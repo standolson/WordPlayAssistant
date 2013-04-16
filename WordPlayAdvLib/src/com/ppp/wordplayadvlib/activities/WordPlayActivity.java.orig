@@ -1,0 +1,152 @@
+package com.ppp.wordplayadvlib.activities;
+
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.appdata.DictionaryType;
+
+public class WordPlayActivity extends SherlockFragmentActivity {
+
+	private Tab dictionaryTab;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+
+		super.onCreate(savedInstanceState);
+
+	    ActionBar actionBar = getSupportActionBar();
+	    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+	    Tab tab = null;
+
+	    // Anagrams Tab
+	    tab = actionBar.newTab();
+	    createTabLayout(tab, R.string.Anagrams, R.drawable.ic_tab_anagrams);
+//	    tab.setTabListener(new TabListener<AnagramsFragment>(this, "anagrams", AnagramsFragment.class));
+	    tab.setTabListener(new TabListener(this, "anagrams", R.layout.anagrams_tab_host));
+	    actionBar.addTab(tab);
+
+	    // Word Judge Tab
+//	    tab = actionBar.newTab();
+//	    createTabLayout(tab, R.string.WordJudge, R.drawable.ic_tab_wordjudge);
+//	    tab.setTabListener(new TabListener<WordJudgeFragment>(this, "wordjudge", WordJudgeFragment.class));
+//	    actionBar.addTab(tab);
+
+	    // Dictionary Tab
+//	    if (WordPlayApp.getInstance().isPaidMode())  {
+//	    	dictionaryTab = actionBar.newTab();
+//		    createTabLayout(dictionaryTab, R.string.Dictionary, R.drawable.ic_tab_dictionary);
+//		    dictionaryTab.setTabListener(new TabListener<DictionaryFragment>(this, "dictionary", DictionaryFragment.class));
+//		    actionBar.addTab(dictionaryTab);
+//	    }
+
+	    // Crosswords Tab
+//	    if (WordPlayApp.getInstance().isPaidMode())  {
+//		    tab = actionBar.newTab();
+//		    createTabLayout(tab, R.string.Crosswords, R.drawable.ic_tab_crosswords);
+//		    tab.setTabListener(new TabListener<CrosswordsFragment>(this, "crosswords", CrosswordsFragment.class));
+//		    actionBar.addTab(tab);
+//	    }
+
+    }
+
+	private void createTabLayout(Tab tab, int titleId, int iconId)
+	{
+	    LinearLayout tabLayout = (LinearLayout)getLayoutInflater().inflate(R.layout.action_bar_tab_item, null);
+	    ((ImageView)tabLayout.findViewById(R.id.tab_icon)).setImageResource(iconId);
+	    ((TextView)tabLayout.findViewById(R.id.tab_title)).setText(titleId);
+	    tab.setCustomView(tabLayout);
+	}
+
+//	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
+	public class TabListener implements ActionBar.TabListener {
+
+//	    private Fragment fragment;
+	    private final SherlockFragmentActivity activity;
+	    private final String tag;
+	    private int tabLayoutId;
+//	    private final Class<T> _class;
+
+//	    public TabListener(SherlockFragmentActivity a, String t, Class<T> c)
+//	    {
+//	        activity = a;
+//	        tag = t;
+//	        _class = c;
+//	    }
+
+	    public TabListener(SherlockFragmentActivity activity, String tag, int tabLayoutId)
+	    {
+	    	this.activity = activity;
+	    	this.tag = tag;
+	    	this.tabLayoutId = tabLayoutId;
+	    }
+
+	    private FragmentTransaction getFragmentTransaction()
+	    {
+	    	return activity.getSupportFragmentManager().beginTransaction();
+	    }
+
+	    public void onTabSelected(Tab tab, FragmentTransaction ft)
+	    {
+	    	setContentView(tabLayoutId);
+//	    	FragmentTransaction trans = (ft == null) ? getFragmentTransaction() : ft;
+//
+//	        // Check if the fragment is already initialized
+//	        if (fragment == null)  {
+//	            fragment = Fragment.instantiate(activity, _class.getName());
+//	            trans.add(android.R.id.content, fragment, tag);
+//	        }
+//
+//	        // If not, instantiate and add it to the activity
+//	        else
+//	            trans.attach(fragment);
+//
+//	        if (ft == null)
+//	        	trans.commit();
+
+	    }
+
+	    public void onTabUnselected(Tab tab, FragmentTransaction ft)
+	    {
+
+//	    	FragmentTransaction trans = (ft == null) ? getFragmentTransaction() : ft;
+//
+//	    	if (fragment != null)
+//	    		trans.detach(fragment);
+//
+//	        if (ft == null)
+//	        	trans.commit();
+	    	
+	    }
+
+	    public void onTabReselected(Tab tab, FragmentTransaction ft) {}
+
+	}
+
+	public void setDictionaryTabMode(int dictionary, EditText textEntry)
+	{
+
+		LinearLayout layout = (LinearLayout)dictionaryTab.getCustomView();
+
+		if (dictionary == DictionaryType.DICTIONARY_THESAURUS.ordinal())  {
+			((ImageView)layout.findViewById(R.id.tab_icon)).setImageResource(R.drawable.ic_tab_thesaurus);
+			((TextView)layout.findViewById(R.id.tab_title)).setText(R.string.Thesaurus);
+			textEntry.setHint(R.string.thesaurus_edit_hint);
+		}
+		else {
+			((ImageView)layout.findViewById(R.id.tab_icon)).setImageResource(R.drawable.ic_tab_dictionary);
+			((TextView)layout.findViewById(R.id.tab_title)).setText(R.string.Dictionary);
+			textEntry.setHint(R.string.dictionary_edit_hint);
+		}
+	}
+
+}

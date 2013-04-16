@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Spinner
+		android:id="@+id/anagrams_dict_spinner"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:entries="@array/word_list_names"
+		android:prompt="@string/word_list_name_prompt"
+		android:visibility="invisible"/>
+
+  	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+
+		<TableLayout
+			android:id="@+id/anagrams_tablelayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:stretchColumns="0">
+			
+			<TableRow
+				android:id="@+id/anagrams_tablerow1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dip">
+				
+				<EditText
+					android:id="@+id/AnagramsTrayText"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:scrollHorizontally="true"
+					android:hint="@string/anagrams_tray_edit_hint"
+					android:inputType="textFilter"/>
+
+				<Button
+					android:id="@+id/AnagramsTrayTextClear"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/clear_button_text"/>
+				
+				<Button
+					android:id="@+id/AnagramsButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/search_button_text"/>
+				
+			</TableRow>
+
+			<TableRow
+				android:id="@+id/anagrams_tablerow2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dip">
+
+				<EditText
+					android:id="@+id/AnagramsBoardText"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:scrollHorizontally="true"
+					android:hint="@string/anagrams_board_edit_hint"
+					android:inputType="textFilter"/>
+
+				<Button
+					android:id="@+id/AnagramsBoardTextClear"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/clear_button_text"/>
+
+			</TableRow>
+
+		</TableLayout>
+
+		<LinearLayout
+			android:id="@+id/DictionaryToggleButtons"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:orientation="horizontal">
+		
+			<com.ppp.wordplayadvlib.widgets.MultiStateButton
+				android:id="@+id/AnagramsWordScores"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dip"/>
+				
+			<com.ppp.wordplayadvlib.widgets.MultiStateButton
+				android:id="@+id/AnagramsSortOrder"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dip"/>
+
+		</LinearLayout>
+			
+	</LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Spinner
+		android:id="@+id/wordjudge_dict_spinner"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:entries="@array/word_list_names"
+		android:prompt="@string/word_list_name_prompt"
+		android:visibility="invisible"/>
+
+	<LinearLayout
+	    android:id="@+id/wordjudge"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		
+		<TableLayout
+			android:id="@+id/wordjudge_tablelayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:stretchColumns="0">
+			
+			<TableRow
+				android:id="@+id/wordjudge_tablerow"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dip"
+				android:layout_marginBottom="5dip">
+				
+				<EditText
+					android:id="@+id/WordJudgeText"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:scrollHorizontally="true"
+					android:hint="@string/wordjudge_edit_hint"
+					android:inputType="textFilter"/>
+
+				<Button
+					android:id="@+id/WordJudgeTextClear"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/clear_button_text"/>
+				
+				<Button
+					android:id="@+id/WordJudgeButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/judge_button_text"/>
+				
+			</TableRow>
+			
+		</TableLayout>
+		
+		<ListView
+			android:id="@+id/wordjudge_listview"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"/>					
+		
+	</LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="@style/Theme.Sherlock">
+        <item name="actionBarStyle">@style/Widget.MyCustom.ActionBar</item>
+        <item name="actionBarSize">55dip</item>
+        <item name="android:actionBarSize">55dip</item>
+	</style>
+
+    <style name="Widget.MyCustom.ActionBar" parent="Widget.Sherlock.ActionBar">
+<!--         <item name="height">55dip</item>
+		<item name="android:height">55dip</item>
+ -->	</style>
+
+	<style name="Widget.MyCustom.ActionButton" parent="Widget.Sherlock.ActionButton">
+        <item name="android:paddingLeft">5dip</item>
+        <item name="android:paddingRight">5dip</item>
+    </style>
+
+</resources>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+	<Spinner
+		android:id="@+id/dictionary_dict_spinner"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:entries="@array/dictionary_names"
+		android:prompt="@string/dictionary_name_prompt"
+		android:visibility="invisible"/>
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
+		
+		<TableLayout
+			android:id="@+id/dictionary_tablelayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:stretchColumns="0">
+			
+			<TableRow
+				android:id="@+id/dictionary_tablerow"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dip">
+				
+				<EditText
+					android:id="@+id/DictionaryText"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:scrollHorizontally="true"
+					android:hint="@string/dictionary_edit_hint"
+					android:inputType="textFilter"/>
+
+				<Button
+					android:id="@+id/DictionaryTextClear"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/clear_button_text"/>
+				
+				<Button
+					android:id="@+id/DictionaryButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/search_button_text"/>
+				
+			</TableRow>
+			
+		</TableLayout>
+
+		<Spinner
+			android:id="@+id/DictionarySpinner"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+    			android:layout_marginTop="5dip"
+			android:entries="@array/search_types" 
+    			android:prompt="@string/search_type_prompt"/>
+
+		<LinearLayout
+			android:id="@+id/DictionaryToggleButtons"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginTop="10dip"
+			android:orientation="horizontal">
+		
+			<com.ppp.wordplayadvlib.widgets.MultiStateButton
+				android:id="@+id/DictionaryWordScores"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"/>
+				
+			<com.ppp.wordplayadvlib.widgets.MultiStateButton
+				android:id="@+id/DictionarySortOrder"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"/>
+
+		</LinearLayout>
+		
+	</LinearLayout>
+	
+</RelativeLayout>

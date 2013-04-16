@@ -1,0 +1,49 @@
+<h3>Dictionary</h3>
+
+<p>In dictionary mode, enter a word in the search box and click the Search button.</p>
+
+<p>To select a dictionary, select <b>Dictionaries</b> from the main menu.</p>
+
+<p><b>NOTE:</b> The dictionary selection for this tab is independent from the dictionary
+ selected in the <b>Word Judge</b> or <b>Anagrams</b> tabs.</p>
+
+<p>When using the DICT.ORG dictionaries, if a word in the dictionary exactly matches the text
+ entered, a list of dictionary definitions will be displayed.  Selecting one of these entries
+ will display the entire dictionary entry.</p>
+
+<p>If more than one word in the dictionary matches the text entered using a non-exact match,
+ a list of words will be displayed.  Selecting one of these words will display all of the
+ definitions of that word.</p>
+
+<p>When using a Scrabble(TM) word list, only a word list will be returned.  Selecting
+ a word from the list will display the definitions of the word.</p>
+ 
+<p><b>NOTE:</b> Some words in a Scrabble(TM) word list may not have definitions in
+ the online regular dictionary.</p>
+
+<h4>Search Type</h4>
+
+<p>The Search Type selection determines what kind of dictionary lookup occurs when the
+ <b>Search</b> button is clicked.</p>
+
+<i>Starts With...</i>
+
+<p>Returns all words that start with the text in the search box.</p>
+
+<i>Exact Match</i>
+
+<p>This is a standard dictionary lookup of the word entered in the search box.</p>
+
+<i>Contains...</i>
+
+<p>Returns all words which contain the text in the search box.</p>
+
+<i>Ends With...</i>
+
+<p>Returns all words which end with the text in the search box.</p>
+
+<h4>Sorting and Scoring</h4>
+
+<p>You may have word scores computed and displayed.  You may also sort the resulting word
+ lists by score (only if scoring is enabled), word length, or alphabetically.  Use the buttons
+ underneath the search text box to set these options.</b>

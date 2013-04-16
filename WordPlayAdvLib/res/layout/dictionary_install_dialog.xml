@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/dictionary_install_layout"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+			<TextView
+				android:id="@+id/dictionary_mode_text"
+				android:text="@string/dictionary_install_dialog_text"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:paddingLeft="5dip"
+				android:paddingRight="5dip"
+				android:paddingBottom="10dip"/>
+		
+			<Button
+				android:text="@android:string/ok"
+				android:id="@+id/dictionary_ok_button"
+				android:layout_width="80dip"
+				android:layout_height="wrap_content"/>
+
+		</LinearLayout>
+
+	</ScrollView>
+		
+</LinearLayout>

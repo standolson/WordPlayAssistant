@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<CheckBoxPreference
+		android:key="notification_bar"
+		android:summary="@string/notification_bar_help"
+		android:title="@string/notification_bar_title"
+		android:defaultValue="false"/>
+
+</PreferenceScreen>

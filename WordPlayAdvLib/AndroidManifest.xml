@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ppp.wordplayadvlib"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="8"/>
+
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/> 
+
+	<activity android:name=".activities.ExactMatchActivity"/>
+	<activity android:name=".activities.HelpViewer"/>
+	<activity android:name=".activities.SearchHistoryActivity"/>
+	<activity android:name=".activities.SearchActivity"/>
+	<activity android:name=".activities.UserPreferenceActivity"/>
+    <activity android:name=".activities.WordPlayActivity"/>
+
+	<!-- Google AdMob Stuff -->
+
+	<meta-data
+		android:name="ADMOB_PUBLISHER_ID"
+		android:value="a14d57787867bd1"/>
+
+	<activity
+		android:name="com.google.ads.AdActivity"
+		android:configChanges="orientation|keyboard|keyboardHidden"/>
+
+</manifest>

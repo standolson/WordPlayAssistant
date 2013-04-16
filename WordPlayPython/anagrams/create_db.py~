@@ -1,0 +1,153 @@
+# StdLib
+import os
+import sys
+from operator import mul, add
+
+# Local
+from db_common import *
+from dicts import *
+from primes import PRIMES, ZIM_PRIMES, CORNELL_PRIMES, DICT_PRIMES
+from letters import LETTER_VALUES
+
+# Database version
+DATABASE_VERSION=1
+
+# Database and table names
+DB_FILENAME = "Wordlist.mp3"              # .mp3 for Android purposes
+WORDLIST_TABLE = "wordlist"
+BAD_WORDLIST_TABLE = "bad_wordlist"
+DATABASE_INFO_TABLE = "database_info"
+
+# Columns
+WORDLIST_TABLE_COLUMNS = (
+    (PRIMARY_KEY_ROW, 'integer primary key'),
+    ('WORD', 'varchar'),
+    ('DICTS', 'integer'),
+    ('PRIMEVALUE', 'unsigned big int'),
+    ('SCORE', 'integer'))
+BAD_WORDLIST_TABLE_COLUMNS = (
+    (PRIMARY_KEY_ROW, 'integer primary key'),
+    ('WORD', 'varchar'),
+    ('DICTS', 'integer'),
+    ('PRIMEVALUE', 'varchar'),
+    ('SCORE', 'integer'))
+DATABASE_INFO_TABLE_COLUMNS = (
+    (PRIMARY_KEY_ROW, 'integer primary key'),
+    ('VERSION', 'integer'))
+
+
+#
+# Main
+#
+
+# Create the database
+db = open_database(DB_FILENAME)
+
+# Create the main wordlist table
+create_table(db, WORDLIST_TABLE, WORDLIST_TABLE_COLUMNS)
+
+# Open the wordlist file...
+f = open('combined.wl', 'r')
+
+# Initialize for letter frequency computation
+letters = {}
+for w in "abcdefghijklmnopqrstuvwxyz":
+    letters[w] = 0
+
+# Initialize bad word data
+bad_word_count = 0
+bad_words = {}
+
+# ...and process each word, generating its prime value and inserting the
+# data into the database
+for l in f:
+
+    # Get the word and its dictionary bitmask
+    ll = l.lower().strip()
+    word, dicts = ll.split(',')
+    try:
+        dicts = int(dicts)
+    except (TypeError, ValueError):
+        dicts = DICTIONARY_TWL06
+
+    # Compute the letter score for the work
+    score = reduce(add, [LETTER_VALUES[w] for w in word])
+
+    # Compute the prime value
+#   v = reduce(mul, [PRIMES[w] for w in word])
+#   v = reduce(mul, [ZIM_PRIMES[w] for w in word])
+#   v = reduce(mul, [CORNELL_PRIMES[w] for w in word])
+    v = reduce(mul, [DICT_PRIMES[w] for w in word])
+
+    # Count bad words.  Bad words are inserted into the main
+    # wordlist with a zero prime value and placed into the
+    # bad wordlist with their prime value expressed as a string.
+    if v > pow(2, 63) - 1:
+        bad_word_count += 1
+        bad_words[word] = (dicts, v, score)
+        v = 0
+
+    # Update letter frequency data
+    for w in word:
+        letters[w] += 1
+
+    # Create the INSERT statement
+    t = (word, dicts, v, score)
+    pt = (word, dicts, dict_to_string(dicts), v, score)
+    print "word %s dicts %d (%s) prime %d score %d" % pt
+    insert_str = create_insert_statement(WORDLIST_TABLE,
+                                         WORDLIST_TABLE_COLUMNS,
+                                         t)
+
+    # Insert the row
+    db.execute(insert_str)
+
+# Commit everything to the database
+db.commit()
+f.close()
+
+# Create the bad wordlist table which contains words whose prime value is
+# larger than can be stored by SQLite
+create_table(db, BAD_WORDLIST_TABLE, BAD_WORDLIST_TABLE_COLUMNS)
+
+# Dump the bad words
+print
+for word in bad_words.keys():
+
+    print "BADWORD %s %d" % (word, bad_words[word][1])
+
+    # Create the insert statement
+    t = (word,
+         bad_words[word][0], str(bad_words[word][1]), bad_words[word][2])
+    insert_str = create_insert_statement(BAD_WORDLIST_TABLE,
+                                         BAD_WORDLIST_TABLE_COLUMNS,
+                                         t)
+
+    # Insert the row
+    db.execute(insert_str)
+
+    # Remove the word from the regular wordlist
+#   db.execute("DELETE FROM %s WHERE WORD = '%s'" % (WORDLIST_TABLE, word))
+
+# Commit again
+db.commit()
+print "%d total bad words" % bad_word_count
+
+# Create the database info table
+create_table(db, DATABASE_INFO_TABLE, DATABASE_INFO_TABLE_COLUMNS)
+t = (DATABASE_VERSION, )
+insert_str = create_insert_statement(DATABASE_INFO_TABLE,
+                                     DATABASE_INFO_TABLE_COLUMNS,
+                                     t)
+db.execute(insert_str)
+db.commit()
+print "created database info table"
+
+# Create the index
+#create_index(db, WORDLIST_TABLE, "PRIMEVALUE")
+#print "create index on PRIMEVALUE"
+
+# Dump the letter frequency information
+print
+for w in "abcdefghijklmnopqrstuvwxyz":
+    print "%s %d" % (w, letters[w])

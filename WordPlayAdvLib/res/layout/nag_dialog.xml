@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/nag_dialog_layout"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:gravity="center">
+
+			<TextView
+				android:id="@+id/nag_text"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:paddingLeft="5dip"
+				android:paddingRight="5dip"
+				android:text="@string/nag_text"/>
+
+			<LinearLayout
+				android:id="@+id/button_row"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:orientation="horizontal">
+		
+				<Button
+					android:text="@string/contact_us_text"
+					android:id="@+id/nag_button"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"/>
+		
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</ScrollView>
+			
+</LinearLayout>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+	<string name="app_name">WordPlay Assistant</string>
+
+	<string name="Anagrams">Anagrams</string>
+	<string name="WordJudge">Word Judge</string>
+	<string name="Dictionary">Dictionary</string>
+	<string name="Thesaurus">Thesaurus</string>
+	<string name="Crosswords">Crosswords</string>
+
+	<string name="search_button_text">Search</string>
+	<string name="clear_button_text">Clear</string>
+	<string name="judge_button_text">Judge</string>
+
+	<string name="search_type_prompt">Choose a search type</string>
+	<string-array name="search_types">
+		<item>Exact Match</item>
+		<item>Starts With...</item>
+		<item>Contains...</item>
+		<item>Ends With...</item>
+    </string-array>
+     
+    <string name="dictionary_name_prompt">Choose a dictionary</string>
+    <string name="word_list_name_prompt">Choose a word list</string>
+    
+    <string-array name="dictionary_names">
+ 		<item>ENABLE (Words With Friends)</item>
+      	<item>SOWPODS</item>
+ 		<item>TWL06</item>
+ 		<item>TWL98</item>
+ 		<item>Collins (2/2007)</item>
+ 		<item>Collins (4/2007)</item>
+		<item>All DICT.ORG Dictionaries</item>
+ 		<item>Moby Thesaurus II</item>
+ 	</string-array>
+
+	<string-array name="crosswords_names">
+		<item>ENABLE (Words With Friends)</item>
+     	<item>SOWPODS</item>
+ 		<item>TWL06</item>
+ 		<item>TWL98</item>
+ 		<item>Collins (2/2007)</item>
+ 		<item>Collins (4/2007)</item>
+		<item>All DICT.ORG Dictionaries</item>
+	</string-array>
+
+    <string-array name="word_list_names">
+ 		<item>ENABLE (Words With Friends)</item>
+      	<item>SOWPODS</item>
+ 		<item>TWL06</item>
+ 		<item>TWL98</item>
+ 		<item>Collins (2/2007)</item>
+ 		<item>Collins (4/2007)</item>
+ 	</string-array>
+ 
+ 	<string name="dictionary_edit_hint">Enter a search string...</string>
+ 	<string name="thesaurus_edit_hint">Enter a word...</string>
+	<string name="wordjudge_edit_hint">Enter words...</string>
+	<string name="anagrams_tray_edit_hint">Enter tray letters...</string>
+	<string name="anagrams_board_edit_hint">Enter board letters...</string>
+	<string name="crosswords_edit_hint">Enter a word pattern...</string>
+	
+	<string-array name="word_score_toggle_states">
+		<item>Word Scores Off</item>
+		<item>Word Scores On</item>
+	</string-array>
+	
+	<string-array name="sort_order_toggle_states">
+		<item>Sort By Word Length</item>
+		<item>Sort By Word Score</item>
+		<item>Sort Alphabetically</item>
+	</string-array>
+	
+    <string name="sr_no_items">No Matches Found</string>
+
+	<string name="sh_no_items">No History Available</string>
+	
+	<string name="exact_match_copy_str">Copy</string>	
+	<string name="exact_match_email_str">Email</string>
+
+	<string name="showhelp_menu_str">Help</string>
+	<string name="showabout_menu_str">About</string>
+	<string name="showhistory_menu_str">History</string>	
+	<string name="clearhistory_menu_str">Clear History</string>
+	<string name="dictionary_menu_str">Dictionaries</string>
+	<string name="exit_menu_str">Exit</string>
+	<string name="prefs_menu_str">Preferences</string>
+	<string name="dictionary_reinstall_str">Reinstall Dictionary</string>
+	
+	<string name="app_description">Online dictionary, thesaurus, crossword puzzle solver, and anagram generator</string>
+	
+	<string name="contact_us_text">Contact Us!</string>
+	<string name="rate_us_text">Rate App!</string>
+	<string name="release_notes_text">Release Notes</string>
+	<string name="buy_it_text">Upgrade To Full Version</string>
+
+	<string name="notify_ticker_text">Swipe here to reopen</string>
+	<string name="notify_description">Reopen (Menu->Exit to close)</string>
+
+	<string name="nag_text">Thank you for using WordPlay Assistant!\n
+\n
+We hope that you find it useful.\n
+If you have comments, we\'d love\n
+to hear from you.\n
+\n
+Click the button and let us know what you\n
+think.  You can do this later from the\n
+About box accessed from the menu.\n
+</string>
+
+<string formatted="false" name="dictionary_install_dialog_text">
+WordPlay Assistant%s v%s.%s requires\n
+that the word database be installed on\n
+the device.  This database takes 8MB of\n
+space on your SD card. If you do not\n
+have an SD card installed, the database\n
+will be installed in your device\'s\n
+memory.\n
+\n
+NOTE: Starting with v4.0, the online\n
+dictionary is no longer used.\n
+\n
+Click OK to start installing the\n
+database.
+</string>
+
+<string formatted="false" name="dictionary_upgrade_dialog_text">
+WordPlay Assistant%s v%s.%s now includes\n
+support for the ENABLE dictionary.  This\n
+dictionary is the one used by Words With\n
+Friends.\n
+\n
+Adding this dictionary requires upgrading\n
+the word database.\n
+\n
+After this upgrade, the selected dictionary\n
+for each tab will be set to ENABLE.\n
+\n
+Click OK to start the database upgrade.
+</string>
+
+	<string name="dictionary_query_ok_button_text">OK</string>
+	<string name="dictionary_query_cancel_button_text">Cancel</string>
+	<string name="dictionary_progress_dialog_text">Installing on %s storage...</string>
+	<string name="dictionary_on_external_storage">external</string>
+	<string name="dictionary_on_internal_storage">internal</string>
+
+	<string name="free_mode_text">Thank you for trying\n
+WordPlay Assistant Free!!!\n
+\n
+If you like our app, please purchase the\n
+full version.\n
+\n
+The full version removes advertising, adds\n
+a tab for looking up words in both Scrabble\n
+and regular dictionaries, and adds a tab for\n
+solving crossword puzzles (also useful in\n
+Scrabble).\n
+\n
+Please enjoy WordPlay Assistant Free!\n
+</string>
+	<string name="free_mode_relnotes_button_text">Release Notes</string>
+	<string name="free_mode_continue_text">Continue</string>
+
+	<string name="email_not_configured">Unable to send email because no email account is currently configured.  Please configure an email account and try again later.</string>
+	<string name="device_in_airplane_mode">Unable to communicate with the online dictionaries because your device is in AIRPLANE MODE. Please retry your request again later after you have turned AIRPLANE MODE off.</string>
+	<string name="no_network_available">Unable to find an available network with which to contact the online dictionaries.  Check your network settings and try again later.</string>
+	<string name="wifi_auth_error">Bad response received from server.  If you are connected to a WiFi hotspot, please make sure you are logged into the hotspot before using this application.</string>
+
+	<string name="notification_bar_title">Notification Bar Icon</string>
+	<string name="notification_bar_help">Show icon on notification bar to switch back to this app easily</string>
+
+	<string name="error_dialog_title">Error</string>
+
+	<string name="company_name">Portland Portable Programs</string>
+	<string name="copyright">(C) 2010-2012</string>
+
+</resources>

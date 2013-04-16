@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Spinner
+		android:id="@+id/crosswords_dict_spinner"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:entries="@array/crosswords_names"
+		android:prompt="@string/dictionary_name_prompt"
+		android:visibility="invisible"/>
+
+	<LinearLayout
+		android:id="@+id/crosswords"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		
+		<TableLayout
+			android:id="@+id/crosswords_tablelayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:stretchColumns="0">
+
+			<TableRow
+				android:id="@+id/crosswords_tablerow"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dip">
+				
+				<EditText
+					android:id="@+id/CrosswordsText"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:scrollHorizontally="true"
+					android:hint="@string/crosswords_edit_hint"
+					android:inputType="textFilter"/>
+
+				<Button
+					android:id="@+id/CrosswordsTextClear"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/clear_button_text"/>
+				
+				<Button
+					android:id="@+id/CrosswordsButton"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/search_button_text"/>
+				
+			</TableRow>
+			
+		</TableLayout>
+		
+	</LinearLayout>
+
+</RelativeLayout>

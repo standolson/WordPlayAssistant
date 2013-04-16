@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+	android:id="@+id/wordplay_fragment"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Dictionary Selection Spinners -->
+
+    <Spinner
+		android:id="@+id/anagrams_dict_spinner"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:entries="@array/word_list_names"
+		android:prompt="@string/word_list_name_prompt"
+		android:visibility="invisible"/>
+
+    <Spinner
+		android:id="@+id/wordjudge_dict_spinner"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:entries="@array/word_list_names"
+		android:prompt="@string/word_list_name_prompt"
+		android:visibility="invisible"/>
+    
+	<Spinner
+		android:id="@+id/dictionary_dict_spinner"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:entries="@array/dictionary_names"
+		android:prompt="@string/dictionary_name_prompt"
+		android:visibility="invisible"/>
+
+    <Spinner
+		android:id="@+id/crosswords_dict_spinner"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:entries="@array/crosswords_names"
+		android:prompt="@string/dictionary_name_prompt"
+		android:visibility="invisible"/>
+	
+    <!-- Button Area -->
+
+    <LinearLayout
+        android:id="@+id/button_area"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:padding="5dip">
+
+        <Button
+            android:id="@+id/anagram_tab_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".25"
+            android:text="@string/Anagrams"
+            android:textSize="10dip"
+			android:textStyle="bold"
+			android:textColor="@android:color/black"
+			android:singleLine="true"
+			android:ellipsize="marquee"
+			android:drawableTop="@drawable/ic_tab_anagrams"/>
+
+        <Button
+            android:id="@+id/wj_tab_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".25"
+            android:text="@string/WordJudge"
+            android:textSize="10dip"
+			android:textStyle="bold"
+			android:textColor="@android:color/black"
+			android:singleLine="true"
+			android:ellipsize="marquee"
+			android:drawableTop="@drawable/ic_tab_wordjudge"/>
+
+        <Button
+            android:id="@+id/dictionary_tab_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".25"
+            android:text="@string/Dictionary"
+            android:textSize="10dip"
+			android:textStyle="bold"
+			android:textColor="@android:color/black"
+			android:singleLine="true"
+			android:ellipsize="marquee"
+			android:drawableTop="@drawable/ic_tab_dictionary"/>
+
+        <Button
+            android:id="@+id/crosswords_tab_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".25"
+            android:text="@string/Crosswords"
+            android:textSize="10dip"
+			android:textStyle="bold"
+			android:textColor="@android:color/black"
+			android:singleLine="true"
+			android:ellipsize="marquee"
+			android:drawableTop="@drawable/ic_tab_crosswords"/>
+
+    </LinearLayout>
+
+    <!-- Content Area -->
+
+    <com.ppp.wordplayadvlib.widgets.PatchedViewFlipper
+        android:id="@+id/view_flipper"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_area">
+
+        <!-- Anagrams Tab -->
+
+		<ScrollView
+		    android:id="@+id/anagrams"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+	
+				<TableLayout
+					android:id="@+id/anagrams_tablelayout"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:stretchColumns="0">
+					
+					<TableRow
+						android:id="@+id/anagrams_tablerow1"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dip">
+						
+						<EditText
+							android:id="@+id/AnagramsTrayText"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:scrollHorizontally="true"
+							android:hint="@string/anagrams_tray_edit_hint"
+							android:inputType="textFilter"/>
+	
+						<Button
+							android:id="@+id/AnagramsTrayTextClear"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:text="@string/clear_button_text"/>
+						
+						<Button
+							android:id="@+id/AnagramsButton"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="@string/search_button_text"/>
+						
+					</TableRow>
+	
+					<TableRow
+						android:id="@+id/anagrams_tablerow2"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dip">
+	
+						<EditText
+							android:id="@+id/AnagramsBoardText"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:scrollHorizontally="true"
+							android:hint="@string/anagrams_board_edit_hint"
+							android:inputType="textFilter"/>
+	
+						<Button
+							android:id="@+id/AnagramsBoardTextClear"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:text="@string/clear_button_text"/>
+	
+					</TableRow>
+	
+				</TableLayout>
+	
+				<LinearLayout
+					android:id="@+id/DictionaryToggleButtons"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:orientation="horizontal">
+				
+					<com.ppp.wordplayadvlib.widgets.MultiStateButton
+						android:id="@+id/AnagramsWordScores"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="10dip"/>
+						
+					<com.ppp.wordplayadvlib.widgets.MultiStateButton
+						android:id="@+id/AnagramsSortOrder"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="10dip"/>
+	
+				</LinearLayout>
+					
+			</LinearLayout>
+
+		</ScrollView>
+		
+		<!-- Word Judge Tab -->
+
+		<LinearLayout
+		    android:id="@+id/wordjudge"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			
+			<TableLayout
+				android:id="@+id/wordjudge_tablelayout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:stretchColumns="0">
+				
+				<TableRow
+					android:id="@+id/wordjudge_tablerow"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="5dip"
+					android:layout_marginBottom="5dip">
+					
+					<EditText
+						android:id="@+id/WordJudgeText"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:scrollHorizontally="true"
+						android:hint="@string/wordjudge_edit_hint"
+						android:inputType="textFilter"/>
+
+					<Button
+						android:id="@+id/WordJudgeTextClear"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/clear_button_text"/>
+					
+					<Button
+						android:id="@+id/WordJudgeButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/judge_button_text"/>
+					
+				</TableRow>
+				
+			</TableLayout>
+			
+			<ListView
+				android:id="@+id/wordjudge_listview"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"/>					
+			
+		</LinearLayout>
+
+		<!-- Dictionary Tab -->
+
+		<ScrollView
+		    android:id="@+id/dictionary"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content">
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:orientation="vertical">
+				
+				<TableLayout
+					android:id="@+id/dictionary_tablelayout"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:stretchColumns="0">
+					
+					<TableRow
+						android:id="@+id/dictionary_tablerow"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dip">
+						
+						<EditText
+							android:id="@+id/DictionaryText"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:scrollHorizontally="true"
+							android:hint="@string/dictionary_edit_hint"
+							android:inputType="textFilter"/>
+	
+						<Button
+							android:id="@+id/DictionaryTextClear"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:text="@string/clear_button_text"/>
+						
+						<Button
+							android:id="@+id/DictionaryButton"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="@string/search_button_text"/>
+						
+					</TableRow>
+					
+				</TableLayout>
+	
+				<Spinner
+					android:id="@+id/DictionarySpinner"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+	     			android:layout_marginTop="5dip"
+					android:entries="@array/search_types" 
+	     			android:prompt="@string/search_type_prompt"/>
+	
+				<LinearLayout
+					android:id="@+id/DictionaryToggleButtons"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:layout_marginTop="10dip"
+					android:orientation="horizontal">
+				
+					<com.ppp.wordplayadvlib.widgets.MultiStateButton
+						android:id="@+id/DictionaryWordScores"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"/>
+						
+					<com.ppp.wordplayadvlib.widgets.MultiStateButton
+						android:id="@+id/DictionarySortOrder"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"/>
+	
+				</LinearLayout>
+				
+			</LinearLayout>
+
+		</ScrollView>
+
+		<!-- Crosswords Tab -->
+
+		<LinearLayout
+			android:id="@+id/crosswords"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			
+			<TableLayout
+				android:id="@+id/crosswords_tablelayout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:stretchColumns="0">
+				
+				<TableRow
+					android:id="@+id/crosswords_tablerow"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="5dip">
+					
+					<EditText
+						android:id="@+id/CrosswordsText"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:scrollHorizontally="true"
+						android:hint="@string/crosswords_edit_hint"
+						android:inputType="textFilter"/>
+
+					<Button
+						android:id="@+id/CrosswordsTextClear"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/clear_button_text"/>
+					
+					<Button
+						android:id="@+id/CrosswordsButton"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/search_button_text"/>
+					
+				</TableRow>
+				
+			</TableLayout>
+			
+		</LinearLayout>
+
+    </com.ppp.wordplayadvlib.widgets.PatchedViewFlipper>
+
+	<!-- Google AdMob Ad -->
+
+	<com.google.ads.AdView
+		android:id="@+id/tabbed_main_ad"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		ads:adSize="BANNER"
+		ads:adUnitId="a14d57787867bd1"/>
+
+</RelativeLayout>

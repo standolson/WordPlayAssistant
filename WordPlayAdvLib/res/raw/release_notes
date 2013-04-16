@@ -1,0 +1,279 @@
+<h3>Release Notes</h3>
+
+<h4>Version 4.2a</h4>
+
+<p>Fixed problem that caused the paid version to want to install
+ the database each time the app is started.</p>
+
+<h4>Version 4.2</h4>
+
+<p>Changed all dialogs to be scrollable for smaller screen devices.</p>
+
+<p>Fixed problem in application startup which could have caused
+ crashes on startup or required reinstalling the database each
+ time the app is restarted.</p>
+
+<p>Made the <b>Anagrams</b> and <b>Dictionary</b> tabs' content
+ scrollable for small screen devices.</p>
+
+<p>Soft keyboards are now closed when dictionary searches start.</p>
+
+<p>Fixed <b>Anagrams</b> tab so that a search is started if the
+ user presses <b>ENTER</b> from the board text input.</p>
+
+<h4>Version 4.1</h4>
+
+<p>Added support for the ENABLE dictionary.  This is the
+ word list that is used by <b>Words With Friends</b>.  This
+ change requires reinstallation of the word list database.
+ After the database is reinstalled, the default dictionary
+ for all tabs in the app will be set to the ENABLE word list.</p>
+
+<p>Added a new menu item to reinstall the word list database.</p>
+
+<p>Bug fixes.</p>
+
+<h4>Version 4.0a</h4>
+
+<p>Fixed database installation issues.  Database should install
+ properly on both SD card and internal memory now.</p>
+
+<p>Added a <b>Preferences</b> menu item.  This menu initially
+ contains a setting for the notification bar icon that allows
+ for faster switching back to the app.</p>
+
+<p>Fixed search result list item selection for the free version
+ to display the actual selected word.  Eliminates an off-by-one
+ crash.</p>
+
+<p>Fixed fast indexing scroller to not crash due to index out
+ of range issues.</p>
+
+<p>Fixed free version so that the database isn't recreated on
+ initial startup every single time the app is first started.</p>
+
+<h4>Version 4.0</h4>
+
+<p>Both the free and paid versions of WordPlay Assistant now use
+ an on device database for word lookup.  The online database is no
+ longer being used.  The database will be installed on your SD memory
+ card if it is installed.  If you do not have an SD memory card
+ installed, the database will be installed in your device's memory.</p>
+
+<p>Removed the notification bar icon based on user demand.</p>
+
+<h4>Version 3.1a</h4>
+
+<p>Fixed force close caused when using a wildcard during anagram search
+ with word scores turned off.</p>
+
+<h4>Version 3.1</h4>
+
+<p>When the app is first started, an icon will be placed in the notification bar
+ so you may get back to the app quickly by opening the notification bar and
+ selecting the notification.  To get rid of the icon, select <b>Exit</b> from the
+ <b>MENU</b> button when in the app.</p>
+
+<p>Fixed crashes caused by the app trying to open a dialog box from a window that
+ has already been closed.</p>
+
+<p>Implemented the ability to use any of the Scrabble(TM) dictionaries in the
+ <b>Crosswords</b> tab.</p>
+
+<p>When generating anagrams, if you are using a wildcard, the returned results
+ will now show the letter being used as the wildcard in <b>GREEN</b> for each
+ word.</p>
+
+<p>Added <b>CLEAR</b> buttons to all text entry fields for quick clearing of
+ the control.</p>
+
+<p>The current contents of all text entry fields are saved to the device so if
+ the app is exited or shutdown by Android, when restarted all text entry fields
+ will be restored to their last state.</p>
+
+<p>Removed a check for <b>Airplane Mode</b> that wasn't necessary.</p>
+
+<h4>Version 3.0b</h4>
+
+<p>Fixed force close issues related to out-of-memory conditions.  These problems
+ were easily reproduced by entering a 15 character anagram string which produced
+ more than 22,000 words.</p>
+
+<p>Fixed other force close issues.</p>
+
+<h4>Version 3.0a</h4>
+
+<p>Fixed search results so that in case the device is reoriented (from landscape
+ to portrait or vice-versa) the board letter highlighting provided by the <b>Anagrams</b>
+ tab is preserved.</p>
+
+<p>Fixed crash caused by not providing a list of board letters.</p>
+
+<p>Fixed crash in <b>Word Judge</b> when only one letter is entered.  More than
+ one letter is now required in this tab's search box.</p>
+
+<p>Fixed problem in <b>PAID</b> version where using a '?' as a wildcard
+ character would cause a crash of the application.</p>
+
+<h4>Version 3.0</h4>
+
+<p>First version with a <b>PAID</b> and <b>FREE</b> version.  Free version
+ contains ads on all of the tabs, the search results, and search history.  Paid
+ version has no ads and adds the <b>Dictionary</b> and <b>Crosswords</b> tabs.</p>
+
+<p><b>PAID VERSION ONLY</b>: Added ability to move the Scrabble(TM) dictionaries
+ into a database that is resident on the device in either device storage or,
+ if one is installed, an SD memory card.  If an SD memory card is installed,
+ the database will always be installed there.  The user has the ability to switch
+ between either the online or device resident dictionaries at any time.  When
+ switching to the online dictionaries, the device resident database will be removed.
+ Each tab that uses the Scrabble(TM) dictionaries has a menu item for switching the
+ dictionary database location.</p>
+
+<p>Changed the <b>Anagram</b> tab to have two text entries; one for tray letters
+ and one for board letters.  The search results now show the board letters highlighted
+ in red text to help players fit words on the Scrabble(TM) playboard.</p>
+
+<p>Cleaned-up search history code necessitating the creation of V3
+ history data.  All prior history is removed when v3.0 is started the
+ first time.</p>
+
+<p>When sorting search results alphabetically, results are indexed by
+ the first letter of the word.  The scroll bar will present the user
+ with the current index being viewed.</p>
+
+<p>Fixed crash caused by hitting the <b>Search</b> button without
+ any search string entered.  Applies to all tabs.</b>
+
+<p>Fixed progress dialogs when searching so that hitting <b>Cancel</b>
+ will cause the search to be properly terminated and the user to be
+ returned to the main screen.</b>
+
+<h4>Version 2.2</h4>
+
+<p>Added <b>Cancel</b> button to dialog boxes displayed while performing
+ searches.  Changed the way retries for communication errors are processed so
+ that the program will continue to retry under certain conditions.  If the user
+ is having some sort of network problem with their cellular carrier, they may
+ now click the <b>Cancel</b> button to terminate the search or keep waiting
+ until the network problem resolves itself.</p>
+
+<p>Turned off spell-checking for all text entry.</p>
+
+<p>Added a note to the user for when they are connected to a WiFi hotspot
+ but not authorized to use the hotspot.  In these cases, the program dutifully
+ reported an unspecified error as the returned data made no sense.  It
+ now will report an error but explain to the user that they need to check
+ their WiFi connection before continuing.  The error may still be reported to
+ PPP.</p>
+ 
+<p>Selecting an item out of the history list to repeat a search now works as
+ it should.  History will be reloaded correctly.  <b>NOTE:</b> This fix requires
+ that your current history be erased.</p>
+
+<h4>Version 2.1a</h4>
+
+<p>Added retry handling for certain types of errors related to networking (unknown hosts,
+ disconnected during communication with server, unable to connect to server, bad
+ HTTP responses).  If any of these conditions occur more than 5 times during a
+ single request, an error will be displayed and the user will be allowed to report
+ it to PPP.</p>
+
+<p>Fixed input character handler for <b>Word Judge</b> so that consecutive commas
+ can no longer be entered.</p>
+
+<h4>Version 2.1</h4>
+
+<p>Fixed application crashes when changing screen orientation.</p>
+
+<p>Enhanced <b>Word Judge</b> so that multiple words can be entered by separating them
+ with a comma (<b>,</b>).</p>
+
+<p>Added the ability to sort dictionary and anagram searches by word length.</p>
+
+<p>Eliminated unused anagram generation for DICT.ORG dictionaries.  Any historic searches
+ of this sort are changed to do anagram lookup on SOWPODS.</p>
+ 
+<p>Eliminated GCIDE and Webster's 1913 dictionaries as user-selectable dictionaries in
+ the <b>Dictionary</b> tab and instead replaced these with <b>All DICT.ORG Dictionaries</b>.
+ This allows users the ability to search <b>ALL</b> on-line dictionaries provided by
+ DICT.ORG, returning many more definitions.  This resolves some of the missing definitions
+ found when using the on-line thesaurus.  <b>NOTE:</b> This change requires the
+ search history to be cleared automatically when this version is installed and first
+ run.</p>
+
+<h4>Version 2.0</h4>
+
+<p>Added <b>Word Judge</b> tab that takes a word and displays whether or not the word is
+ in the user selected Scrabble(TM) word list.</p>
+ 
+<p>Consolidated <b>Thesaurus</b> tab in <b>Dictionary</b> tab as a separate user-selectable
+ dictionary.</p>
+ 
+<p>Fixed problem in <b>Anagram</b> input where it was possible to cause an application
+ failure because the input string was only a single character or longer than 20
+ characters.</p>
+ 
+<p>Fixed problem in the <b>Dictionary</b> tab where it was possible when in landscape
+ mode that the toggle buttons for scoring and sorting would be outside the view.
+ Changed so the buttons are now centered on a single line of the layout and the
+ sorting button is disabled when scoring is disabled.</p>
+ 
+<h4>Version 1.2a</h4>
+
+<p>Inadvertently removed support for Android v1.5 in last release.  Put this support back
+ into the app.</p>
+
+<p>Added support for saving the current state of the toggle buttons for scoring and sorting
+ in the <b>Dictionary</b> and <b>Anagrams</b> tabs so they are restored when the app is first
+  executed.</p>
+
+<p>Implemented the ability to email problem reports detected at runtime to the development
+ staff.</p>
+
+<p>Implemented the ability to reach PPP website by clicking the app icon in the <b>About</b>
+ dialog.</p>
+
+<h4>Version 1.2</h4>
+
+<p>Implemented five well-known Scrabble(TM) word lists and added the use of these word
+ lists to the <b>Dictionary</b> and <b>Anagrams</b> tabs.  The user's selection of each of these
+ dictionaries is saved to device memory so that they are restored when the application is
+ started.</p>
+
+<p><b>Dictionary</b> and <b>Anagrams</b> lookups when using a Scrabble(TM) word list
+ can provide scoring in returned word lists.  Word lists in these cases can be sorted by score
+ (high to low) or alphabetically.</b>
+
+<p>New icons!</b>
+
+<p>Implemented a WebView activity for displaying help and release notes.</p>
+
+<p>Eliminated the <b>Quick Scramble</b> and <b>Full Scramble</b> options in the <b>Anagrams</b>
+ tab.</p>
+
+<p>Regular dictionary anagram lookup now does a complete anagram search by using a Power Set.</p>
+
+<p>Added an icon to inform users that the dictionary backend is provided by dict.org.</p>
+
+<h4>Version 1.1</h4>
+
+<p>Anagrams search now faster.</p>
+
+<p>Added Quick Scramble mode to <b>Anagrams</b> where one character on the end of the word is
+ removed for each iteration.</p>
+
+<p>Added Full Scramble mode to <b>Anagrams</b> which searches all possible anagrams.</p>
+
+<p>Can now use a period (<b>.</b>) for patterns in crosswords.</p>
+
+<p>Added <b>Release Notes</b> to <b>About</b> dialog.</p>
+
+<p>Added <b>Contact Us!</b> to <b>About</b> dialog.</p>
+
+<p>Fixed exception caused by email not being configured when using <b>Email</b> context menu
+ option.</p>
+
+<h4>Version 1.0</h4>
+
+<p>Initial release.</p>

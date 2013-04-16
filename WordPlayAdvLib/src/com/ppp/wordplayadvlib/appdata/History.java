@@ -1,0 +1,120 @@
+package com.ppp.wordplayadvlib.appdata;
+
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.LinkedList;
+import java.util.ListIterator;
+
+import android.content.SharedPreferences;
+
+import com.ppp.wordplayadvlib.Constants;
+import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.appdata.HistoryObject;
+import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
+import com.ppp.wordplayadvlib.utils.Debug;
+
+public class History {
+
+	private static History instance;
+
+	// Search History
+	private LinkedList<HistoryObject> history = new LinkedList<HistoryObject>();
+
+	private History() {}
+
+	public static History getInstance()
+	{
+		if (instance == null)
+			instance = new History();
+		return instance;
+	}
+
+	public LinkedList<HistoryObject> getHistory() { return history; }
+
+	public void clearHistory()
+	{
+		Debug.d("clearHistory: history cleared");
+		history.clear();
+	}
+
+	public void saveHistory(SharedPreferences prefs)
+	{
+
+		SharedPreferences.Editor editor = prefs.edit();
+		StringBuilder historyBuf = new StringBuilder();
+
+		ListIterator<HistoryObject> iterator = getHistory().listIterator(history.size());
+		while (iterator.hasPrevious())  {
+			HistoryObject elem = iterator.previous();
+			historyBuf.append(elem.getSearchString()).append(":");
+			historyBuf.append(elem.getBoardString()).append(":");
+			historyBuf.append(elem.getSearchType()).append(":");
+			historyBuf.append(elem.getDictionary().toString()).append(":");
+			historyBuf.append(elem.getScoreState().ordinal()).append(":");
+			historyBuf.append(elem.getSortState().ordinal());
+			historyBuf.append("\n");
+		}
+
+		editor.putString("history", historyBuf.toString());
+		Debug.v("SAVE HISTORY = '" + historyBuf.toString() + "'");
+
+		editor.commit();
+
+	}
+
+	public void loadHistory(SharedPreferences prefs)
+	{
+
+		String historyStr = prefs.getString("history", "");
+
+		Debug.v("LOAD HISTORY = '" + historyStr + "'");
+
+		clearHistory();
+
+		BufferedReader historyBuf = new BufferedReader(new StringReader(historyStr), Constants.BufSize);
+		try {
+			String input;
+			while ((input = historyBuf.readLine()) != null)  {
+				HistoryObject history = new HistoryObject(input);
+				addHistory(history);
+			}
+		}
+		catch (Exception e) {
+			new AppErrDialog(WordPlayApp.getInstance()).showMessage("Problem loading search history");
+			return;
+		}
+
+	}
+
+	public void addHistory(HistoryObject newHistory)
+	{
+
+		// Don't add one we already have
+		for (HistoryObject elem : history)
+			if (elem.equalTo(newHistory))  {
+				Debug.v("addHistory: duplicate '" + newHistory + "'");
+				return;
+			}
+
+		Debug.v("addHistory: " + newHistory);
+
+		// If the history stack size is at its maximum, get rid of
+		// the oldest item first before adding this new item
+		if (history.size() >= Constants.MaxHistory)  {
+			Debug.v("addHistory: exceeds " + Constants.MaxHistory + " elements...removing last");
+			history.removeLast();
+		}
+		history.addFirst(newHistory);
+
+		Debug.v("addHistory: size " + history.size());
+
+	}
+
+	public void addHistory(String str, String boardStr, SearchType type,
+							DictionaryType dict, WordScoreState score, WordSortState sort)
+	{
+		HistoryObject newHistory = new HistoryObject(str, boardStr, type, dict, score, sort);
+		addHistory(newHistory);
+	}
+
+}

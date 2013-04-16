@@ -1,0 +1,9 @@
+<h3>Crosswords</h3>
+
+<p>In crosswords mode, enter a word pattern in the search box.  The word pattern includes
+ letters known in the crossword and a period (<b>.</b>) or question mark (<b>?</b>) where the
+ letter is not known.</p>
+
+<p>Clicking the <b>Search</b> button will perform a dictionary search for any words which
+ match the given pattern.  If any words are found, a list of words will be displayed.  Clicking
+  on a word will display all of the definitions of the word.</p>

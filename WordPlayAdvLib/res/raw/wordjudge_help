@@ -1,0 +1,24 @@
+<h3>Word Judge</h3>
+
+<p>In <b>Word Judge</b> mode, you can quickly determine if a word is in the current Scrabble(TM)
+ word list by simply entering the word in the search box and clicking the <b>Judge</b>
+ button.</p>
+ 
+<p>You may also enter a list of words separated by commas (<b>,</b>) to determine if all of
+ the words in the list are in the current Scrabble(TM) word list.  Use this feature
+ when playing to determine if a play (rather than an individual word) is valid.</p>
+
+<p>To select a dictionary, select <b>Dictionaries</b> from the main menu.</p>
+
+<p>After clicking the <b>Judge</b> button, the result of your search will be displayed in a
+ list underneath the search box.  The most recent search result will be displayed at the top of
+ the list.</p>
+ 
+<p>Items in the list can themselves be clicked.  Clicking a word that was found in a Scrabble(TM)
+ word list will show the definitions for that word.</p>
+  
+<p><b>NOTE:</b> Some words in a Scrabble(TM) word list may not have definitions in
+ the online regular dictionary.</p>
+
+<p><b>NOTE:</b> The dictionary selection for this tab is independent from the dictionary selected
+ in the <b>Dictionary</b> or <b>Anagrams</b> tabs.</p>
