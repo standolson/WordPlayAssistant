@@ -4,7 +4,6 @@
     <style name="AppTheme" parent="@style/Theme.Sherlock">
         <item name="actionBarStyle">@style/Widget.MyCustom.ActionBar</item>
         <item name="actionBarSize">55dip</item>
-        <item name="android:actionBarSize">55dip</item>
 	</style>
 
     <style name="Widget.MyCustom.ActionBar" parent="Widget.Sherlock.ActionBar">
