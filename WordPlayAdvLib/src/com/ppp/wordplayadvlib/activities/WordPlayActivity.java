@@ -29,13 +29,13 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,11 +57,18 @@ import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
+import com.ppp.wordplayadvlib.fragments.AnagramsFragment;
+import com.ppp.wordplayadvlib.fragments.CrosswordsFragment;
+import com.ppp.wordplayadvlib.fragments.DictionaryFragment;
+import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
 import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
 
 @SuppressLint("ValidFragment")
-public class WordPlayActivity extends SherlockFragmentActivity {
+public class WordPlayActivity extends SherlockFragmentActivity
+	implements
+		OnItemClickListener
+{
 
 	private static final int RestartNotificationId = 1;
 
@@ -79,8 +86,9 @@ public class WordPlayActivity extends SherlockFragmentActivity {
 	private MenuDrawer menuDrawer;
 	private ListView menuListView;
 	private MenuAdapter menuAdapter;
-    private PagerAdapter pagerAdapter;
-    private ViewPager viewPager;
+
+    private String lastAddedTag = null;
+    private Fragment lastAdded = null;
 
 	private static boolean notificationIconEnabled = false;
     private int activePosition = -1;
@@ -96,52 +104,46 @@ public class WordPlayActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 
 	    ActionBar actionBar = getSupportActionBar();
-	    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Create and show the initial fragment
+        if (savedInstanceState == null)
+            replaceStack(getInitialFragment(), true);
 
 	    menuDrawer = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_CONTENT);
 	    menuDrawer.setContentView(R.layout.menu_drawer);
+        menuDrawer.setMenuSize(getResources().getDimensionPixelSize(R.dimen.drawer_width));
 
-        List<Object> items = new ArrayList<Object>();
-        items.add(new Item(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams));
-        items.add(new Item(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge));
-        items.add(new Item(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary));
-        items.add(new Item(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords));
+        List<DrawerMenuItem> items = new ArrayList<DrawerMenuItem>();
+        items.add(new DrawerMenuItem(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams, AnagramsFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge, WordJudgeFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsFragment.class));
 
         menuListView = new ListView(this);
         menuAdapter = new MenuAdapter(items);
         menuListView.setAdapter(menuAdapter);
-        menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                activePosition = position;
-                menuDrawer.setActiveView(view, position);
-                menuDrawer.closeMenu();
-            }
-        });
+        menuListView.setScrollingCacheEnabled(false);
+        menuListView.setOnItemClickListener(this);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        menuAdapter = new MenuAdapter(items);
+        menuListView.setAdapter(menuAdapter);
+        menuDrawer.setMenuView(menuListView);
 
         menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
 
-        pagerAdapter = new PagerAdapter(this);
-//		pagerAdapter.addTab(TextViewFragment.class, null);
-//		pagerAdapter.addTab(TextViewFragment.class, null);
-//		pagerAdapter.addTab(TextViewFragment.class, null);
-
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-		    @Override
-		    public void onPageSelected(final int position)
-		    {
-		    	int touchMode = position == 0 ? MenuDrawer.TOUCH_MODE_FULLSCREEN : MenuDrawer.TOUCH_MODE_NONE;
-		        menuDrawer.setTouchMode(touchMode);
-		    }
-		});
-
-        viewPager.setAdapter(pagerAdapter);
-
+    }
+    
+    @Override
+    public void onBackPressed()
+    {
+        if (menuDrawer.isMenuVisible())
+            menuDrawer.closeMenu();
+        else
+            super.onBackPressed();
     }
 
 	@Override
@@ -189,6 +191,15 @@ public class WordPlayActivity extends SherlockFragmentActivity {
 
     	}
     	
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,	long id)
+    {
+        DrawerMenuItem it = (DrawerMenuItem) parent.getAdapter().getItem(position);		
+        parent.setSelection(position);
+		switchToFragment(it.itemClass);
+        menuDrawer.closeMenu();
     }
 
     private void displayDialog(int id)
@@ -255,9 +266,17 @@ public class WordPlayActivity extends SherlockFragmentActivity {
     @Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-	
+
+    	// Home menu
+    	if (item.getItemId() == android.R.id.home)  {
+	        if (getSupportFragmentManager().getBackStackEntryCount() == 0)
+	            menuDrawer.toggleMenu();
+	        else
+	            onBackPressed();
+    	}
+
 		// Preferences
-		if (item.getItemId() == R.id.prefs_menu)  {
+    	else if (item.getItemId() == R.id.prefs_menu)  {
 			Intent intent = new Intent(this, UserPreferenceActivity.class);
 			try {
 				startActivityForResult(intent, UserPrefsActivity);
@@ -914,30 +933,40 @@ public class WordPlayActivity extends SherlockFragmentActivity {
     }
 
     //
-    // Private Classes
+    // Tab Support Classes
     //
 
-    private static final class Item {
+    private static final class DrawerMenuItem {
 
         public String title;
         public int iconResource;
+        public Class<?> itemClass;
 
-        Item(String title, int iconResource)
+        DrawerMenuItem(String title, int iconResource, Class<?> itemClass)
         {
             this.title = title;
             this.iconResource = iconResource;
+            this.itemClass = itemClass;
         }
  
     }
 
     private class MenuAdapter extends BaseAdapter {
 
-        private List<Object> items;
+        private List<DrawerMenuItem> items;
 
-        MenuAdapter(List<Object> items) { this.items = items; }
+        public MenuAdapter(List<DrawerMenuItem> items)
+        {
+            this.items = items;
+        }
 
         @Override
-        public int getCount() { return items.size(); }
+        public int getCount()
+        {
+            if (items != null)
+                return items.size();
+            return 0;
+        }
 
         @Override
         public Object getItem(int position) { return items.get(position); }
@@ -946,87 +975,90 @@ public class WordPlayActivity extends SherlockFragmentActivity {
         public long getItemId(int position) { return position; }
 
         @Override
-        public int getItemViewType(int position)
-        {
-            return getItem(position) instanceof Item ? 0 : 1;
-        }
-
-        @Override
-        public int getViewTypeCount() { return 2; }
-
-        @Override
-        public boolean isEnabled(int position)
-        {
-            return getItem(position) instanceof Item;
-        }
-
-        @Override
-        public boolean areAllItemsEnabled() { return false; }
-
-        @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
 
-            View v = convertView;
-            Object item = getItem(position);
+            DrawerMenuItem item = items.get(position);
 
-            if (v == null)
-            	v = getLayoutInflater().inflate(R.layout.menu_row_item, parent, false);
-            TextView tv = (TextView) v;
-            tv.setText(((Item) item).title);
-            tv.setCompoundDrawablesWithIntrinsicBounds(((Item) item).iconResource, 0, 0, 0);
+            if (convertView == null)
+                convertView = getLayoutInflater().inflate(R.layout.menu_row_item, null);
 
-            v.setTag(R.id.mdActiveViewPosition, position);
+            TextView tv = (TextView) convertView.findViewById(R.id.title);
+            ImageView iv = (ImageView) convertView.findViewById(R.id.icon);
 
-            if (position == activePosition)
-                menuDrawer.setActiveView(v, position);
+            tv.setText(item.title);
+            if (item.iconResource != 0)  {
+                iv.setVisibility(View.VISIBLE);
+                iv.setImageResource(item.iconResource);
+            }
+            else
+                iv.setVisibility(View.INVISIBLE);
 
-            return v;
+            return convertView;
 
         }
 
     }
 
-    public static class PagerAdapter extends FragmentPagerAdapter {
+    //
+    // Fragment Management
+    //
 
-        private final Context context;
-        private final ArrayList<TabInfo> tabs = new ArrayList<TabInfo>();
+    private int getFragmentContainer() { return R.id.content; }
 
-        static final class TabInfo {
+    protected Fragment getInitialFragment() { return new AnagramsFragment(); }
 
-            private final Class<?> tabClass;
-            private final Bundle args;
-
-            TabInfo(Class<?> tabClass, Bundle args)
-            {
-                this.tabClass = tabClass;
-                this.args = args;
+    private void switchToFragment(Class<?> cls)
+    {
+        
+        // Process the fragment transaction
+        boolean fresh = false;
+        
+        // Might have had a rotation since the last selection, so we should look up the last added fragment.
+        if ((lastAddedTag != null) && (lastAdded == null))
+            lastAdded = getSupportFragmentManager().findFragmentByTag(lastAddedTag);
+        
+        Fragment f = (Fragment) getSupportFragmentManager().findFragmentByTag(cls.getName());
+        try {
+            if (f == null)  {
+                fresh = true;
+                f = (Fragment) cls.newInstance();
             }
-
+            replaceStack(f, fresh);
+        }
+        catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
 
-        public PagerAdapter(FragmentActivity activity)
-        {
-            super(activity.getSupportFragmentManager());
-            context = activity;
-        }
+    }
 
-        @Override
-        public int getCount() { return tabs.size(); }
+    private void replaceStack(Fragment newFragment, boolean freshAdd)
+    {
 
-        @Override
-        public Fragment getItem(int position)
-        {
-            TabInfo info = tabs.get(position);
-            return Fragment.instantiate(context, info.tabClass.getName(), info.args);
-        }
+        if ((newFragment == null) || (newFragment == lastAdded))
+            return;
 
-        public void addTab(Class<?> clss, Bundle args)
-        {
-            TabInfo info = new TabInfo(clss, args);
-            tabs.add(info);
-            notifyDataSetChanged();
-        }
+        // Clear out the back stack
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_NONE);
+
+        if (lastAdded != null)
+            ft.detach(lastAdded);
+
+        if (freshAdd)
+            ft.add(getFragmentContainer(), newFragment, newFragment.getClass().getName());
+        else
+            ft.attach(newFragment);
+
+        ft.commit();
+
+        lastAdded = newFragment;
+        lastAddedTag = newFragment.getClass().getName();
 
     }
 

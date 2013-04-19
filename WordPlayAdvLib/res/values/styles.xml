@@ -17,7 +17,7 @@
     </style>
 
     <style name="MenuDrawerTitle">
-        <item name="android:background">@color/black</item>
+        <item name="android:background">@color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearance</item>
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:textSize">18sp</item>
