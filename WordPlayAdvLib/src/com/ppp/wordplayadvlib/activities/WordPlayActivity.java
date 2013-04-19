@@ -4,7 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
+import net.simonvt.menudrawer.MenuDrawer;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,21 +23,25 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -42,7 +50,6 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
@@ -50,15 +57,10 @@ import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
-import com.ppp.wordplayadvlib.fragments.AnagramsFragment;
-import com.ppp.wordplayadvlib.fragments.CrosswordsFragment;
-import com.ppp.wordplayadvlib.fragments.DictionaryFragment;
-import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
-import com.ppp.wordplayadvlib.fragments.WordPlayFragment;
-import com.ppp.wordplayadvlib.fragments.WordPlayFragment.DbInstallDialog;
 import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
 
+@SuppressLint("ValidFragment")
 public class WordPlayActivity extends SherlockFragmentActivity {
 
 	private static final int RestartNotificationId = 1;
@@ -74,8 +76,14 @@ public class WordPlayActivity extends SherlockFragmentActivity {
 	private static final int NagDialog = 5;
 
 	private Tab dictionaryTab;
+	private MenuDrawer menuDrawer;
+	private ListView menuListView;
+	private MenuAdapter menuAdapter;
+    private PagerAdapter pagerAdapter;
+    private ViewPager viewPager;
 
 	private static boolean notificationIconEnabled = false;
+    private int activePosition = -1;
 
 	//
 	// Activity Methods
@@ -90,35 +98,49 @@ public class WordPlayActivity extends SherlockFragmentActivity {
 	    ActionBar actionBar = getSupportActionBar();
 	    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-	    Tab tab = null;
+	    menuDrawer = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_CONTENT);
+	    menuDrawer.setContentView(R.layout.menu_drawer);
 
-	    // Anagrams Tab
-	    tab = actionBar.newTab();
-	    createTabLayout(tab, R.string.Anagrams, R.drawable.ic_tab_anagrams);
-	    tab.setTabListener(new TabListener<AnagramsFragment>(this, "anagrams", AnagramsFragment.class));
-	    actionBar.addTab(tab);
+        List<Object> items = new ArrayList<Object>();
+        items.add(new Item(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams));
+        items.add(new Item(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge));
+        items.add(new Item(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary));
+        items.add(new Item(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords));
 
-	    // Word Judge Tab
-	    tab = actionBar.newTab();
-	    createTabLayout(tab, R.string.WordJudge, R.drawable.ic_tab_wordjudge);
-	    tab.setTabListener(new TabListener<WordJudgeFragment>(this, "wordjudge", WordJudgeFragment.class));
-	    actionBar.addTab(tab);
+        menuListView = new ListView(this);
+        menuAdapter = new MenuAdapter(items);
+        menuListView.setAdapter(menuAdapter);
+        menuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                activePosition = position;
+                menuDrawer.setActiveView(view, position);
+                menuDrawer.closeMenu();
+            }
+        });
 
-	    // Dictionary Tab
-	    if (WordPlayApp.getInstance().isPaidMode())  {
-	    	dictionaryTab = actionBar.newTab();
-		    createTabLayout(dictionaryTab, R.string.Dictionary, R.drawable.ic_tab_dictionary);
-		    dictionaryTab.setTabListener(new TabListener<DictionaryFragment>(this, "dictionary", DictionaryFragment.class));
-		    actionBar.addTab(dictionaryTab);
-	    }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-	    // Crosswords Tab
-	    if (WordPlayApp.getInstance().isPaidMode())  {
-		    tab = actionBar.newTab();
-		    createTabLayout(tab, R.string.Crosswords, R.drawable.ic_tab_crosswords);
-		    tab.setTabListener(new TabListener<CrosswordsFragment>(this, "crosswords", CrosswordsFragment.class));
-		    actionBar.addTab(tab);
-	    }
+        menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
+
+        pagerAdapter = new PagerAdapter(this);
+//		pagerAdapter.addTab(TextViewFragment.class, null);
+//		pagerAdapter.addTab(TextViewFragment.class, null);
+//		pagerAdapter.addTab(TextViewFragment.class, null);
+
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+		    @Override
+		    public void onPageSelected(final int position)
+		    {
+		    	int touchMode = position == 0 ? MenuDrawer.TOUCH_MODE_FULLSCREEN : MenuDrawer.TOUCH_MODE_NONE;
+		        menuDrawer.setTouchMode(touchMode);
+		    }
+		});
+
+        viewPager.setAdapter(pagerAdapter);
 
     }
 
@@ -291,76 +313,6 @@ public class WordPlayActivity extends SherlockFragmentActivity {
 		
 		return true;
 		
-	}
-
-    //
-    // ActionBar Tab Helpers
-    //
-
-	private void createTabLayout(Tab tab, int titleId, int iconId)
-	{
-	    LinearLayout tabLayout = (LinearLayout)getLayoutInflater().inflate(R.layout.action_bar_tab_item, null);
-	    ((ImageView)tabLayout.findViewById(R.id.tab_icon)).setImageResource(iconId);
-	    ((TextView)tabLayout.findViewById(R.id.tab_title)).setText(titleId);
-	    tab.setCustomView(tabLayout);
-	}
-
-	public static class TabListener<T extends Fragment> implements ActionBar.TabListener {
-
-	    private Fragment fragment;
-	    private final FragmentActivity activity;
-	    private final String tag;
-	    private final Class<T> _class;
-
-	    public TabListener(FragmentActivity a, String t, Class<T> c)
-	    {
-	        activity = a;
-	        tag = t;
-	        _class = c;
-	    }
-
-	    private FragmentTransaction getFragmentTransaction()
-	    {
-	        FragmentManager fragMgr = activity.getSupportFragmentManager();
-	        FragmentTransaction ft = fragMgr.beginTransaction();
-	        return ft;
-	    }
-
-	    public void onTabSelected(Tab tab, FragmentTransaction ft)
-	    {
-
-	    	FragmentTransaction trans = (ft == null) ? getFragmentTransaction() : ft;
-
-	        // Check if the fragment is already initialized
-	        if (fragment == null)  {
-	            fragment = Fragment.instantiate(activity, _class.getName());
-	            trans.add(android.R.id.content, fragment, tag);
-	        }
-
-	        // If not, instantiate and add it to the activity
-	        else
-	            trans.attach(fragment);
-
-	        if (ft == null)
-	        	trans.commit();
-
-	    }
-
-	    public void onTabUnselected(Tab tab, FragmentTransaction ft)
-	    {
-
-	    	FragmentTransaction trans = (ft == null) ? getFragmentTransaction() : ft;
-
-	    	if (fragment != null)
-	            trans.detach(fragment);
-
-	        if (ft == null)
-	        	trans.commit();
-	    	
-	    }
-
-	    public void onTabReselected(Tab tab, FragmentTransaction ft) {}
-
 	}
 
     //
@@ -959,6 +911,123 @@ public class WordPlayActivity extends SherlockFragmentActivity {
     {
     	NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
     	manager.cancel(RestartNotificationId);
+    }
+
+    //
+    // Private Classes
+    //
+
+    private static final class Item {
+
+        public String title;
+        public int iconResource;
+
+        Item(String title, int iconResource)
+        {
+            this.title = title;
+            this.iconResource = iconResource;
+        }
+ 
+    }
+
+    private class MenuAdapter extends BaseAdapter {
+
+        private List<Object> items;
+
+        MenuAdapter(List<Object> items) { this.items = items; }
+
+        @Override
+        public int getCount() { return items.size(); }
+
+        @Override
+        public Object getItem(int position) { return items.get(position); }
+
+        @Override
+        public long getItemId(int position) { return position; }
+
+        @Override
+        public int getItemViewType(int position)
+        {
+            return getItem(position) instanceof Item ? 0 : 1;
+        }
+
+        @Override
+        public int getViewTypeCount() { return 2; }
+
+        @Override
+        public boolean isEnabled(int position)
+        {
+            return getItem(position) instanceof Item;
+        }
+
+        @Override
+        public boolean areAllItemsEnabled() { return false; }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+
+            View v = convertView;
+            Object item = getItem(position);
+
+            if (v == null)
+            	v = getLayoutInflater().inflate(R.layout.menu_row_item, parent, false);
+            TextView tv = (TextView) v;
+            tv.setText(((Item) item).title);
+            tv.setCompoundDrawablesWithIntrinsicBounds(((Item) item).iconResource, 0, 0, 0);
+
+            v.setTag(R.id.mdActiveViewPosition, position);
+
+            if (position == activePosition)
+                menuDrawer.setActiveView(v, position);
+
+            return v;
+
+        }
+
+    }
+
+    public static class PagerAdapter extends FragmentPagerAdapter {
+
+        private final Context context;
+        private final ArrayList<TabInfo> tabs = new ArrayList<TabInfo>();
+
+        static final class TabInfo {
+
+            private final Class<?> tabClass;
+            private final Bundle args;
+
+            TabInfo(Class<?> tabClass, Bundle args)
+            {
+                this.tabClass = tabClass;
+                this.args = args;
+            }
+
+        }
+
+        public PagerAdapter(FragmentActivity activity)
+        {
+            super(activity.getSupportFragmentManager());
+            context = activity;
+        }
+
+        @Override
+        public int getCount() { return tabs.size(); }
+
+        @Override
+        public Fragment getItem(int position)
+        {
+            TabInfo info = tabs.get(position);
+            return Fragment.instantiate(context, info.tabClass.getName(), info.args);
+        }
+
+        public void addTab(Class<?> clss, Bundle args)
+        {
+            TabInfo info = new TabInfo(clss, args);
+            tabs.add(info);
+            notifyDataSetChanged();
+        }
+
     }
 
 }
