@@ -5,25 +5,15 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="8"/>
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17"/>
 
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/> 
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-	<activity android:name=".activities.ExactMatchActivity"/>
-	<activity android:name=".activities.HelpViewer"/>
-	<activity android:name=".activities.SearchHistoryActivity"/>
-	<activity android:name=".activities.SearchActivity"/>
-	<activity android:name=".activities.UserPreferenceActivity"/>
-    <activity android:name=".activities.WordPlayActivity"/>
-
-	<!-- Google AdMob Stuff -->
-
-	<meta-data
-		android:name="ADMOB_PUBLISHER_ID"
-		android:value="a14d57787867bd1"/>
-
-	<activity
-		android:name="com.google.ads.AdActivity"
-		android:configChanges="orientation|keyboard|keyboardHidden"/>
+	<uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
 
 </manifest>
