@@ -428,6 +428,7 @@ public class WordPlayActivity extends SherlockFragmentActivity
 			((TextView)layout.findViewById(R.id.tab_title)).setText(R.string.Dictionary);
 			textEntry.setHint(R.string.dictionary_edit_hint);
 		}
+
 	}
 
 

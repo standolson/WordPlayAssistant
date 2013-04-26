@@ -16,42 +16,39 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical">
-		
-		<TableLayout
-			android:id="@+id/crosswords_tablelayout"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:stretchColumns="0">
 
-			<TableRow
-				android:id="@+id/crosswords_tablerow"
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
+				
+			<EditText
+			    style="@style/EditTextStyle"
+				android:id="@+id/CrosswordsText"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="5dip">
-				
-				<EditText
-					android:id="@+id/CrosswordsText"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:scrollHorizontally="true"
-					android:hint="@string/crosswords_edit_hint"
-					android:inputType="textFilter"/>
+				android:layout_weight="3"
+				android:scrollHorizontally="true"
+				android:hint="@string/crosswords_edit_hint"
+				android:inputType="textFilter"/>
 
-				<Button
-					android:id="@+id/CrosswordsTextClear"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/clear_button_text"/>
-				
-				<Button
-					android:id="@+id/CrosswordsButton"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/search_button_text"/>
-				
-			</TableRow>
+			<Button
+			    style="@style/ButtonStyle"
+				android:id="@+id/CrosswordsTextClear"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/clear_button_text"/>
 			
-		</TableLayout>
+			<Button
+			    style="@style/ButtonStyle"
+				android:id="@+id/CrosswordsButton"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/search_button_text"/>
+				
+		</LinearLayout>
 		
 	</LinearLayout>
 

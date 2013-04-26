@@ -17,63 +17,63 @@
 		android:layout_height="wrap_content"
 		android:orientation="vertical">
 
-		<TableLayout
-			android:id="@+id/anagrams_tablelayout"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:stretchColumns="0">
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
+				
+			<EditText
+			    style="@style/EditTextStyle"
+				android:id="@+id/AnagramsTrayText"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="3"
+				android:scrollHorizontally="true"
+				android:hint="@string/anagrams_tray_edit_hint"
+				android:inputType="textFilter"/>
+
+			<Button
+			    style="@style/ButtonStyle"
+				android:id="@+id/AnagramsTrayTextClear"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/clear_button_text"/>
 			
-			<TableRow
-				android:id="@+id/anagrams_tablerow1"
+			<Button
+			    style="@style/ButtonStyle"
+				android:id="@+id/AnagramsButton"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="5dip">
+				android:layout_weight="1"
+				android:text="@string/search_button_text"/>
 				
-				<EditText
-					android:id="@+id/AnagramsTrayText"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:scrollHorizontally="true"
-					android:hint="@string/anagrams_tray_edit_hint"
-					android:inputType="textFilter"/>
+		</LinearLayout>
 
-				<Button
-					android:id="@+id/AnagramsTrayTextClear"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/clear_button_text"/>
-				
-				<Button
-					android:id="@+id/AnagramsButton"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/search_button_text"/>
-				
-			</TableRow>
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
 
-			<TableRow
-				android:id="@+id/anagrams_tablerow2"
+			<EditText
+			    style="@style/EditTextStyle"
+				android:id="@+id/AnagramsBoardText"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="5dip">
+				android:layout_weight="4"
+				android:scrollHorizontally="true"
+				android:hint="@string/anagrams_board_edit_hint"
+				android:inputType="textFilter"/>
 
-				<EditText
-					android:id="@+id/AnagramsBoardText"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:scrollHorizontally="true"
-					android:hint="@string/anagrams_board_edit_hint"
-					android:inputType="textFilter"/>
+			<Button
+			    style="@style/ButtonStyle"
+				android:id="@+id/AnagramsBoardTextClear"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/clear_button_text"/>
 
-				<Button
-					android:id="@+id/AnagramsBoardTextClear"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:text="@string/clear_button_text"/>
-
-			</TableRow>
-
-		</TableLayout>
+		</LinearLayout>
 
 		<LinearLayout
 			android:id="@+id/DictionaryToggleButtons"
@@ -83,12 +83,14 @@
 			android:orientation="horizontal">
 		
 			<com.ppp.wordplayadvlib.widgets.MultiStateButton
+			    style="@style/ButtonStyle"
 				android:id="@+id/AnagramsWordScores"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="10dip"/>
 				
 			<com.ppp.wordplayadvlib.widgets.MultiStateButton
+			    style="@style/ButtonStyle"
 				android:id="@+id/AnagramsSortOrder"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"

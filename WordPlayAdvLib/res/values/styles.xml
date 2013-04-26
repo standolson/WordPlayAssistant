@@ -7,9 +7,7 @@
 	</style>
 
     <style name="Widget.MyCustom.ActionBar" parent="Widget.Sherlock.ActionBar">
-<!--         <item name="height">55dip</item>
-		<item name="android:height">55dip</item>
- -->	</style>
+	</style>
 
 	<style name="Widget.MyCustom.ActionButton" parent="Widget.Sherlock.ActionButton">
         <item name="android:paddingLeft">5dip</item>
@@ -27,6 +25,14 @@
         <item name="android:paddingBottom">8dp</item>
         <item name="android:drawablePadding">16dp</item>
         <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="EditTextStyle">
+        <item name="android:textSize">10dip</item>
+    </style>
+
+    <style name="ButtonStyle">
+        <item name="android:textSize">10dip</item>
     </style>
 	
 </resources>
