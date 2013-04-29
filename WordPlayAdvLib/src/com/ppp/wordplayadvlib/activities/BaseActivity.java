@@ -1,12 +1,12 @@
 package com.ppp.wordplayadvlib.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.ppp.wordplayadvlib.fragments.BaseFragment;
 
-public class BaseActivity extends FragmentActivity {
+public class BaseActivity extends SherlockFragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

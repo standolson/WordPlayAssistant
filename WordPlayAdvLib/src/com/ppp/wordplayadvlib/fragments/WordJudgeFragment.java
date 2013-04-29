@@ -63,6 +63,13 @@ public class WordJudgeFragment extends BaseFragment implements View.OnClickListe
 	}
 
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setActionBarTitle(getString(R.string.WordJudge));
+	}
+
+	@Override
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

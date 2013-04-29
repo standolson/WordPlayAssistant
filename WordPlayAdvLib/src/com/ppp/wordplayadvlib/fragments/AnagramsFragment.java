@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.SearchType;
@@ -44,6 +46,13 @@ public class AnagramsFragment extends BaseFragment implements View.OnClickListen
 
 		return rootView;
 
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setActionBarTitle(getString(R.string.Anagrams));
 	}
 
 	@Override

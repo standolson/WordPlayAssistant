@@ -48,6 +48,13 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
 	}
 
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setActionBarTitle(getString(R.string.Dictionary));
+	}
+
+	@Override
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

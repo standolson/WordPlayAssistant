@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,9 +31,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -41,13 +39,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.activities.HelpViewer;
 import com.ppp.wordplayadvlib.activities.SearchActivity;
-import com.ppp.wordplayadvlib.activities.UserPreferenceActivity;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.History;
 import com.ppp.wordplayadvlib.appdata.SearchType;
@@ -59,6 +57,7 @@ import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
 
+@SuppressLint("ValidFragment")
 public class BaseFragment extends Fragment {
 
 	private static final int RestartNotificationId = 1;
@@ -364,6 +363,15 @@ public class BaseFragment extends Fragment {
 	}
 
 	//
+	// Action Bar
+	//
+
+	protected void setActionBarTitle(String tile)
+	{
+		((SherlockFragmentActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.Anagrams));
+	}
+
+	//
 	// Filters and Listeners
 	//
 
@@ -600,7 +608,7 @@ public class BaseFragment extends Fragment {
 
     	BaseFragment fragment;
 
-    	public AboutDialog(BaseFragment f)
+		public AboutDialog(BaseFragment f)
     	{
     		super();
     		fragment = f;

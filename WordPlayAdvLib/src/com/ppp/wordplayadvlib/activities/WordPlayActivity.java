@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.simonvt.menudrawer.MenuDrawer;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -40,7 +41,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -106,6 +106,7 @@ public class WordPlayActivity extends SherlockFragmentActivity
 	    ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setTitle(getString(R.string.app_name));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -121,6 +122,7 @@ public class WordPlayActivity extends SherlockFragmentActivity
         items.add(new DrawerMenuItem(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams, AnagramsFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge, WordJudgeFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, DictionaryFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsFragment.class));
 
         menuListView = new ListView(this);
@@ -416,18 +418,10 @@ public class WordPlayActivity extends SherlockFragmentActivity
 	public void setDictionaryTabMode(int dictionary, EditText textEntry)
 	{
 
-		LinearLayout layout = (LinearLayout)dictionaryTab.getCustomView();
-
-		if (dictionary == DictionaryType.DICTIONARY_THESAURUS.ordinal())  {
-			((ImageView)layout.findViewById(R.id.tab_icon)).setImageResource(R.drawable.ic_tab_thesaurus);
-			((TextView)layout.findViewById(R.id.tab_title)).setText(R.string.Thesaurus);
+		if (dictionary == DictionaryType.DICTIONARY_THESAURUS.ordinal())
 			textEntry.setHint(R.string.thesaurus_edit_hint);
-		}
-		else {
-			((ImageView)layout.findViewById(R.id.tab_icon)).setImageResource(R.drawable.ic_tab_dictionary);
-			((TextView)layout.findViewById(R.id.tab_title)).setText(R.string.Dictionary);
+		else
 			textEntry.setHint(R.string.dictionary_edit_hint);
-		}
 
 	}
 

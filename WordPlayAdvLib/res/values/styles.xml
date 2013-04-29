@@ -9,6 +9,12 @@
     <style name="Widget.MyCustom.ActionBar" parent="Widget.Sherlock.ActionBar">
 	</style>
 
+    <style name="TabStyle">
+        <item name="android:paddingTop">5dip</item>
+        <item name="android:paddingLeft">5dip</item>
+        <item name="android:paddingRight">5dip</item>
+    </style>
+
 	<style name="Widget.MyCustom.ActionButton" parent="Widget.Sherlock.ActionButton">
         <item name="android:paddingLeft">5dip</item>
         <item name="android:paddingRight">5dip</item>
@@ -28,11 +34,11 @@
     </style>
 
     <style name="EditTextStyle">
-        <item name="android:textSize">10dip</item>
+        <item name="android:textSize">12dip</item>
     </style>
 
     <style name="ButtonStyle">
-        <item name="android:textSize">10dip</item>
+        <item name="android:textSize">12dip</item>
     </style>
 	
 </resources>
