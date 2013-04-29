@@ -105,10 +105,12 @@ public class WordPlayActivity extends SherlockFragmentActivity
 
 	    ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(getString(R.string.app_name));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        actionBar.setTitle(getString(R.string.app_name));
 
         // Create and show the initial fragment
         if (savedInstanceState == null)

@@ -366,9 +366,9 @@ public class BaseFragment extends Fragment {
 	// Action Bar
 	//
 
-	protected void setActionBarTitle(String tile)
+	protected void setActionBarTitle(String title)
 	{
-		((SherlockFragmentActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.Anagrams));
+		((SherlockFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(title);
 	}
 
 	//
