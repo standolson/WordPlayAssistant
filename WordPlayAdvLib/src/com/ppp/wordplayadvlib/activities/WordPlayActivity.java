@@ -60,6 +60,7 @@ import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.fragments.AnagramsFragment;
 import com.ppp.wordplayadvlib.fragments.CrosswordsFragment;
 import com.ppp.wordplayadvlib.fragments.DictionaryFragment;
+import com.ppp.wordplayadvlib.fragments.ThesaurusFragment;
 import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
 import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
@@ -124,7 +125,7 @@ public class WordPlayActivity extends SherlockFragmentActivity
         items.add(new DrawerMenuItem(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams, AnagramsFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge, WordJudgeFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryFragment.class));
-        items.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, DictionaryFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, ThesaurusFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsFragment.class));
 
         menuListView = new ListView(this);
@@ -416,17 +417,6 @@ public class WordPlayActivity extends SherlockFragmentActivity
     	return retval;
     	
     }
-
-	public void setDictionaryTabMode(int dictionary, EditText textEntry)
-	{
-
-		if (dictionary == DictionaryType.DICTIONARY_THESAURUS.ordinal())
-			textEntry.setHint(R.string.thesaurus_edit_hint);
-		else
-			textEntry.setHint(R.string.dictionary_edit_hint);
-
-	}
-
 
     //
     // Dialogs

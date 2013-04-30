@@ -54,9 +54,9 @@
 			android:id="@+id/DictionarySpinner"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-    			android:layout_marginTop="5dip"
+    		android:layout_marginTop="5dip"
 			android:entries="@array/search_types" 
-    			android:prompt="@string/search_type_prompt"/>
+    		android:prompt="@string/search_type_prompt"/>
 
 		<LinearLayout
 			android:id="@+id/DictionaryToggleButtons"
