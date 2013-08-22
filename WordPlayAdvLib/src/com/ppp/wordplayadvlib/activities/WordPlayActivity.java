@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.simonvt.menudrawer.MenuDrawer;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,7 +22,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -32,6 +29,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,11 +44,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
+
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
@@ -62,6 +62,7 @@ import com.ppp.wordplayadvlib.fragments.CrosswordsFragment;
 import com.ppp.wordplayadvlib.fragments.DictionaryFragment;
 import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
 import com.ppp.wordplayadvlib.utils.Debug;
+import com.ppp.wordplayadvlib.utils.SherlockBarDrawerToggle;
 import com.ppp.wordplayadvlib.utils.Utils;
 
 @SuppressLint("ValidFragment")
@@ -82,16 +83,17 @@ public class WordPlayActivity extends SherlockFragmentActivity
 	private static final int AboutDialog = 4;
 	private static final int NagDialog = 5;
 
-	private Tab dictionaryTab;
-	private MenuDrawer menuDrawer;
+    private DrawerLayout menuDrawer;
+    private SherlockBarDrawerToggle drawerToggle;
 	private ListView menuListView;
 	private MenuAdapter menuAdapter;
 
     private String lastAddedTag = null;
+    private String lastItemTitle = null;
     private Fragment lastAdded = null;
+    private boolean drawerSeen = false;
 
 	private static boolean notificationIconEnabled = false;
-    private int activePosition = -1;
 
 	//
 	// Activity Methods
@@ -103,49 +105,97 @@ public class WordPlayActivity extends SherlockFragmentActivity
 
 		super.onCreate(savedInstanceState);
 
+//		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+	    setContentView(R.layout.menu_drawer);
+
 	    ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(getString(R.string.app_name));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        actionBar.setTitle(getString(R.string.app_name));
-
-        // Create and show the initial fragment
-        if (savedInstanceState == null)
-            replaceStack(getInitialFragment(), true);
-
-	    menuDrawer = MenuDrawer.attach(this, MenuDrawer.MENU_DRAG_CONTENT);
-	    menuDrawer.setContentView(R.layout.menu_drawer);
-        menuDrawer.setMenuSize(getResources().getDimensionPixelSize(R.dimen.drawer_width));
-
-        List<DrawerMenuItem> items = new ArrayList<DrawerMenuItem>();
-        items.add(new DrawerMenuItem(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams, AnagramsFragment.class));
+        List<DrawerMenuItem> items = new ArrayList<DrawerMenuItem>(5);
+        DrawerMenuItem anagramsItem =
+        	new DrawerMenuItem(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams, AnagramsFragment.class);
+        items.add(anagramsItem);
         items.add(new DrawerMenuItem(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge, WordJudgeFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, DictionaryFragment.class));
         items.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsFragment.class));
 
-        menuListView = new ListView(this);
+        // Create and show the initial fragment or the last
+        // fragment seen
+        if (savedInstanceState == null)  {
+            lastItemTitle = anagramsItem.title;
+            replaceStack(getInitialFragment(), true);
+        }
+        else
+            lastItemTitle = savedInstanceState.getString("lastItemTitle");
+ 
+        // Get the DrawerLayout
+        menuDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        menuDrawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.LEFT);
+
+        // Get the ListView for the DrawerLayout and populate it with
+        // the adapter of DrawerMenuItems
+        menuListView = (ListView) findViewById(R.id.left_drawer);
         menuAdapter = new MenuAdapter(items);
         menuListView.setAdapter(menuAdapter);
         menuListView.setScrollingCacheEnabled(false);
         menuListView.setOnItemClickListener(this);
 
-        menuAdapter = new MenuAdapter(items);
-        menuListView.setAdapter(menuAdapter);
-        menuDrawer.setMenuView(menuListView);
+        // Create the drawer toggle so that we can do special shit
+        // like show the normal drawer icon instead of the ActionBar
+        // back icon
+        drawerToggle = new SherlockBarDrawerToggle(this, menuDrawer, R.drawable.ic_drawer, R.string.app_name, R.string.app_name) {      
 
-        menuDrawer.setTouchMode(MenuDrawer.TOUCH_MODE_FULLSCREEN);
+            public void onDrawerOpened(View drawerView) {}
+            
+            public void onDrawerClosed(View drawerView)
+            {
+                if (!drawerSeen)  {
+                    drawerSeen = true;
+                    SharedPreferences.Editor edit = getPreferences(Context.MODE_PRIVATE).edit();
+                    edit.putBoolean("drawerSeen", true);
+                    edit.commit();
+                }
+            }
+
+        };
+        menuDrawer.setDrawerListener(drawerToggle);
+
+        // Initialize the drawer seen state
+        drawerSeen = getPreferences(Context.MODE_PRIVATE).getBoolean("drawerSeen", false);
 
     }
     
     @Override
+    protected void onResume()
+    {
+
+        super.onResume();
+
+        // If the drawer has not been seen, show it
+        if (!drawerSeen)
+            menuDrawer.postDelayed(new Runnable() {
+                @Override
+                public void run() { menuDrawer.openDrawer(menuListView); }
+            }, 500);
+
+    }
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState)
+	{
+		super.onSaveInstanceState(savedInstanceState);
+		savedInstanceState.putBoolean("drawerSeen", drawerSeen);
+	}
+
+    @Override
     public void onBackPressed()
     {
-        if (menuDrawer.isMenuVisible())
-            menuDrawer.closeMenu();
+        if (menuDrawer.isDrawerOpen(menuListView))
+            menuDrawer.closeDrawer(menuListView);
         else
             super.onBackPressed();
     }
@@ -200,10 +250,12 @@ public class WordPlayActivity extends SherlockFragmentActivity
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,	long id)
     {
-        DrawerMenuItem it = (DrawerMenuItem) parent.getAdapter().getItem(position);		
+        DrawerMenuItem it = (DrawerMenuItem) parent.getAdapter().getItem(position);
+        lastItemTitle = it.title;
         parent.setSelection(position);
-		switchToFragment(it.itemClass);
-        menuDrawer.closeMenu();
+        switchToFragment(it.itemClass);
+        menuListView.setItemChecked(position, true);
+        menuDrawer.closeDrawer(menuListView);
     }
 
     private void displayDialog(int id)
@@ -272,12 +324,8 @@ public class WordPlayActivity extends SherlockFragmentActivity
 	{
 
     	// Home menu
-    	if (item.getItemId() == android.R.id.home)  {
-	        if (getSupportFragmentManager().getBackStackEntryCount() == 0)
-	            menuDrawer.toggleMenu();
-	        else
-	            onBackPressed();
-    	}
+        if (drawerToggle.onOptionsItemSelected(item))
+            return true;
 
 		// Preferences
     	else if (item.getItemId() == R.id.prefs_menu)  {
