@@ -38,7 +38,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,12 +47,10 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
@@ -168,6 +165,13 @@ public class WordPlayActivity extends SherlockFragmentActivity
         // Initialize the drawer seen state
         drawerSeen = getPreferences(Context.MODE_PRIVATE).getBoolean("drawerSeen", false);
 
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState)
+    {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
     }
     
     @Override
