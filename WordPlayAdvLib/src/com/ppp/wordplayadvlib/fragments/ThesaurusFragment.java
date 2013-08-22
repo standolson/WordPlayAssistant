@@ -21,7 +21,7 @@ import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
-public class DictionaryFragment extends BaseFragment implements View.OnClickListener {
+public class ThesaurusFragment extends BaseFragment implements View.OnClickListener {
 
 	private RelativeLayout rootView;
 	private Button dictButton = null;
@@ -39,7 +39,7 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
 
 		rootView = (RelativeLayout)inflater.inflate(R.layout.dictionary_fragment, container, false);
 
-		setupDictionaryTab();
+		setupThesaurusTab();
 
 		return rootView;
 
@@ -49,7 +49,7 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
 	public void onResume()
 	{
 		super.onResume();
-		setActionBarTitle(getString(R.string.Dictionary));
+		setActionBarTitle(getString(R.string.Thesaurus));
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
     // UI Setup
     //
 
-	private void setupDictionaryTab()
+	private void setupThesaurusTab()
 	{
 
         dictButton = (Button)rootView.findViewById(R.id.DictionaryButton);
@@ -83,7 +83,7 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
 				return false;
 			}
         });
-		dictText.setHint(R.string.dictionary_edit_hint);
+		dictText.setHint(R.string.thesaurus_edit_hint);
 
         final Button dictClearButton = (Button)rootView.findViewById(R.id.DictionaryTextClear);
         dictClearButton.setOnClickListener(new View.OnClickListener() {
@@ -92,22 +92,13 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
 		});
 
         dictScoreToggle = (MultiStateButton)rootView.findViewById(R.id.DictionaryWordScores);
-        dictScoreToggle.setStateNames(getResources().getStringArray(R.array.word_score_toggle_states));
+		dictScoreToggle.setVisibility(View.GONE);
 
         dictSortToggle = (MultiStateButton)rootView.findViewById(R.id.DictionarySortOrder);
-        dictSortToggle.setStateNames(getResources().getStringArray(R.array.sort_order_toggle_states));
-        dictScoreToggle.setOnChangeListener(new View.OnClickListener() {
-        	public void onClick(View v) {
-        		MultiStateButton button = (MultiStateButton)v;
-        		WordScoreState score = WordScoreState.fromInt(button.getState() + 1);
-        		boolean button_state = true;
-        		if (score == WordScoreState.WORD_SCORE_STATE_OFF)
-        			button_state = false;
-        		dictSortToggle.setButtonState(WordSortState.WORD_SORT_BY_WORD_SCORE.ordinal() - 1, button_state);
-        	}
-        });
+		dictSortToggle.setVisibility(View.GONE);
     	
     	dictSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
+		dictSpinner.setVisibility(View.GONE);
 
 	}
 
@@ -126,19 +117,12 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
     	SearchType searchType = SearchType.OPTION_UNKNOWN;
 
 		final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
-		final Spinner spinner = (Spinner)rootView.findViewById(R.id.DictionarySpinner);
 
 		searchString = dictText.getText().toString();	    
-		dictionary = DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
-		searchType = SearchType.fromInt((int)spinner.getSelectedItemId());
-		if (dictionary.isScrabbleDict())  {
-    		wordScores = WordScoreState.fromInt(dictScoreToggle.getState() + 1);
-    		wordSort = WordSortState.fromInt(dictSortToggle.getState() + 1);
-		}
-		else {
-			wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
-			wordSort = WordSortState.WORD_SORT_UNKNOWN;
-		}
+		searchType = SearchType.OPTION_THESAURUS;
+		dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
+		wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
+		wordSort = WordSortState.WORD_SORT_UNKNOWN;
 
 		startSearchActivity(searchType,
 							searchString,
