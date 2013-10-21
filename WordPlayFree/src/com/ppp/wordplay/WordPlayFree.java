@@ -1,4 +1,4 @@
-package com.ppp.wordplayfree;
+package com.ppp.wordplay;
 
 import com.ppp.wordplayadvlib.activities.WordPlayActivity;
 import com.ppp.wordplayadvlib.WordPlayApp;

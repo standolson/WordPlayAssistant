@@ -25,13 +25,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,12 +47,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
@@ -60,11 +60,10 @@ import com.ppp.wordplayadvlib.fragments.DictionaryFragment;
 import com.ppp.wordplayadvlib.fragments.ThesaurusFragment;
 import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
 import com.ppp.wordplayadvlib.utils.Debug;
-import com.ppp.wordplayadvlib.utils.SherlockBarDrawerToggle;
 import com.ppp.wordplayadvlib.utils.Utils;
 
 @SuppressLint("ValidFragment")
-public class WordPlayActivity extends SherlockFragmentActivity
+public class WordPlayActivity extends ActionBarActivity
 	implements
 		OnItemClickListener
 {
@@ -82,7 +81,7 @@ public class WordPlayActivity extends SherlockFragmentActivity
 	private static final int NagDialog = 5;
 
     private DrawerLayout menuDrawer;
-    private SherlockBarDrawerToggle drawerToggle;
+    private ActionBarDrawerToggle drawerToggle;
 	private ListView menuListView;
 	private MenuAdapter menuAdapter;
 
@@ -145,7 +144,7 @@ public class WordPlayActivity extends SherlockFragmentActivity
         // Create the drawer toggle so that we can do special shit
         // like show the normal drawer icon instead of the ActionBar
         // back icon
-        drawerToggle = new SherlockBarDrawerToggle(this, menuDrawer, R.drawable.ic_drawer, R.string.app_name, R.string.app_name) {      
+        drawerToggle = new ActionBarDrawerToggle(this, menuDrawer, R.drawable.ic_drawer, R.string.app_name, R.string.app_name) {      
 
             public void onDrawerOpened(View drawerView) {}
             
@@ -305,7 +304,7 @@ public class WordPlayActivity extends SherlockFragmentActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-    	MenuInflater inflater = getSupportMenuInflater();
+    	MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_menu, menu);
         return true;
     }

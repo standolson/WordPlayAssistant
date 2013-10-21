@@ -26,7 +26,7 @@
     	android:allowBackup="false"
     	android:icon="@drawable/ic_launcher_wordplay_assistant_free"
     	android:name="com.ppp.wordplayadvlib.WordPlayApp"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
 
 		<activity
 	      	android:name="com.ppp.wordplay.WordPlayFree"
@@ -39,6 +39,7 @@
 		</activity>
 
 		<activity android:name="com.ppp.wordplayadvlib.activities.HelpViewer"/>
+		<activity android:name="com.ppp.wordplayadvlib.activities.SearchActivity"/>
 		<activity android:name="com.ppp.wordplayadvlib.activities.SearchHistoryActivity"/>
 		<activity android:name="com.ppp.wordplayadvlib.activities.UserPreferenceActivity"/>
 

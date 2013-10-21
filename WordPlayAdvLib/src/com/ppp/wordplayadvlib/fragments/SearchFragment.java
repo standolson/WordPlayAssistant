@@ -657,13 +657,17 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 
 	private class WordListAdapter extends ArrayAdapter<String> implements SectionIndexer {
 
+		private ArrayList<String> items;
+
 		private HashMap<String, Integer> indexer;
 		private String[] sections = new String[0];
 
 		WordListAdapter(Context ctx, int rowLayoutId, ArrayList<String> items)
 		{
 
-			super(ctx, rowLayoutId, items);
+			super(ctx, rowLayoutId);
+
+			this.items = items;
 
 			if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)  {
 
@@ -691,7 +695,11 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 			}
 
 		}
-		
+
+		public int getCount() { return items.size(); }
+
+		public String getItem(int position) { return items.get(position); }
+
         public View getView(int position, View convertView, ViewGroup parent)
         {
 
@@ -706,8 +714,10 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
             SpannableString word = convertToBoardString(getItem(position), getItem(position));
             if (word != null)  {
             	TextView wordView = (TextView)v.findViewById(R.id.wl_word);
-            	if (wordView != null)
+            	if (wordView != null)  {
+            		Debug.e(word.toString());
             		wordView.setText(word);
+            	}
             }
             
             return v;

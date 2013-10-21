@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarActivity;
 import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -38,8 +39,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
@@ -368,7 +367,7 @@ public class BaseFragment extends Fragment {
 
 	protected void setActionBarTitle(String title)
 	{
-		((SherlockFragmentActivity) getActivity()).getSupportActionBar().setSubtitle(title);
+		((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(title);
 	}
 
 	//
