@@ -20,11 +20,10 @@ import android.os.Message;
 import android.text.ClipboardManager;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +39,9 @@ import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.adapters.ScoredWordListAdapter;
+import com.ppp.wordplayadvlib.adapters.WordDefinitionsAdapter;
+import com.ppp.wordplayadvlib.adapters.WordListAdapter;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.ScoredWord;
 import com.ppp.wordplayadvlib.appdata.SearchObject;
@@ -73,21 +75,27 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	
 	private SearchThread searchThread;
 
-	private LinearLayout rootView;
+	private View rootView;
 	private ListView searchListView;
 	private Handler searchHandler;
+	private LayoutInflater inflater;
 	private ProgressDialog progressDialog;
 	private boolean cancel = false;
 
 //	private AdView adView;
 
-	public SearchFragment() { super(); }
+//	public SearchFragment() { super(); }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		rootView = (LinearLayout)inflater.inflate(R.layout.search_fragment, null);
+
+		this.inflater = inflater;
+
+		rootView = inflater.inflate(R.layout.search_fragment, null);
+
 		return rootView;
+
 	}
 
 	@Override
@@ -97,7 +105,7 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	    super.onActivityCreated(savedInstanceState);
 
 	    // Get a handle on the ListView
-	    searchListView = (ListView)rootView.findViewById(R.id.search_result_list);
+	    searchListView = (ListView) rootView.findViewById(R.id.search_result_list);
 	    searchListView.setOnItemClickListener(this);
 
 		// This fragment has menu items...
@@ -621,7 +629,10 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 		adapter = new WordListAdapter(
 						getActivity(),
 						R.layout.word_list,
-						wordList);
+						wordList,
+						wordSort,
+						boardString,
+						searchObject);
 		searchListView.setAdapter(adapter);
 		registerForContextMenu(searchListView);
 		
@@ -645,7 +656,10 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 		adapter = new ScoredWordListAdapter(
 						getActivity(),
 						R.layout.word_list,
-						scoredWordList);
+						scoredWordList,
+						wordSort,
+						boardString,
+						searchObject);
 		searchListView.setAdapter(adapter);
 		registerForContextMenu(searchListView);
 		
@@ -654,240 +668,50 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	//
 	// Adapters and Utilities
 	//
-
-	private class WordListAdapter extends ArrayAdapter<String> implements SectionIndexer {
-
-		private ArrayList<String> items;
-
-		private HashMap<String, Integer> indexer;
-		private String[] sections = new String[0];
-
-		WordListAdapter(Context ctx, int rowLayoutId, ArrayList<String> items)
-		{
-
-			super(ctx, rowLayoutId);
-
-			this.items = items;
-
-			if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)  {
-
-				// Create a map of first letters to array positions
-				indexer = new HashMap<String, Integer>();
-				for (int i = items.size() - 1; i >= 0; i -= 1)  {
-					String word = items.get(i);
-					String firstChar = (word.charAt(0) + "").toUpperCase();
-					if ((firstChar.charAt(0) < 'A') || (firstChar.charAt(0) > 'Z'))
-						firstChar = "@";
-					indexer.put(firstChar, i);
-				}
-
-				// Now get all of the first letters we found and
-				// create an ordered array for section names
-				Set<String> keys = indexer.keySet();
-				Iterator<String> it = keys.iterator();
-				ArrayList<String> keyList = new ArrayList<String>();
-				while (it.hasNext())
-				    keyList.add(it.next());
-				Collections.sort(keyList);
-				sections = new String[keyList.size()];
-				keyList.toArray(sections);
-
-			}
-
-		}
-
-		public int getCount() { return items.size(); }
-
-		public String getItem(int position) { return items.get(position); }
-
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-
-            View v = convertView;
-
-            if (v == null)  {
-                LayoutInflater vi =
-                	(LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.word_list, null);
-            }
-
-            SpannableString word = convertToBoardString(getItem(position), getItem(position));
-            if (word != null)  {
-            	TextView wordView = (TextView)v.findViewById(R.id.wl_word);
-            	if (wordView != null)  {
-            		Debug.e(word.toString());
-            		wordView.setText(word);
-            	}
-            }
-            
-            return v;
-            
-        }
-
-		public int getPositionForSection(int section)
-		{
-			if (wordSort != WordSortState.WORD_SORT_BY_ALPHA)
-				return 0;
-			if (section < 0)
-				section = 0;
-			else if (section >= sections.length)
-				section = sections.length - 1;
-			String letter = sections[section];
-			return indexer.get(letter);
-		}
-
-		public int getSectionForPosition(int position)
-		{
-			if (wordSort != WordSortState.WORD_SORT_BY_ALPHA)
-				return 0;
-			int prevIndex = 0;
-			for (int i = 0; i < sections.length; i += 1)  {
-				if ((position < getPositionForSection(i)) && (position >= prevIndex))  {
-			        prevIndex = i;
-			        break;
-			    }
-			    prevIndex = i;
-			}
-			return prevIndex;
-		}
-
-		public Object[] getSections() { return sections; }
-        
-	}
-
-	private class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements SectionIndexer {
-		
-		private HashMap<String, Integer> indexer;
-		private String[] sections = new String[0];
-		
-		ScoredWordListAdapter(Context ctx, int rowLayoutId, ArrayList<ScoredWord> items)
-		{
-
-			super(ctx, rowLayoutId, items);
-
-			if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)  {
-
-				// Create a map of first letters to array positions
-				indexer = new HashMap<String, Integer>();
-				for (int i = items.size() - 1; i >= 0; i -= 1)  {
-					String word = items.get(i).getWord();
-					String firstChar = word.substring(0, 1).toUpperCase();
-					if ((firstChar.charAt(0) < 'A') || (firstChar.charAt(0) > 'Z'))
-						firstChar = "@";
-					indexer.put(firstChar, i);
-				}
-
-				// Now get all of the first letters we found and
-				// create an ordered array for section names
-				Set<String> keys = indexer.keySet();
-				Iterator<String> it = keys.iterator();
-				ArrayList<String> keyList = new ArrayList<String>();
-				while (it.hasNext())
-				    keyList.add(it.next());
-				Collections.sort(keyList);
-				sections = new String[keyList.size()];
-				keyList.toArray(sections);
-
-			}
-
-		}
-		
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-        	
-            View v = convertView;
-
-            if (v == null)  {
-                LayoutInflater vi =
-                	(LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.word_list, null);
-            }
-
-            ScoredWord word = getItem(position);
-            if (word != null)  {
-            	TextView wordView = (TextView)v.findViewById(R.id.wl_word);
-            	if (wordView != null)
-            		wordView.setText(convertToBoardString(word.toString(), word.getWord()));
-            }
-            
-            return v;
-            
-        }
-
-		public int getPositionForSection(int section)
-		{
-			if (wordSort != WordSortState.WORD_SORT_BY_ALPHA)
-				return 0;
-			if (section < 0)
-				section = 0;
-			else if (section >= sections.length)
-				section = sections.length - 1;
-			String letter = sections[section];
-			return indexer.get(letter);
-		}
-
-		public int getSectionForPosition(int position)
-		{
-			if (wordSort != WordSortState.WORD_SORT_BY_ALPHA)
-				return 0;
-			int prevIndex = 0;
-			for (int i = 0; i < sections.length; i += 1)  {
-				if ((position < getPositionForSection(i)) && (position >= prevIndex))  {
-			        prevIndex = i;
-			        break;
-			    }
-			    prevIndex = i;
-			}
-			return prevIndex;
-		}
-
-		public Object[] getSections() { return sections; }
-
-	}
 	
-	private class WordDefinitionsAdapter extends ArrayAdapter<String> {
-		
-		private String word;
-		private ArrayList<String> defns;
-		
-		WordDefinitionsAdapter(Context ctx, int rowLayoutId, String w, ArrayList<String> items)
-		{
-			super(ctx, rowLayoutId, items);
-			word = w;
-			defns = items;
-		}
-
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-        	
-            View v = convertView;
-
-            if (v == null)  {
-                LayoutInflater vi =
-                	(LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.search_result, null);
-            }
-
-            String defn = defns.get(position);
-            if (defn != null)  {
-            	TextView wordView = (TextView)v.findViewById(R.id.sr_word);
-            	TextView defnView = (TextView)v.findViewById(R.id.sr_definition);
-            	if (wordView != null)
-            		wordView.setText(word);
-            	if (defnView != null)  {
-            		int index = defn.indexOf('\n');
-            		if (index != -1)
-            			defnView.setText(defn.substring(0, defn.indexOf('\n')));
-            		else
-            			defnView.setText(defn);
-            	}
-            }
-            
-            return v;
-            
-        }
-
-	}
+//	private class WordDefinitionsAdapter extends ArrayAdapter<String> {
+//		
+//		private String word;
+//		private ArrayList<String> defns;
+//		
+//		WordDefinitionsAdapter(Context ctx, int rowLayoutId, String w, ArrayList<String> items)
+//		{
+//			super(ctx, rowLayoutId, items);
+//			word = w;
+//			defns = items;
+//		}
+//
+//        public View getView(int position, View convertView, ViewGroup parent)
+//        {
+//        	
+//            View v = convertView;
+//
+//            if (v == null)  {
+//                LayoutInflater vi =
+//                	(LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                v = vi.inflate(R.layout.search_result, null);
+//            }
+//
+//            String defn = defns.get(position);
+//            if (defn != null)  {
+//            	TextView wordView = (TextView)v.findViewById(R.id.sr_word);
+//            	TextView defnView = (TextView)v.findViewById(R.id.sr_definition);
+//            	if (wordView != null)
+//            		wordView.setText(word);
+//            	if (defnView != null)  {
+//            		int index = defn.indexOf('\n');
+//            		if (index != -1)
+//            			defnView.setText(defn.substring(0, defn.indexOf('\n')));
+//            		else
+//            			defnView.setText(defn);
+//            	}
+//            }
+//            
+//            return v;
+//            
+//        }
+//
+//	}
 
 	private SpannableString convertToBoardString(String str, String word)
 	{

@@ -4,12 +4,9 @@
 	android:id="@+id/wl_word"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:paddingLeft="5dip"
-	android:paddingBottom="5dip"
-	android:paddingTop="5dip"
+	android:padding="5dip"
 	android:text="Word Goes Here"
 	android:textColor="@color/white"
 	android:textSize="20dip"
 	android:textStyle="bold"
-	android:typeface="serif"
-	android:background="@color/blue" />
+	android:typeface="serif" />
