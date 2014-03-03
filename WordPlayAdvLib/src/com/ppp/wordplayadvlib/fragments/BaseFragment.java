@@ -25,11 +25,11 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +44,6 @@ import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.activities.HelpViewer;
-import com.ppp.wordplayadvlib.activities.SearchActivity;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.History;
 import com.ppp.wordplayadvlib.appdata.SearchType;
@@ -79,8 +78,10 @@ public class BaseFragment extends Fragment {
 	protected Bundle searchBundle = null;
 	protected static Bundle savedSearchBundle = null;
 
+	protected HostFragmentInterface hostFragment;
+
 	//
-	// Activity Methods
+	// Fragment Methods
 	//
 
 	public BaseFragment() { super(); }
@@ -104,10 +105,19 @@ public class BaseFragment extends Fragment {
 	}
 
 	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		Log.e(getClass().getSimpleName(), "onAttach: " + this.toString() + " to " + activity);
+	}
+
+	@Override
 	public void onDetach()
 	{
 
 		super.onDetach();
+
+		Log.e(getClass().getSimpleName(), "onDetach: " + this.toString());
 
 		// On device reorientation, we need close the progress dialog
 		// for any open WordJudge search and reset the search handler
@@ -327,127 +337,6 @@ public class BaseFragment extends Fragment {
 //		
 //	}
 
-    //
-    // Fragments
-    //
-
-	private int getFragmentContainer() { return android.R.id.content; }
-
-	public void pushToStack(BaseFragment newFragment)
-	{
-
-		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-
-		// Replace whatever is in the fragment_container view with this fragment,
-		// and add the transaction to the back stack
-		ft.replace(getFragmentContainer(), newFragment, newFragment.getClass().getName());
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-		ft.addToBackStack(newFragment.getClass().getName());
-
-		// Commit the transaction
-		ft.commit();
-
-	}
-
-	public void replaceStack(BaseFragment newFragment)
-	{
-
-		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-
-		// Replace without history
-		ft.replace(getFragmentContainer(), newFragment, newFragment.getClass().getName());
-		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		ft.commit();
-
-	}
-
-	//
-	// Action Bar
-	//
-
-	protected void setActionBarTitle(String title)
-	{
-		((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(title);
-	}
-
-	//
-	// Filters and Listeners
-	//
-
-    // A filter for input of one or more alphabetic characters
-    protected InputFilter alphaFilter = new InputFilter() {
-    	public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
-    	{
-    		if (end > start)  {
-    			String destText = dest.toString();
-    			String resultText =
-    				destText.substring(0, dstart) + source.subSequence(start, end) + destText.substring(dend);
-    			if (!resultText.matches("[a-zA-Z]*"))  {
-    				if (source instanceof Spanned)
-    					return new SpannableString("");
-    				else
-    					return "";
-    			}
-    		}
-    		return null;
-    	}
-    };
-
-    // A filter for input of a list of words
-    protected InputFilter commaFilter = new InputFilter() {
-    	public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
-    	{
-    		if (end > start)  {
-    			String destText = dest.toString();
-    			String resultText =
-    				destText.substring(0, dstart) + source.subSequence(start, end) + destText.substring(dend);
-    			if (!resultText.matches("([a-zA-Z]+,?)*"))  {
-    				if (source instanceof Spanned)
-    					return new SpannableString("");
-    				else
-    					return "";
-    			}
-    		}
-    		return null;
-    	}
-    };
-
-    // A filter for a wild-carded text entry field
-    protected InputFilter searchFilter = new InputFilter() {
-    	public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
-    	{
-    		if (end > start)  {
-    			String destText = dest.toString();
-    			String resultText =
-    				destText.substring(0, dstart) + source.subSequence(start, end) + destText.substring(dend);
-    			if (!resultText.matches("[a-zA-Z?.]*"))  {
-    				if (source instanceof Spanned)
-    					return new SpannableString("");
-    				else
-    					return "";
-    			}
-    		}
-    		return null;
-    	}
-    };
-
-	protected boolean checkForEnterKey(View v, int keyCode, KeyEvent event)
-	{
-
-		// Only operate on the ENTER key when pressed down
-		if (event.getAction() == KeyEvent.ACTION_UP)
-			return false;
-		if (event.getKeyCode() != KeyEvent.KEYCODE_ENTER)
-			return false;
-
-		// Dismiss the soft keyboard
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-		
-		return true;
-		
-	}
-
 	//
 	// Search Activity Support
 	//
@@ -510,14 +399,14 @@ public class BaseFragment extends Fragment {
 		
 	}
 
-	public void startSearchActivity(Bundle b)
+	public void startSearchActivity(Bundle args)
 	{
-//		SearchFragment details = new SearchFragment();
-//		details.setArguments(b);
-//		pushToStack(details);
-		Intent intent = new Intent(getActivity(), SearchActivity.class);
-		intent.putExtras(b);
-		startActivity(intent);
+		SearchFragment fragment = new SearchFragment();
+		fragment.setArguments(args);
+		pushToStack(fragment);
+//		Intent intent = new Intent(getActivity(), SearchActivity.class);
+//		intent.putExtras(args);
+//		startActivity(intent);
 	}
 
     //
@@ -1248,5 +1137,137 @@ public class BaseFragment extends Fragment {
 //		}
     	
     }
+
+	//
+	// Fragment Manipulation
+	//
+
+	public interface HostFragmentInterface {
+		public void pushToStack(BaseFragment newFragment);
+		public void replaceStack(BaseFragment newFragment);
+		public void clearStack();
+		public void clearStackToFragment(String fragmentName);
+		public void popStack();
+	}
+
+	public void setHostFragment(HostFragmentInterface nTH) { hostFragment = nTH; }
+	public HostFragmentInterface getHostFragment() { return hostFragment; }
+
+	protected void pushToStack(BaseFragment newFragment)
+	{
+		if (hostFragment != null)
+			hostFragment.pushToStack(newFragment);
+	}
+
+	protected void replaceStack(BaseFragment newFragment)
+	{
+		if (hostFragment != null)
+			hostFragment.replaceStack(newFragment);
+	}
+
+	protected void clearStack()
+	{
+		if (hostFragment != null)
+			hostFragment.clearStack();
+	}
+
+	protected void clearStackToFragment(String fragmentName)
+	{
+		if (hostFragment != null)
+			hostFragment.clearStackToFragment(fragmentName);
+	}
+	
+	protected void popStack()
+	{
+		if (hostFragment != null)
+			hostFragment.popStack();
+	}
+
+	//
+	// Action Bar
+	//
+
+	protected void setActionBarTitle(String title)
+	{
+		((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(title);
+	}
+
+	//
+	// Filters and Listeners
+	//
+
+    // A filter for input of one or more alphabetic characters
+    protected InputFilter alphaFilter = new InputFilter() {
+    	public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
+    	{
+    		if (end > start)  {
+    			String destText = dest.toString();
+    			String resultText =
+    				destText.substring(0, dstart) + source.subSequence(start, end) + destText.substring(dend);
+    			if (!resultText.matches("[a-zA-Z]*"))  {
+    				if (source instanceof Spanned)
+    					return new SpannableString("");
+    				else
+    					return "";
+    			}
+    		}
+    		return null;
+    	}
+    };
+
+    // A filter for input of a list of words
+    protected InputFilter commaFilter = new InputFilter() {
+    	public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
+    	{
+    		if (end > start)  {
+    			String destText = dest.toString();
+    			String resultText =
+    				destText.substring(0, dstart) + source.subSequence(start, end) + destText.substring(dend);
+    			if (!resultText.matches("([a-zA-Z]+,?)*"))  {
+    				if (source instanceof Spanned)
+    					return new SpannableString("");
+    				else
+    					return "";
+    			}
+    		}
+    		return null;
+    	}
+    };
+
+    // A filter for a wild-carded text entry field
+    protected InputFilter searchFilter = new InputFilter() {
+    	public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend)
+    	{
+    		if (end > start)  {
+    			String destText = dest.toString();
+    			String resultText =
+    				destText.substring(0, dstart) + source.subSequence(start, end) + destText.substring(dend);
+    			if (!resultText.matches("[a-zA-Z?.]*"))  {
+    				if (source instanceof Spanned)
+    					return new SpannableString("");
+    				else
+    					return "";
+    			}
+    		}
+    		return null;
+    	}
+    };
+
+	protected boolean checkForEnterKey(View v, int keyCode, KeyEvent event)
+	{
+
+		// Only operate on the ENTER key when pressed down
+		if (event.getAction() == KeyEvent.ACTION_UP)
+			return false;
+		if (event.getKeyCode() != KeyEvent.KEYCODE_ENTER)
+			return false;
+
+		// Dismiss the soft keyboard
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+		
+		return true;
+		
+	}
 
 }

@@ -1,35 +1,19 @@
 package com.ppp.wordplayadvlib.activities;
 
-import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 
-import com.ppp.wordplayadvlib.fragments.BaseFragment;
-
 public class BaseActivity extends ActionBarActivity {
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-
-		super.onCreate(savedInstanceState);
-
-		if (savedInstanceState == null)  {
-			BaseFragment fragment = getInitialFragment();
-			fragment.setArguments(getIntent().getExtras());
-			replaceStack(fragment);
-		}
-
-	}
 
     //
     // Fragments
     //
 
 	protected int getFragmentContainer() { return android.R.id.content; }
-	protected BaseFragment getInitialFragment() { return null; }
+	protected Fragment getInitialFragment() { return null; }
 
-	protected void pushToStack(BaseFragment newFragment)
+	protected void pushToStack(Fragment newFragment)
 	{
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -45,7 +29,7 @@ public class BaseActivity extends ActionBarActivity {
 
 	}
 
-	protected void replaceStack(BaseFragment newFragment)
+	protected void replaceStack(Fragment newFragment)
 	{
 
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

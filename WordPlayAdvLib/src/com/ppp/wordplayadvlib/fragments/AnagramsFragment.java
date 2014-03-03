@@ -7,8 +7,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnKeyListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +22,9 @@ import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
-public class AnagramsFragment extends BaseFragment implements View.OnClickListener {
+public class AnagramsFragment extends BaseFragment
+	implements View.OnClickListener
+{
 
 	private RelativeLayout rootView;
 	private Button anagramButton = null;
@@ -165,12 +167,12 @@ public class AnagramsFragment extends BaseFragment implements View.OnClickListen
 		if (!validateString(searchString + boardString, dictionary, true))
 			return;
 
-		startSearchActivity(searchType,
-							searchString,
-							boardString,
-							dictionary,
-							wordScores,
-							wordSort);
+//		startSearchActivity(searchType,
+//							searchString,
+//							boardString,
+//							dictionary,
+//							wordScores,
+//							wordSort);
 
     }
 

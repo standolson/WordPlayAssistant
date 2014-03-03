@@ -28,11 +28,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,16 +51,16 @@ import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
-import com.ppp.wordplayadvlib.fragments.AnagramsFragment;
-import com.ppp.wordplayadvlib.fragments.CrosswordsFragment;
-import com.ppp.wordplayadvlib.fragments.DictionaryFragment;
-import com.ppp.wordplayadvlib.fragments.ThesaurusFragment;
-import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
+import com.ppp.wordplayadvlib.fragments.hosts.AnagramsHostFragment;
+import com.ppp.wordplayadvlib.fragments.hosts.CrosswordsHostFragment;
+import com.ppp.wordplayadvlib.fragments.hosts.DictionaryHostFragment;
+import com.ppp.wordplayadvlib.fragments.hosts.ThesaurusHostFragment;
+import com.ppp.wordplayadvlib.fragments.hosts.WordJudgeHostFragment;
 import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
 
 @SuppressLint("ValidFragment")
-public class WordPlayActivity extends ActionBarActivity
+public class WordPlayActivity extends HostActivity
 	implements
 		OnItemClickListener
 {
@@ -85,9 +82,7 @@ public class WordPlayActivity extends ActionBarActivity
 	private ListView menuListView;
 	private MenuAdapter menuAdapter;
 
-    private String lastAddedTag = null;
     private String lastItemTitle = null;
-    private Fragment lastAdded = null;
     private boolean drawerSeen = false;
 
 	private static boolean notificationIconEnabled = false;
@@ -113,12 +108,12 @@ public class WordPlayActivity extends ActionBarActivity
 
         List<DrawerMenuItem> items = new ArrayList<DrawerMenuItem>(5);
         DrawerMenuItem anagramsItem =
-        	new DrawerMenuItem(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams, AnagramsFragment.class);
+        	new DrawerMenuItem(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams, AnagramsHostFragment.class);
         items.add(anagramsItem);
-        items.add(new DrawerMenuItem(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge, WordJudgeFragment.class));
-        items.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryFragment.class));
-        items.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, ThesaurusFragment.class));
-        items.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge, WordJudgeHostFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryHostFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, ThesaurusHostFragment.class));
+        items.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsHostFragment.class));
 
         // Create and show the initial fragment or the last
         // fragment seen
@@ -254,12 +249,17 @@ public class WordPlayActivity extends ActionBarActivity
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,	long id)
     {
+
         DrawerMenuItem it = (DrawerMenuItem) parent.getAdapter().getItem(position);
-        lastItemTitle = it.title;
-        parent.setSelection(position);
-        switchToFragment(it.itemClass);
-        menuListView.setItemChecked(position, true);
-        menuDrawer.closeDrawer(menuListView);
+
+        if (it.itemClass != null)  {
+	        lastItemTitle = it.title;
+	        parent.setSelection(position);
+	        switchToFragment(it.itemClass, true);
+	        menuListView.setItemChecked(position, true);
+	        menuDrawer.closeDrawer(menuListView);
+        }
+
     }
 
     private void displayDialog(int id)
@@ -1042,62 +1042,11 @@ public class WordPlayActivity extends ActionBarActivity
     // Fragment Management
     //
 
-    private int getFragmentContainer() { return R.id.content; }
+    protected int getFragmentContainer() { return R.id.content; }
 
-    protected Fragment getInitialFragment() { return new AnagramsFragment(); }
-
-    private void switchToFragment(Class<?> cls)
-    {
-        
-        // Process the fragment transaction
-        boolean fresh = false;
-        
-        // Might have had a rotation since the last selection, so we should look up the last added fragment.
-        if ((lastAddedTag != null) && (lastAdded == null))
-            lastAdded = getSupportFragmentManager().findFragmentByTag(lastAddedTag);
-        
-        Fragment f = (Fragment) getSupportFragmentManager().findFragmentByTag(cls.getName());
-        try {
-            if (f == null)  {
-                fresh = true;
-                f = (Fragment) cls.newInstance();
-            }
-            replaceStack(f, fresh);
-        }
-        catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void replaceStack(Fragment newFragment, boolean freshAdd)
-    {
-
-        if ((newFragment == null) || (newFragment == lastAdded))
-            return;
-
-        // Clear out the back stack
-        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_NONE);
-
-        if (lastAdded != null)
-            ft.detach(lastAdded);
-
-        if (freshAdd)
-            ft.add(getFragmentContainer(), newFragment, newFragment.getClass().getName());
-        else
-            ft.attach(newFragment);
-
-        ft.commit();
-
-        lastAdded = newFragment;
-        lastAddedTag = newFragment.getClass().getName();
-
-    }
+    protected Fragment getInitialFragment() { return new AnagramsHostFragment(); }
+    
+    public ActionBarDrawerToggle getDrawerToggle() { return drawerToggle; }
+    public DrawerLayout getDrawerLayout() { return menuDrawer; }
 
 }
