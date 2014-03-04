@@ -65,7 +65,6 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	private View rootView;
 	private ListView searchListView;
 	private Handler searchHandler;
-	private LayoutInflater inflater;
 	private ProgressDialog progressDialog;
 	private boolean cancel = false;
 
@@ -76,13 +75,8 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
-		this.inflater = inflater;
-
 		rootView = inflater.inflate(R.layout.search_fragment, null);
-
 		return rootView;
-
 	}
 
 	@Override
@@ -97,9 +91,6 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 
 		// This fragment has menu items...
 		setHasOptionsMenu(true);
-
-		// ...and wants to be retained on reconfiguration
-		setRetainInstance(true);
 
 //		if (WordPlayApp.isFreeMode())  {
 //			LinearLayout header_layout = (LinearLayout)View.inflate(this, R.layout.admob_listview_footer, null);

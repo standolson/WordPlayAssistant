@@ -39,13 +39,9 @@ public class AnagramsFragment extends BaseFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
 		rootView = (RelativeLayout)inflater.inflate(R.layout.anagrams_fragment, container, false);
-
 		setupAnagramTab();
-
 		return rootView;
-
 	}
 
 	@Override
@@ -167,12 +163,17 @@ public class AnagramsFragment extends BaseFragment
 		if (!validateString(searchString + boardString, dictionary, true))
 			return;
 
-//		startSearchActivity(searchType,
-//							searchString,
-//							boardString,
-//							dictionary,
-//							wordScores,
-//							wordSort);
+		Bundle args = new Bundle();
+		args.putInt("SearchType", searchType.ordinal());
+		args.putString("SearchString", searchString);
+		args.putString("BoardString", boardString);
+		args.putInt("Dictionary", dictionary.ordinal());
+		args.putInt("WordScores", wordScores.ordinal());
+		args.putInt("WordSort", wordSort.ordinal());
+
+		BaseFragment fragment = new SearchFragment();
+		fragment.setArguments(args);
+		pushToStack(fragment);
 
     }
 

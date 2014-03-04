@@ -1,13 +1,11 @@
 package com.ppp.wordplayadvlib.fragments.hosts;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,20 +58,6 @@ public class HostFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         return inflater.inflate(R.layout.base_fragment, null);
-    }
-
-    @Override
-    public void onAttach(Activity activity)
-    {
-    	super.onAttach(activity);
-    	Log.e(getClass().getSimpleName(), "onAttach: " + this.toString() + " to " + activity.toString());
-    }
-
-    @Override
-    public void onDetach()
-    {
-    	super.onDetach();
-    	Log.e(getClass().getSimpleName(), "onDetach: " + this.toString());
     }
 
     protected HostActivity getHostActivity() { return host; }
@@ -154,6 +138,7 @@ public class HostFragment extends Fragment
 				clearStack();
         
         setHomeIcon();
+
     }
 	
 	public boolean inBackStack(String fragmentName) 

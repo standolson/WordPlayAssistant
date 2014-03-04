@@ -105,19 +105,10 @@ public class BaseFragment extends Fragment {
 	}
 
 	@Override
-	public void onAttach(Activity activity)
-	{
-		super.onAttach(activity);
-		Log.e(getClass().getSimpleName(), "onAttach: " + this.toString() + " to " + activity);
-	}
-
-	@Override
 	public void onDetach()
 	{
 
 		super.onDetach();
-
-		Log.e(getClass().getSimpleName(), "onDetach: " + this.toString());
 
 		// On device reorientation, we need close the progress dialog
 		// for any open WordJudge search and reset the search handler
@@ -1189,7 +1180,7 @@ public class BaseFragment extends Fragment {
 
 	protected void setActionBarTitle(String title)
 	{
-		((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(title);
+//		((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(title);
 	}
 
 	//

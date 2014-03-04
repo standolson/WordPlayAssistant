@@ -62,7 +62,6 @@ public class HostActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-
         return super.onOptionsItemSelected(item);
     }
     
@@ -111,7 +110,7 @@ public class HostActivity extends BaseActivity {
         }
 
         // Clear out the back stack
-//      getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
@@ -175,5 +174,7 @@ public class HostActivity extends BaseActivity {
         return f;
 		
 	}
+
+	public boolean isDrawerOpen() { return false; }
 
 }

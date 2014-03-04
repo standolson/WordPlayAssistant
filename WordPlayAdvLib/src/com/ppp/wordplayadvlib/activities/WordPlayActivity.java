@@ -30,6 +30,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -84,6 +85,7 @@ public class WordPlayActivity extends HostActivity
 
     private String lastItemTitle = null;
     private boolean drawerSeen = false;
+    private List<DrawerMenuItem> menuItems;
 
 	private static boolean notificationIconEnabled = false;
 
@@ -106,14 +108,14 @@ public class WordPlayActivity extends HostActivity
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(getString(R.string.app_name));
 
-        List<DrawerMenuItem> items = new ArrayList<DrawerMenuItem>(5);
+        menuItems = new ArrayList<DrawerMenuItem>(5);
         DrawerMenuItem anagramsItem =
         	new DrawerMenuItem(getString(R.string.Anagrams), R.drawable.ic_tab_anagrams, AnagramsHostFragment.class);
-        items.add(anagramsItem);
-        items.add(new DrawerMenuItem(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge, WordJudgeHostFragment.class));
-        items.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryHostFragment.class));
-        items.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, ThesaurusHostFragment.class));
-        items.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsHostFragment.class));
+        menuItems.add(anagramsItem);
+        menuItems.add(new DrawerMenuItem(getString(R.string.WordJudge), R.drawable.ic_tab_wordjudge, WordJudgeHostFragment.class));
+        menuItems.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryHostFragment.class));
+        menuItems.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, ThesaurusHostFragment.class));
+        menuItems.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsHostFragment.class));
 
         // Create and show the initial fragment or the last
         // fragment seen
@@ -131,7 +133,7 @@ public class WordPlayActivity extends HostActivity
         // Get the ListView for the DrawerLayout and populate it with
         // the adapter of DrawerMenuItems
         menuListView = (ListView) findViewById(R.id.left_drawer);
-        menuAdapter = new MenuAdapter(items);
+        menuAdapter = new MenuAdapter(menuItems);
         menuListView.setAdapter(menuAdapter);
         menuListView.setScrollingCacheEnabled(false);
         menuListView.setOnItemClickListener(this);
@@ -174,6 +176,9 @@ public class WordPlayActivity extends HostActivity
 
         super.onResume();
 
+        // Set the subtitle to the currently selected tab item
+		getSupportActionBar().setSubtitle(lastItemTitle);
+
         // If the drawer has not been seen, show it
         if (!drawerSeen)
             menuDrawer.postDelayed(new Runnable() {
@@ -193,10 +198,14 @@ public class WordPlayActivity extends HostActivity
     @Override
     public void onBackPressed()
     {
+
         if (menuDrawer.isDrawerOpen(menuListView))
             menuDrawer.closeDrawer(menuListView);
         else
             super.onBackPressed();
+        
+        refreshHomeIcon();
+
     }
 
 	@Override
@@ -258,6 +267,7 @@ public class WordPlayActivity extends HostActivity
 	        switchToFragment(it.itemClass, true);
 	        menuListView.setItemChecked(position, true);
 	        menuDrawer.closeDrawer(menuListView);
+			getSupportActionBar().setSubtitle(it.title);
         }
 
     }
@@ -326,9 +336,28 @@ public class WordPlayActivity extends HostActivity
     @Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+    	switch (item.getItemId())  {
+
+			// Respond to the action bar's Up/Home button
+		    case android.R.id.home:
+
+		    	if (isDrawerOpen() && !drawerToggle.isDrawerIndicatorEnabled())
+		    		menuDrawer.closeDrawer(menuListView);
+		    	
+		    	else if (!drawerToggle.isDrawerIndicatorEnabled()) 
+		    		if (lastAdded.getChildFragmentManager() != null)
+		    			popBackStackPlus(lastAdded);
+		    	
+		    	refreshHomeIcon();
+
+		}
+
+        // Menu drawer
+    	if (drawerToggle.onOptionsItemSelected(item))
+            return true;
 
     	// Home menu
-        if (drawerToggle.onOptionsItemSelected(item))
+        else if (drawerToggle.onOptionsItemSelected(item))
             return true;
 
 		// Preferences
@@ -989,6 +1018,55 @@ public class WordPlayActivity extends HostActivity
  
     }
 
+    private DrawerMenuItem findDrawerItemByTag(String tag)
+    {
+        for (DrawerMenuItem item : menuItems)
+            if (item.itemClass != null && tag.equals(item.itemClass.getName()))
+                return item;
+        return null;
+    }
+
+    private DrawerMenuItem findDrawerItemByTitle(String title)
+    {
+        for (DrawerMenuItem item : menuItems)
+            if (title.equals(item.title))
+                return item;
+        return null;
+    }
+
+    private DrawerMenuItem findDrawerItemByClass(Class<?> cls)
+    {
+    	for (DrawerMenuItem item : menuItems)
+    		if (cls.equals(item.itemClass))
+    			return item;
+    	return null;
+    }
+
+	@Override
+	public boolean isDrawerOpen()
+	{
+		if ((menuDrawer != null) && (menuListView != null))
+			return menuDrawer.isDrawerOpen(menuListView);
+		return false;
+	}
+	
+	public void closeDrawer()
+	{
+		if ((menuDrawer != null) && (menuListView != null))
+			menuDrawer.closeDrawer(menuListView);
+	}
+
+	private void showDrawer()
+	{
+        menuDrawer.postDelayed(new Runnable() {
+            @Override
+            public void run()
+            {
+                menuDrawer.openDrawer(menuListView);   
+            }
+        }, 500);
+	}
+
     private class MenuAdapter extends BaseAdapter {
 
         private List<DrawerMenuItem> items;
@@ -1048,5 +1126,27 @@ public class WordPlayActivity extends HostActivity
     
     public ActionBarDrawerToggle getDrawerToggle() { return drawerToggle; }
     public DrawerLayout getDrawerLayout() { return menuDrawer; }
+    
+    //
+    // Home Icon
+    //
+
+    private void refreshHomeIcon()
+    {
+    	menuDrawer.postDelayed(new Runnable() {
+            @Override
+            public void run()
+            {
+            	if (lastAdded != null) {
+            		
+                	if (lastAdded.getChildFragmentManager().getBackStackEntryCount() > 0) 
+                		drawerToggle.setDrawerIndicatorEnabled(false);
+                	else 
+                		drawerToggle.setDrawerIndicatorEnabled(true);
+                	
+                }
+            }
+        }, 500);
+    }
 
 }
