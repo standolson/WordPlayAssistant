@@ -148,12 +148,10 @@ public class AnagramsFragment extends BaseFragment
     	WordScoreState wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
     	WordSortState wordSort = WordSortState.WORD_SORT_UNKNOWN;
     	DictionaryType dictionary = DictionaryType.DICTIONARY_UNKNOWN;
-    	SearchType searchType = SearchType.OPTION_UNKNOWN;
 
 		final EditText anagramsTrayText = (EditText)rootView.findViewById(R.id.AnagramsTrayText);
 		final EditText anagramsBoardText = (EditText)rootView.findViewById(R.id.AnagramsBoardText);
 
-		searchType = SearchType.OPTION_ANAGRAMS;
 		searchString = anagramsTrayText.getText().toString();
 		boardString = anagramsBoardText.getText().toString();
 		dictionary = DictionaryType.fromInt((int)anagramSpinner.getSelectedItemId() + 1);
@@ -164,7 +162,7 @@ public class AnagramsFragment extends BaseFragment
 			return;
 
 		Bundle args = new Bundle();
-		args.putInt("SearchType", searchType.ordinal());
+		args.putInt("SearchType", SearchType.OPTION_ANAGRAMS.ordinal());
 		args.putString("SearchString", searchString);
 		args.putString("BoardString", boardString);
 		args.putInt("Dictionary", dictionary.ordinal());

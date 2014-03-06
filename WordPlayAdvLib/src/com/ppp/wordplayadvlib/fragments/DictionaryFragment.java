@@ -36,13 +36,9 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
 		rootView = (RelativeLayout)inflater.inflate(R.layout.dictionary_fragment, container, false);
-
 		setupDictionaryTab();
-
 		return rootView;
-
 	}
 
 	@Override
@@ -128,9 +124,9 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
 		final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
 		final Spinner spinner = (Spinner)rootView.findViewById(R.id.DictionarySpinner);
 
-		searchString = dictText.getText().toString();	    
-		dictionary = DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
 		searchType = SearchType.fromInt((int)spinner.getSelectedItemId());
+		searchString = dictText.getText().toString();
+		dictionary = DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
 		if (dictionary.isScrabbleDict())  {
     		wordScores = WordScoreState.fromInt(dictScoreToggle.getState() + 1);
     		wordSort = WordSortState.fromInt(dictSortToggle.getState() + 1);
@@ -140,12 +136,17 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
 			wordSort = WordSortState.WORD_SORT_UNKNOWN;
 		}
 
-		startSearchActivity(searchType,
-							searchString,
-							boardString,
-							dictionary,
-							wordScores,
-							wordSort);
+		Bundle args = new Bundle();
+		args.putInt("SearchType", searchType.ordinal());
+		args.putString("SearchString", searchString);
+		args.putString("BoardString", boardString);
+		args.putInt("Dictionary", dictionary.ordinal());
+		args.putInt("WordScores", wordScores.ordinal());
+		args.putInt("WordSort", wordSort.ordinal());
+
+		BaseFragment fragment = new SearchFragment();
+		fragment.setArguments(args);
+		pushToStack(fragment);
 
     }
 

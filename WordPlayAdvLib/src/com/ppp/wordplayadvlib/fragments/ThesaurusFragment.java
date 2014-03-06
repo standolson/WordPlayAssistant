@@ -36,13 +36,9 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
 		rootView = (RelativeLayout)inflater.inflate(R.layout.dictionary_fragment, container, false);
-
 		setupThesaurusTab();
-
 		return rootView;
-
 	}
 
 	@Override
@@ -114,22 +110,25 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
     	WordScoreState wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
     	WordSortState wordSort = WordSortState.WORD_SORT_UNKNOWN;
     	DictionaryType dictionary = DictionaryType.DICTIONARY_UNKNOWN;
-    	SearchType searchType = SearchType.OPTION_UNKNOWN;
 
 		final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
 
-		searchString = dictText.getText().toString();	    
-		searchType = SearchType.OPTION_THESAURUS;
+		searchString = dictText.getText().toString();
 		dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
 		wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
 		wordSort = WordSortState.WORD_SORT_UNKNOWN;
 
-		startSearchActivity(searchType,
-							searchString,
-							boardString,
-							dictionary,
-							wordScores,
-							wordSort);
+		Bundle args = new Bundle();
+		args.putInt("SearchType", SearchType.OPTION_THESAURUS.ordinal());
+		args.putString("SearchString", searchString);
+		args.putString("BoardString", boardString);
+		args.putInt("Dictionary", dictionary.ordinal());
+		args.putInt("WordScores", wordScores.ordinal());
+		args.putInt("WordSort", wordSort.ordinal());
+
+		BaseFragment fragment = new SearchFragment();
+		fragment.setArguments(args);
+		pushToStack(fragment);
 
     }
 

@@ -35,13 +35,9 @@ public class CrosswordsFragment extends BaseFragment implements View.OnClickList
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
 		rootView = (RelativeLayout)inflater.inflate(R.layout.crosswords_fragment, container, false);
-
-		setupDictionaryTab();
-
+		setupCrosswordsTab();
 		return rootView;
-
 	}
 
 	@Override
@@ -63,7 +59,7 @@ public class CrosswordsFragment extends BaseFragment implements View.OnClickList
     // UI Setup
     //
 
-	private void setupDictionaryTab()
+	private void setupCrosswordsTab()
 	{
 
 		crosswordsButton = (Button)rootView.findViewById(R.id.CrosswordsButton);
@@ -109,20 +105,23 @@ public class CrosswordsFragment extends BaseFragment implements View.OnClickList
     	WordScoreState wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
     	WordSortState wordSort = WordSortState.WORD_SORT_UNKNOWN;
     	DictionaryType dictionary = DictionaryType.DICTIONARY_UNKNOWN;
-    	SearchType searchType = SearchType.OPTION_UNKNOWN;
 
 		searchString = crosswordsText.getText().toString();
-		searchType = SearchType.OPTION_CROSSWORDS;
 		dictionary = DictionaryType.fromInt((int)crosswordsSpinner.getSelectedItemId() + 1);
 		wordScores = WordScoreState.WORD_SCORE_STATE_OFF;
 		wordSort = WordSortState.WORD_SORT_BY_ALPHA;
 
-		startSearchActivity(searchType,
-				searchString,
-				boardString,
-				dictionary,
-				wordScores,
-				wordSort);
+		Bundle args = new Bundle();
+		args.putInt("SearchType", SearchType.OPTION_CROSSWORDS.ordinal());
+		args.putString("SearchString", searchString);
+		args.putString("BoardString", boardString);
+		args.putInt("Dictionary", dictionary.ordinal());
+		args.putInt("WordScores", wordScores.ordinal());
+		args.putInt("WordSort", wordSort.ordinal());
+
+		BaseFragment fragment = new SearchFragment();
+		fragment.setArguments(args);
+		pushToStack(fragment);
 
     }
 
