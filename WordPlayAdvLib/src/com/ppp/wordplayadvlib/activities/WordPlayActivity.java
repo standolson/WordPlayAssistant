@@ -176,8 +176,7 @@ public class WordPlayActivity extends HostActivity
 
         super.onResume();
 
-        // Set the subtitle to the currently selected tab item
-		getSupportActionBar().setSubtitle(lastItemTitle);
+        initUi();
 
         // If the drawer has not been seen, show it
         if (!drawerSeen)
@@ -193,6 +192,7 @@ public class WordPlayActivity extends HostActivity
 	{
 		super.onSaveInstanceState(savedInstanceState);
 		savedInstanceState.putBoolean("drawerSeen", drawerSeen);
+		savedInstanceState.putString("lastItemTitle", lastItemTitle);
 	}
 
     @Override
@@ -271,6 +271,22 @@ public class WordPlayActivity extends HostActivity
         }
 
     }
+
+	protected void initUi() 
+	{
+
+		// App may have been killed while in the background.
+        if ((lastAddedTag != null) && (lastAdded == null))
+        	lastAdded = getSupportFragmentManager().findFragmentByTag(lastAddedTag);
+		
+        // As a last-resort, default to Browse.
+		if (lastAdded == null)
+			switchToFragment(AnagramsHostFragment.class, true);
+
+        // Set the subtitle to the currently selected tab item
+		getSupportActionBar().setSubtitle(lastItemTitle);
+
+	}
 
     private void displayDialog(int id)
     {

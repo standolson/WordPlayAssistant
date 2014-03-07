@@ -525,7 +525,7 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 			closeProgressDialog();
 
 		if (cancel)  {
-			getActivity().finish();
+			popStack();
 			return;
 		}
 

@@ -1,5 +1,6 @@
 package com.ppp.wordplayadvlib.activities;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
@@ -20,7 +21,40 @@ public class HostActivity extends BaseActivity {
     //
     // Stack Management
     //
+	@Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+
+	    super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null)
+            lastAddedTag = savedInstanceState.getString("lastAddedTag");
+
+    }
     
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState)
+    {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("lastAddedTag", lastAddedTag);
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+    	return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        return super.onOptionsItemSelected(item);
+    }
+
+    //
+    // Fragments
+    //
+
     protected int getFragmentContainer() { return -1; }
     
     public void onBackPressed()
@@ -52,18 +86,6 @@ public class HostActivity extends BaseActivity {
 		cfm.popBackStack();
 
 	}
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-    	return true;
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        return super.onOptionsItemSelected(item);
-    }
     
     public HostFragment switchToFragment(Class<?> cls, boolean restartIfSameFragment)
     {
