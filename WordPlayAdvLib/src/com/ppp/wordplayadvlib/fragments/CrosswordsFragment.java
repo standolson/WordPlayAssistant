@@ -41,13 +41,6 @@ public class CrosswordsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	@Override
-	public void onResume()
-	{
-		super.onResume();
-		setActionBarTitle(getString(R.string.Crosswords));
-	}
-
-	@Override
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

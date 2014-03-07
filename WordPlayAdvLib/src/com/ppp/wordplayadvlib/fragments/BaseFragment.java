@@ -25,11 +25,9 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,6 +83,23 @@ public class BaseFragment extends Fragment {
 	//
 
 	public BaseFragment() { super(); }
+
+	@Override
+	public void onAttach(Activity activity)
+	{
+
+		super.onAttach(activity);
+
+		if (activity instanceof HostFragmentInterface)
+			setHostFragment((HostFragmentInterface) activity);
+		else if ((getParentFragment() != null) &&
+					getParentFragment() instanceof HostFragmentInterface)
+			setHostFragment((HostFragmentInterface) getParentFragment());
+		else if ((getParentFragment() != null) && (getParentFragment().getParentFragment() != null) &&
+					getParentFragment().getParentFragment() instanceof HostFragmentInterface)
+		    setHostFragment((HostFragmentInterface) (getParentFragment().getParentFragment()));
+
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
@@ -1172,15 +1187,6 @@ public class BaseFragment extends Fragment {
 	{
 		if (hostFragment != null)
 			hostFragment.popStack();
-	}
-
-	//
-	// Action Bar
-	//
-
-	protected void setActionBarTitle(String title)
-	{
-//		((ActionBarActivity) getActivity()).getSupportActionBar().setSubtitle(title);
 	}
 
 	//

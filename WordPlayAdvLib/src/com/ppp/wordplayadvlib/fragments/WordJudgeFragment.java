@@ -53,20 +53,9 @@ public class WordJudgeFragment extends BaseFragment implements View.OnClickListe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
 		rootView = (RelativeLayout)inflater.inflate(R.layout.word_judge_fragment, container, false);
-
 		setupWordJudgeTab();
-
 		return rootView;
-
-	}
-
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-		setActionBarTitle(getString(R.string.WordJudge));
 	}
 
 	@Override

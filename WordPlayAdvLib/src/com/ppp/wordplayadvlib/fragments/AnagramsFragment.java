@@ -45,18 +45,11 @@ public class AnagramsFragment extends BaseFragment
 	}
 
 	@Override
-	public void onResume()
-	{
-		super.onResume();
-		setActionBarTitle(getString(R.string.Anagrams));
-	}
-
-	@Override
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-    	startSearchFragment(v);
+    	startSearchFragment();
     }
 
     //
@@ -76,7 +69,7 @@ public class AnagramsFragment extends BaseFragment
 			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
 				if (checkForEnterKey(v, keyCode, event))  {
-					startSearchFragment(v);
+					startSearchFragment();
 					return true;
 				}
 				return false;
@@ -90,7 +83,7 @@ public class AnagramsFragment extends BaseFragment
 			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
 				if (checkForEnterKey(v, keyCode, event))  {
-					startSearchFragment(v);
+					startSearchFragment();
 					return true;
 				}
 				return false;
@@ -140,7 +133,7 @@ public class AnagramsFragment extends BaseFragment
 	// Search Activity Support
 	//
 
-    private void startSearchFragment(View v)
+    private void startSearchFragment()
     {
 
     	String searchString = "";

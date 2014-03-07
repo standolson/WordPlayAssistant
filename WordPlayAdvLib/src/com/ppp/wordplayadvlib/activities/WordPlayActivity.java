@@ -30,7 +30,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -177,6 +176,7 @@ public class WordPlayActivity extends HostActivity
         super.onResume();
 
         initUi();
+        refreshHomeIcon();
 
         // If the drawer has not been seen, show it
         if (!drawerSeen)
@@ -352,6 +352,7 @@ public class WordPlayActivity extends HostActivity
     @Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+
     	switch (item.getItemId())  {
 
 			// Respond to the action bar's Up/Home button
