@@ -68,38 +68,15 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	private ProgressDialog progressDialog;
 	private boolean cancel = false;
 
-//	private AdView adView;
-
-//	public SearchFragment() { super(); }
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
-		rootView = inflater.inflate(R.layout.search_fragment, null);
-		return rootView;
-	}
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		
-	    super.onActivityCreated(savedInstanceState);
+		super.onCreate(savedInstanceState);
 
-	    // Get a handle on the ListView
-	    searchListView = (ListView) rootView.findViewById(R.id.search_result_list);
-	    searchListView.setOnItemClickListener(this);
-
-		// This fragment has menu items...
 		setHasOptionsMenu(true);
 
-//		if (WordPlayApp.isFreeMode())  {
-//			LinearLayout header_layout = (LinearLayout)View.inflate(this, R.layout.admob_listview_footer, null);
-//			adView = (AdView)header_layout.findViewById(R.id.listview_ad);
-//			adView.loadAd(new AdRequest());
-//			ListView list = (ListView)findViewById(android.R.id.list); 
-//			list.addHeaderView(adView);
-//		}
-
+	    // Get the arguments
 	    Bundle args = getArguments();
 	    searchType = SearchType.fromInt(args.getInt("SearchType"));
 	    searchString = args.getString("SearchString").toLowerCase();
@@ -112,11 +89,37 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 			dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
 		wordScore = WordScoreState.fromInt(args.getInt("WordScores"));
 		wordSort = WordSortState.fromInt(args.getInt("WordSort"));
+	    
+	    Debug.i("SearchString: '" + searchString + "'");
+		Debug.i("BoardString: '" + boardString + "'");
+	    Debug.i("SearchType: " + searchType);
+		Debug.i("Dictionary: " + dictionary);
+		Debug.i("WordScores: " + wordScore);
+		Debug.i("SortByScore: " + wordSort);
 
-        // If the device was reoriented, then reconnect to the word judge
-        // search.  In these cases, the JudgeSearch object is retained because
-		// we called setRetainInstance(true) above.
-	    if (searchThread != null)  {
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+
+		rootView = inflater.inflate(R.layout.search_fragment, null);
+
+		searchListView = (ListView) rootView.findViewById(R.id.search_result_list);
+	    searchListView.setOnItemClickListener(this);
+
+		return rootView;
+
+	}
+
+	@Override
+	public void onResume()
+	{
+
+		super.onResume();
+
+		// If a search is already running, reattach to it
+		if (searchThread != null)  {
 	    	searchThread.setReconfigured(false);
 	    	searchObject = searchThread.getSearchObject();
 	    	searchHandler = searchObject.getSearchHandler();
@@ -138,18 +141,17 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	    		return;
 	    	}
 	    }
-		
-	    // Create the new SearchObject used for this search
-	    searchObject = new SearchObject(args);
-    
-	    Debug.i("SearchString: '" + searchString + "'");
-		Debug.i("BoardString: '" + boardString + "'");
-	    Debug.i("SearchType: " + searchType);
-		Debug.i("Dictionary: " + dictionary);
-		Debug.i("WordScores: " + wordScore);
-		Debug.i("SortByScore: " + wordSort);
 
+		// If we've already done a search, don't do another
+		if (searchObject != null)
+			return;
+
+	    // Create the new SearchObject and connection to the dictionary
+		// server used for this search
+	    searchObject = new SearchObject(getArguments());
     	dictServer = new RFC2229();
+
+    	// Execute the search
     	switch (searchObject.getSearchType())  {
 			case OPTION_DICTIONARY_EXACT_MATCH:
 				onExactMatch();
@@ -175,41 +177,8 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
     		default:
     			break;
     	}
-    	
-	}
-
-	//
-	// Activity Methods
-	//
-
-	@Override
-	public void onDestroy()
-	{
-
-//		if (adView != null)
-//			adView.destroy();
-
-		super.onDestroy();
-
-		// If we are not being reconfigured and are really going away
-		// for good, free the memory being held by the result list.
-		if ((searchThread != null) && !searchThread.isReconfigured())  {
-			Debug.d("onDestroy: freeing memory");
-			ArrayAdapter<?> adapter = (ArrayAdapter<?>)searchListView.getAdapter();
-			if (adapter != null)
-				adapter.clear();
-			System.gc();
-		}
 
 	}
-
-//	@Override
-	//	public void onResume()
-//	{
-//		super.onResume();
-//		if (WordPlayApp.isFreeMode())
-//			adView.loadAd(new AdRequest());
-//	}
 
 	@Override
 	public void onDetach()
@@ -219,7 +188,6 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 
 		// If the user is reorienting the device, close the progress dialog
 		// and reset the search handler
-		Debug.v("SearchResult: onDetach executing");
 		if (progressDialog != null)
 			closeProgressDialog();
 		if (searchThread != null)  {
@@ -725,9 +693,9 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 				
 				while (!cancel)  {
 					try {
-						StringBuilder resp = dictServer.defineWord(
-								"^" + searchObject.getSearchString() + "$",
-								searchObject.getDictionary());
+						StringBuilder resp =
+							dictServer.defineWord("^" + searchObject.getSearchString() + "$",
+													searchObject.getDictionary());
 						if (resp != null)  {
 							searchObject.setDefinition(new WordDefinition(searchObject.getSearchString(), resp));
 							searchObject.setDefinitionList(searchObject.getDefinition().getDefinitionsList());
@@ -824,10 +792,10 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 				
 				while (!cancel)  {
 					try {
-						StringBuilder resp = dictServer.matchWord(
-								"^" + searchObject.getSearchString(),
-								searchObject.getDictionary(),
-								false);
+						StringBuilder resp =
+							dictServer.matchWord("^" + searchObject.getSearchString(),
+													searchObject.getDictionary(),
+													false);
 						searchObject.setWordList(RFC2229.parseWordList(resp));
 						break;
 					}
@@ -921,10 +889,10 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 				
 				while (!cancel)  {
 					try {
-						StringBuilder resp = dictServer.matchWord(
-								searchObject.getSearchString(),
-								searchObject.getDictionary(), 
-								false);
+						StringBuilder resp =
+							dictServer.matchWord(searchObject.getSearchString(),
+													searchObject.getDictionary(), 
+													false);
 						searchObject.setWordList(RFC2229.parseWordList(resp));
 						break;
 					}
@@ -1018,10 +986,10 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 				
 				while (!cancel)  {
 					try {
-						StringBuilder resp = dictServer.matchWord(
-								searchObject.getSearchString() + "$",
-								searchObject.getDictionary(),
-								false);
+						StringBuilder resp =
+							dictServer.matchWord(searchObject.getSearchString() + "$",
+													searchObject.getDictionary(),
+													false);
 						searchObject.setWordList(RFC2229.parseWordList(resp));
 						break;
 					}
@@ -1065,10 +1033,10 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 
 				while (!cancel)  {
 					try {
-						StringBuilder resp = dictServer.matchWord(
-								"^" + newSearchString + "$",
-								searchObject.getDictionary(),
-								false);
+						StringBuilder resp =
+							dictServer.matchWord("^" + newSearchString + "$",
+													searchObject.getDictionary(),
+													false);
 						searchObject.setWordList(RFC2229.parseWordList(resp));
 						break;
 					}

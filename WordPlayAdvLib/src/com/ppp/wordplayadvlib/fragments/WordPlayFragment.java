@@ -439,10 +439,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     	else if (item.getItemId() == R.id.showhelp_menu)
 			showHelp();
 
-    	// About
-    	else if (item.getItemId() == R.id.showabout_menu)
-    		showDialog(AboutDialog);
-
     	// Exit
     	else if (item.getItemId() == R.id.exit_menu)  {
 			removeNotification();

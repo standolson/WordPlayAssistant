@@ -29,4 +29,6 @@ public class Constants {
 	
 	public static final int BufSize = 8192;
 
+	public static final String BLANK = "";
+
 }

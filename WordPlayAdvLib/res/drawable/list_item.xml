@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true">
+        <shape>
+            <gradient android:angle="270" android:endColor="#FFEEEEEE" android:startColor="#FFEEEEEE" />
+        </shape>
+    </item>
+
+    <item android:state_focused="true">
+        <shape>
+            <gradient android:angle="270" android:endColor="#FFEEEEEE" android:startColor="#FFEEEEEE" />
+        </shape>
+    </item>
+    
+    <item android:state_selected="true">
+        <shape>
+            <gradient android:angle="270" android:endColor="#FFEEEEEE" android:startColor="#FFEEEEEE" />
+        </shape>
+    </item>
+
+    <!-- Removed the 'default' state color since its redundant -->
+<!--     <item> -->
+<!--         <shape> -->
+<!--             <gradient android:angle="270" android:endColor="#FFFFFFFF" android:startColor="#FFFFFFFF" /> -->
+<!--         </shape> -->
+<!--     </item> -->
+
+</selector>

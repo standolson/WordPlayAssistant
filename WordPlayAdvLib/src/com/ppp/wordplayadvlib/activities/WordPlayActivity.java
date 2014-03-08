@@ -51,6 +51,7 @@ import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
+import com.ppp.wordplayadvlib.fragments.hosts.AboutHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.AnagramsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.CrosswordsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.DictionaryHostFragment;
@@ -98,8 +99,6 @@ public class WordPlayActivity extends HostActivity
 
 		super.onCreate(savedInstanceState);
 
-//		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
 	    setContentView(R.layout.menu_drawer);
 
 	    ActionBar actionBar = getSupportActionBar();
@@ -115,6 +114,8 @@ public class WordPlayActivity extends HostActivity
         menuItems.add(new DrawerMenuItem(getString(R.string.Dictionary), R.drawable.ic_tab_dictionary, DictionaryHostFragment.class));
         menuItems.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, ThesaurusHostFragment.class));
         menuItems.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsHostFragment.class));
+        menuItems.add(new DrawerMenuItem(Constants.BLANK, 0, null));
+        menuItems.add(new DrawerMenuItem(getString(R.string.showabout_menu_str), 0, AboutHostFragment.class));
 
         // Create and show the initial fragment or the last
         // fragment seen
@@ -410,10 +411,6 @@ public class WordPlayActivity extends HostActivity
 		// Help
 		else if (item.getItemId() == R.id.showhelp_menu)
 			showHelp();
-	
-		// About
-		else if (item.getItemId() == R.id.showabout_menu)
-			displayDialog(AboutDialog);
 	
 		// Exit
 		else if (item.getItemId() == R.id.exit_menu)  {
