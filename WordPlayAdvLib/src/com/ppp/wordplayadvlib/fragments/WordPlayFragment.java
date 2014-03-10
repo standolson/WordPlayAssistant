@@ -1090,9 +1090,9 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
         		}
         	});
         	    	
-        	final String appName = getString(R.string.app_name);
-        	TextView versionText = (TextView)layout.findViewById(R.id.about_dialog_version);
-        	versionText.setText(appName + " v" + Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
+//        	final String appName = getString(R.string.app_name);
+//        	TextView versionText = (TextView)layout.findViewById(R.id.about_dialog_version);
+//        	versionText.setText(appName + " v" + Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
         	
         	TextView copyrightText = (TextView)layout.findViewById(R.id.about_dialog_copyright);
         	copyrightText.setText(getString(R.string.copyright));
@@ -1101,28 +1101,28 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
         	companyNameText.setText(getString(R.string.company_name));
         	
         	Button contactButton = (Button)layout.findViewById(R.id.contact_us);
-        	contactButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-    	    		Intent intent = new Intent(Intent.ACTION_SEND);
-    	    		intent.setType("message/rfc822");
-    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
-    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-    	    				"Comments on " + appName + " v" +
-    	    				Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
-                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
-                	if (!getActivity().isFinishing())  {
-                		dismiss();
-    	            	try {
-    	            		if (!getActivity().isFinishing())
-    	            			startActivity(intent);
-    	            	}
-    	            	catch (ActivityNotFoundException exception) {
-    	            		Utils.configureEmailAlert(getActivity());
-    	            	}
-                	}
-        		}
-        	});
+//        	contactButton.setOnClickListener(new View.OnClickListener() {
+//        		public void onClick(View v)
+//        		{
+//    	    		Intent intent = new Intent(Intent.ACTION_SEND);
+//    	    		intent.setType("message/rfc822");
+//    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
+//    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
+//    	    				"Comments on " + appName + " v" +
+//    	    				Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
+//                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+//                	if (!getActivity().isFinishing())  {
+//                		dismiss();
+//    	            	try {
+//    	            		if (!getActivity().isFinishing())
+//    	            			startActivity(intent);
+//    	            	}
+//    	            	catch (ActivityNotFoundException exception) {
+//    	            		Utils.configureEmailAlert(getActivity());
+//    	            	}
+//                	}
+//        		}
+//        	});
         	
         	Button releaseNotesButton = (Button)layout.findViewById(R.id.release_notes);
         	releaseNotesButton.setOnClickListener(new View.OnClickListener()  {
@@ -1194,33 +1194,33 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
         	builder.setView(layout);
         	dialog = builder.create();
         	
-        	Button contactButton = (Button)layout.findViewById(R.id.nag_button);
-        	contactButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-
-    	    		Intent intent = new Intent(Intent.ACTION_SEND);
-    	        	String appName = getString(R.string.app_name);
-
-    	    		intent.setType("message/rfc822");
-    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
-    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-    	    				"Comments on " + appName + " v" + Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
-                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
-                	if (!getActivity().isFinishing())  {
-    	            	dismiss();
-    	            	fragment.savedSearchIntent = fragment.searchIntent;
-    	            	try {
-    	            		if (!getActivity().isFinishing())
-    	            			startActivityForResult(intent, EmailActivity);
-    	            	}
-    	            	catch (Exception e) {
-    	    	    		startActivity(fragment.savedSearchIntent);
-    	            	}
-                	}
-
-        		}
-        	});
+//        	Button contactButton = (Button)layout.findViewById(R.id.nag_button);
+//        	contactButton.setOnClickListener(new View.OnClickListener() {
+//        		public void onClick(View v)
+//        		{
+//
+//    	    		Intent intent = new Intent(Intent.ACTION_SEND);
+//    	        	String appName = getString(R.string.app_name);
+//
+//    	    		intent.setType("message/rfc822");
+//    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
+//    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
+//    	    				"Comments on " + appName + " v" + Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
+//                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+//                	if (!getActivity().isFinishing())  {
+//    	            	dismiss();
+//    	            	fragment.savedSearchIntent = fragment.searchIntent;
+//    	            	try {
+//    	            		if (!getActivity().isFinishing())
+//    	            			startActivityForResult(intent, EmailActivity);
+//    	            	}
+//    	            	catch (Exception e) {
+//    	    	    		startActivity(fragment.savedSearchIntent);
+//    	            	}
+//                	}
+//
+//        		}
+//        	});
 
         	return dialog;
 
@@ -1290,13 +1290,13 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
         	dialog = builder.create();
 
         	TextView textView = (TextView)layout.findViewById(R.id.dictionary_mode_text);
-        	String text = String.format(isUpgrade ?
-        									getString(R.string.dictionary_upgrade_dialog_text) :
-        									getString(R.string.dictionary_install_dialog_text),
-        								WordPlayApp.getInstance().isFreeMode() ?
-        									" Free" : "",
-        								Constants.AppMajorVersion, Constants.AppMinorVersion);
-        	textView.setText(text);
+//        	String text = String.format(isUpgrade ?
+//        									getString(R.string.dictionary_upgrade_dialog_text) :
+//        									getString(R.string.dictionary_install_dialog_text),
+//        								WordPlayApp.getInstance().isFreeMode() ?
+//        									" Free" : "",
+//        								Constants.AppMajorVersion, Constants.AppMinorVersion);
+//        	textView.setText(text);
 
         	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);
         	okButton.setOnClickListener(new View.OnClickListener() {

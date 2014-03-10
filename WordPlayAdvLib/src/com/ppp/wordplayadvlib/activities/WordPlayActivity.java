@@ -1,9 +1,6 @@
 package com.ppp.wordplayadvlib.activities;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +12,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -487,30 +483,6 @@ public class WordPlayActivity extends HostActivity
 //		catch (Exception e) {}
     	
     }
-    
-    private String getHelpText(String whichHelp, int id)
-    {
-
-    	BufferedReader rd =
-    		new BufferedReader(new InputStreamReader(getResources().openRawResource(id)), Constants.BufSize);
-    	String retval = "";
-    	String line;
-    	
-    	try {
-    		while ((line = rd.readLine()) != null)  {
-    			if (line.length() == 0)
-    				continue;
-    			retval += line.replace('\n', ' ');
-    		}
-    		rd.close();
-    	}
-    	catch (IOException e) {
-    		return "Unable to view '" + whichHelp + "' help at this time.";
-    	}
-    	
-    	return retval;
-    	
-    }
 
     //
     // Dialogs
@@ -564,58 +536,12 @@ public class WordPlayActivity extends HostActivity
         	    	
         	final String appName = getString(R.string.app_name);
         	TextView versionText = (TextView)layout.findViewById(R.id.about_dialog_version);
-        	versionText.setText(appName + " v" + Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
         	
         	TextView copyrightText = (TextView)layout.findViewById(R.id.about_dialog_copyright);
         	copyrightText.setText(getString(R.string.copyright));
         	
         	TextView companyNameText = (TextView)layout.findViewById(R.id.about_dialog_company_name);
         	companyNameText.setText(getString(R.string.company_name));
-        	
-        	Button contactButton = (Button)layout.findViewById(R.id.contact_us);
-        	contactButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-    	    		Intent intent = new Intent(Intent.ACTION_SEND);
-    	    		intent.setType("message/rfc822");
-    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
-    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-    	    				"Comments on " + appName + " v" +
-    	    				Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
-                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
-                	if (!getActivity().isFinishing())  {
-                		dismiss();
-    	            	try {
-    	            		if (!getActivity().isFinishing())
-    	            			startActivity(intent);
-    	            	}
-    	            	catch (ActivityNotFoundException exception) {
-    	            		Utils.configureEmailAlert(getActivity());
-    	            	}
-                	}
-        		}
-        	});
-        	
-        	Button releaseNotesButton = (Button)layout.findViewById(R.id.release_notes);
-        	releaseNotesButton.setOnClickListener(new View.OnClickListener()  {
-        		public void onClick(View v)
-        		{
-        			String str = getHelpText("Release Notes", R.raw.release_notes);
-        			Intent intent = new Intent(getActivity(), HelpViewer.class);
-        			intent.putExtra("HelpText", str);
-        			if (!getActivity().isFinishing())  {
-        				dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())
-    	    					startActivity(intent);
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-
-        	Button buyItButton = (Button)layout.findViewById(R.id.buy_it);
-//        	fragment.setMarketButton(dialog, buyItButton, true);
         		
         	ImageView dictOrgImage = (ImageView)layout.findViewById(R.id.powered_by_image);
         	dictOrgImage.setOnClickListener(new View.OnClickListener() {
@@ -660,34 +586,6 @@ public class WordPlayActivity extends HostActivity
         	builder = new AlertDialog.Builder(getActivity());
         	builder.setView(layout);
         	dialog = builder.create();
-        	
-        	Button contactButton = (Button)layout.findViewById(R.id.nag_button);
-        	contactButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-
-    	    		Intent intent = new Intent(Intent.ACTION_SEND);
-    	        	String appName = getString(R.string.app_name);
-
-    	    		intent.setType("message/rfc822");
-    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
-    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-    	    				"Comments on " + appName + " v" + Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
-                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
-                	if (!getActivity().isFinishing())  {
-    	            	dismiss();
-//    	            	fragment.savedSearchIntent = fragment.searchIntent;
-    	            	try {
-    	            		if (!getActivity().isFinishing())
-    	            			startActivityForResult(intent, EmailActivity);
-    	            	}
-    	            	catch (Exception e) {
-//    	    	    		startActivity(fragment.savedSearchIntent);
-    	            	}
-                	}
-
-        		}
-        	});
 
         	return dialog;
 
@@ -758,7 +656,7 @@ public class WordPlayActivity extends HostActivity
         									getString(R.string.dictionary_install_dialog_text),
         								WordPlayApp.getInstance().isFreeMode() ?
         									" Free" : "",
-        								Constants.AppMajorVersion, Constants.AppMinorVersion);
+        								WordPlayApp.appVersionName);
         	textView.setText(text);
 
         	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);
@@ -800,7 +698,7 @@ public class WordPlayActivity extends HostActivity
         	Button showRelNotesButton = (Button)layout.findViewById(R.id.free_mode_relnotes_button);
         	showRelNotesButton.setOnClickListener(new View.OnClickListener() {
         		public void onClick(View v) {
-        			String str = getHelpText("Release Notes", R.raw.release_notes);
+        			String str = Utils.getHelpText(WordPlayActivity.this, "Release Notes", R.raw.release_notes);
         			Intent intent = new Intent(getActivity(), HelpViewer.class);
         			intent.putExtra("HelpText", str);
         			if (!getActivity().isFinishing())  {

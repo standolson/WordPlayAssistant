@@ -86,11 +86,18 @@ public class AppErrDialog extends AlertDialog {
     	StringBuilder buf = new StringBuilder();
     	final String appName = context.getString(R.string.app_name);
 
+		// Get the version number
+    	String versionName = "Unknown";
+		try {
+			versionName =
+				context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+		}
+		catch (Exception e) {}
+
     	intent.setType("message/rfc822");
 		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
     	intent.putExtra(Intent.EXTRA_SUBJECT,
-    			"Problem Report for " + appName + " v" +
-    			Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
+    			"Problem Report for " + appName + " v" + versionName);
 
     	buf.append(exception.toString() + "\n\n");
     	for (StackTraceElement e : stackTrace)

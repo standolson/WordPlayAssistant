@@ -13,8 +13,9 @@ public class WordPlayApp extends Application
 
 	private static WordPlayApp singleton = null;
 
-	// App Version
-	private static int manifestAppVersion = 0;
+	// App version code and name
+	public static int appVersionCode = 0;
+	public static String appVersionName = "Unknown";
 
 	private boolean freeMode = true;
 	private boolean useGoogleAppEngine = false;
@@ -61,7 +62,7 @@ public class WordPlayApp extends Application
 	{
 
 		// Skip if the version is set
-		if (manifestAppVersion != 0)
+		if (appVersionCode != 0)
 			return;
 
         // Get the application version we use later in reseting the nag count
@@ -69,24 +70,20 @@ public class WordPlayApp extends Application
 		// history is loaded as we also use the manifest version to determine
 		// when history needs upgrading.
         try {
-        	PackageInfo pInfo = app.getPackageManager().getPackageInfo(
-        												WordPlayApp.getInstance().isFreeMode() ?
+        	PackageInfo pInfo =
+        		app.getPackageManager().getPackageInfo(getInstance().isFreeMode() ?
         													Constants.FreeAppName : Constants.PaidAppName,
         												PackageManager.GET_META_DATA);
-        	manifestAppVersion = pInfo.versionCode;
-        	Debug.v("MANIFEST VERSION = " + manifestAppVersion);
+        	appVersionCode = pInfo.versionCode;
+        	appVersionName = pInfo.versionName;
+        	Debug.v("MANIFEST VERISON CODE = " + appVersionCode);
+        	Debug.v("MANIFEST VERSION NAME = " + appVersionName);
         }
-        catch (NameNotFoundException e) {
-        	if (WordPlayApp.getInstance().isPaidMode())
-        		manifestAppVersion = Constants.PaidVersionCode;
-        	else
-        		manifestAppVersion = Constants.FreeVersionCode;
-        	Debug.v("DEFAULTING TO APPLICATION VERSION " + manifestAppVersion);
-        }
+        catch (NameNotFoundException e) {}
 
 	}
 
-	public static int getAppManifestVersion() { return manifestAppVersion; }
+	public static int getAppManifestVersion() { return appVersionCode; }
 
 	public void setFreeMode() { freeMode = true; }
 	public void setPaidMode() { freeMode = false; }

@@ -110,7 +110,7 @@ About box accessed from the menu.\n
 </string>
 
 <string formatted="false" name="dictionary_install_dialog_text">
-WordPlay Assistant%s v%s.%s requires\n
+WordPlay Assistant%s v%s requires\n
 that the word database be installed on\n
 the device.  This database takes 8MB of\n
 space on your SD card. If you do not\n
@@ -126,7 +126,7 @@ database.
 </string>
 
 <string formatted="false" name="dictionary_upgrade_dialog_text">
-WordPlay Assistant%s v%s.%s now includes\n
+WordPlay Assistant%s v%s now includes\n
 support for the ENABLE dictionary.  This\n
 dictionary is the one used by Words With\n
 Friends.\n
@@ -173,7 +173,8 @@ Please enjoy WordPlay Assistant Free!\n
 
 	<string name="error_dialog_title">Error</string>
 
+	<string name="version" formatted="true">Version v%1$s</string>
 	<string name="company_name">Portland Portable Programs</string>
-	<string name="copyright">(C) 2010-2012</string>
+	<string name="copyright">Copyright (C) 2010-2014</string>
 
 </resources>

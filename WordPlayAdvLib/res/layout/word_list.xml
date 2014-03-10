@@ -9,4 +9,5 @@
 	android:textColor="@color/white"
 	android:textSize="20dip"
 	android:textStyle="bold"
-	android:typeface="serif" />
+	android:typeface="serif"
+	android:background="@drawable/list_item" />

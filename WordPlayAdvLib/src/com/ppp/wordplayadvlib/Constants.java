@@ -11,8 +11,6 @@ public class Constants {
 	public static final String MarketFreeWebAddress = "market://details?id=com.ppp.wordplayfree";
 	public static final String DictOrgWebAddress = "http://www.dict.org/bin/Dict";
 
-	public static final String AppMajorVersion = "4";
-	public static final String AppMinorVersion = "2a";
 	public static final int PaidVersionCode = 18;
 	public static final int FreeVersionCode = 19;
 	

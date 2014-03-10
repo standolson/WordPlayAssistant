@@ -3,19 +3,19 @@
 
     <item android:state_pressed="true">
         <shape>
-            <gradient android:angle="270" android:endColor="#FFEEEEEE" android:startColor="#FFEEEEEE" />
+            <gradient android:angle="270" android:endColor="#FFBEBEBE" android:startColor="#FFBEBEBE" />
         </shape>
     </item>
 
     <item android:state_focused="true">
         <shape>
-            <gradient android:angle="270" android:endColor="#FFEEEEEE" android:startColor="#FFEEEEEE" />
+            <gradient android:angle="270" android:endColor="#FFBEBEBE" android:startColor="#FFBEBEBE" />
         </shape>
     </item>
     
     <item android:state_selected="true">
         <shape>
-            <gradient android:angle="270" android:endColor="#FFEEEEEE" android:startColor="#FFEEEEEE" />
+            <gradient android:angle="270" android:endColor="#FFBEBEBE" android:startColor="#FFBEBEBE" />
         </shape>
     </item>
 

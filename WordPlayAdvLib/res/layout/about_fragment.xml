@@ -23,6 +23,25 @@
 		    style="@style/AboutText"
 		    android:id="@+id/contact_us"
 		    android:text="@string/contact_us_text" />
+
+		<LinearLayout
+		    android:id="@+id/buy_it_layout"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical" >
+	
+			<ImageView
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:scaleType="fitXY"
+			    android:src="@drawable/rowseparator" />
+	
+			<TextView
+			    style="@style/AboutText"
+			    android:id="@+id/buy_it"
+			    android:text="@string/buy_it_text" />
+
+		</LinearLayout>
 	
 		<ImageView
 		    android:layout_width="fill_parent"
@@ -44,7 +63,28 @@
 		<TextView
 		    style="@style/AboutText"
 		    android:id="@+id/copyright"
-		    android:text="Copyright Goes Here" />
+		    android:text="@string/copyright" />
+	
+		<ImageView
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:scaleType="fitXY"
+		    android:src="@drawable/rowseparator" />
+
+		<LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:padding="10dip"
+		    android:orientation="vertical" >
+
+		    <ImageView
+				android:id="@+id/powered_by_image"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:src="@drawable/powered_by_dict_org" />
+
+		</LinearLayout>
 
 	</LinearLayout>
 

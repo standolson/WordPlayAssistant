@@ -1,6 +1,9 @@
 package com.ppp.wordplayadvlib.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
@@ -13,6 +16,7 @@ import android.text.SpannableString;
 import android.text.format.Formatter;
 import android.text.style.ForegroundColorSpan;
 
+import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.appdata.SearchObject;
 import com.ppp.wordplayadvlib.appdata.SearchType;
@@ -165,5 +169,29 @@ public class Utils {
 		return ss;
 
 	}
+    
+    public static String getHelpText(Context context, String whichHelp, int id)
+    {
+
+    	BufferedReader rd =
+    		new BufferedReader(new InputStreamReader(context.getResources().openRawResource(id)), Constants.BufSize);
+    	String retval = "";
+    	String line;
+    	
+    	try {
+    		while ((line = rd.readLine()) != null)  {
+    			if (line.length() == 0)
+    				continue;
+    			retval += line.replace('\n', ' ');
+    		}
+    		rd.close();
+    	}
+    	catch (IOException e) {
+    		return "Unable to view '" + whichHelp + "' at this time.";
+    	}
+    	
+    	return retval;
+    	
+    }
 
 }
