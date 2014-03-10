@@ -51,7 +51,9 @@ public class HostFragment extends Fragment
             clearOnResume = false;
             replaceStack(getInitialFragment());
         }
-       
+ 
+        setHomeIcon();
+
     }
 
     @Override
