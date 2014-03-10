@@ -78,8 +78,6 @@ public class BaseFragment extends Fragment {
 
 	protected HostFragmentInterface hostFragment;
 
-	private static String versionName;
-
 	//
 	// Fragment Methods
 	//
@@ -108,14 +106,6 @@ public class BaseFragment extends Fragment {
 	{
 
 		super.onActivityCreated(savedInstanceState);
-
-		// Get the version number
-    	versionName = "Unknown";
-		try {
-			versionName =
-				getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
-		}
-		catch (Exception e) {}
 
         // For the free mode, see if we've shown the free dialog
         // and if we haven't, show it.  If we show it, when we're
@@ -420,9 +410,6 @@ public class BaseFragment extends Fragment {
 		SearchFragment fragment = new SearchFragment();
 		fragment.setArguments(args);
 		pushToStack(fragment);
-//		Intent intent = new Intent(getActivity(), SearchActivity.class);
-//		intent.putExtras(args);
-//		startActivity(intent);
 	}
 
     //
@@ -562,7 +549,7 @@ public class BaseFragment extends Fragment {
         	    	
         	final String appName = getString(R.string.app_name);
         	TextView versionText = (TextView)layout.findViewById(R.id.about_dialog_version);
-        	versionText.setText(appName + " v" + versionName);
+        	versionText.setText(appName + " v" + WordPlayApp.appVersionName);
         	
         	TextView copyrightText = (TextView)layout.findViewById(R.id.about_dialog_copyright);
         	copyrightText.setText(getString(R.string.copyright));
@@ -578,7 +565,7 @@ public class BaseFragment extends Fragment {
     	    		intent.setType("message/rfc822");
     	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
     	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-    	    				"Comments on " + appName + " v" + versionName);
+    	    				"Comments on " + appName + " v" + WordPlayApp.appVersionName);
                 	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
                 	if (!getActivity().isFinishing())  {
                 		dismiss();
@@ -675,7 +662,7 @@ public class BaseFragment extends Fragment {
     	    		intent.setType("message/rfc822");
     	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
     	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-    	    				"Comments on " + appName + " v" + versionName);
+    	    				"Comments on " + appName + " v" + WordPlayApp.appVersionName);
                 	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
                 	if (!getActivity().isFinishing())  {
     	            	dismiss();
@@ -760,7 +747,7 @@ public class BaseFragment extends Fragment {
         									getString(R.string.dictionary_install_dialog_text),
         								WordPlayApp.getInstance().isFreeMode() ?
         									" Free" : "",
-        								versionName);
+        								WordPlayApp.appVersionName);
         	textView.setText(text);
 
         	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);

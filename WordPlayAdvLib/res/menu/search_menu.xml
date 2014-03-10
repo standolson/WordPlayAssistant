@@ -3,51 +3,37 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:title="@string/showhistory_menu_str"
-		android:id="@+id/showhistory_menu"
-		android:icon="@drawable/ic_menu_history"
-		android:enabled="true"
-		android:visible="true"/>
-
-	<item
-		android:title="@string/dictionary_menu_str"
-		android:id="@+id/dictionary_menu"
-		android:icon="@drawable/ic_menu_dictionaries"
-		android:enabled="true"
-		android:visible="true"/>
-
-	<item
-		android:title="@string/clearhistory_menu_str"
-		android:id="@+id/clearhistory_menu"
-		android:icon="@android:drawable/ic_menu_close_clear_cancel"
-		android:enabled="true"
-		android:visible="true"/>
-
-	<item
-		android:title="@string/showhelp_menu_str"
 		android:id="@+id/showhelp_menu"
-		android:icon="@android:drawable/ic_menu_help"
-		android:enabled="true"
-		android:visible="true"/>
+		android:title="@string/showhelp_menu_str"
+		android:icon="@android:drawable/ic_menu_help" />
 
 	<item
-		android:title="@string/prefs_menu_str"
+		android:id="@+id/showhistory_menu"
+		android:title="@string/showhistory_menu_str"
+		android:icon="@drawable/ic_menu_history" />
+
+	<item
+		android:id="@+id/clearhistory_menu"
+		android:title="@string/clearhistory_menu_str"
+		android:icon="@android:drawable/ic_menu_close_clear_cancel" />
+
+	<item
+		android:id="@+id/dictionary_menu"
+		android:title="@string/dictionary_menu_str"
+		android:icon="@drawable/ic_menu_dictionaries" />
+
+	<item
 		android:id="@+id/prefs_menu"
-		android:icon="@android:drawable/ic_menu_preferences"
-		android:enabled="true"
-		android:visible="true"/>
+		android:title="@string/prefs_menu_str"
+		android:icon="@android:drawable/ic_menu_preferences" />
 
 	<item
-		android:title="@string/dictionary_reinstall_str"
 		android:id="@+id/dictionary_reinstall_menu"
-		android:enabled="true"
-		android:visible="true"/>
+		android:title="@string/dictionary_reinstall_str" />
 
 	<item
-		android:title="@string/exit_menu_str"
 		android:id="@+id/exit_menu"
-		android:icon="@android:drawable/ic_menu_close_clear_cancel"
-		android:enabled="true"
-		android:visible="true"/>
+		android:title="@string/exit_menu_str"
+		android:icon="@android:drawable/ic_menu_close_clear_cancel" />
 
 </menu>

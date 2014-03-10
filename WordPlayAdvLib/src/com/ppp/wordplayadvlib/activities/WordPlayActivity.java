@@ -47,10 +47,12 @@ import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
+import com.ppp.wordplayadvlib.fragments.WebViewFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.AboutHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.AnagramsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.CrosswordsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.DictionaryHostFragment;
+import com.ppp.wordplayadvlib.fragments.hosts.HostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.ThesaurusHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.WordJudgeHostFragment;
 import com.ppp.wordplayadvlib.utils.Debug;
@@ -336,10 +338,18 @@ public class WordPlayActivity extends HostActivity
     public boolean onPrepareOptionsMenu(Menu menu)
     {
 
+    	MenuItem item = null;
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+    	// If there is no help, don't show it
+    	if (lastAdded != null)  {
+        	HostFragment host = (HostFragment) lastAdded;
+        	if (host.getFragmentHelp() == 0)
+        		menu.findItem(R.id.showhelp_menu).setVisible(false);
+    	}
+
     	// If the notification bar is turned off, don't show "Exit"
-    	MenuItem item = menu.findItem(R.id.exit_menu);
+    	item = menu.findItem(R.id.exit_menu);
     	item.setVisible(prefs.getBoolean("notification_bar", false));
 
     	return true;
@@ -369,21 +379,10 @@ public class WordPlayActivity extends HostActivity
         // Menu drawer
     	if (drawerToggle.onOptionsItemSelected(item))
             return true;
-
-    	// Home menu
-        else if (drawerToggle.onOptionsItemSelected(item))
-            return true;
-
-		// Preferences
-    	else if (item.getItemId() == R.id.prefs_menu)  {
-			Intent intent = new Intent(this, UserPreferenceActivity.class);
-			try {
-				startActivityForResult(intent, UserPrefsActivity);
-			}
-			catch (Exception e) {
-				Debug.e("User Prefs Startup Failed: " + e);
-			}
-		}
+    	
+		// Help
+		else if (item.getItemId() == R.id.showhelp_menu)
+			showHelp();
 	
 		// History
 		else if (item.getItemId() == R.id.showhistory_menu)
@@ -403,17 +402,18 @@ public class WordPlayActivity extends HostActivity
 		// Dictionaries
 		else if (item.getItemId() == R.id.dictionary_menu)
 			showDictionaries();
-	
-		// Help
-		else if (item.getItemId() == R.id.showhelp_menu)
-			showHelp();
-	
-		// Exit
-		else if (item.getItemId() == R.id.exit_menu)  {
-//			removeNotification();
-			finish();
+
+		// Preferences
+    	else if (item.getItemId() == R.id.prefs_menu)  {
+			Intent intent = new Intent(this, UserPreferenceActivity.class);
+			try {
+				startActivityForResult(intent, UserPrefsActivity);
+			}
+			catch (Exception e) {
+				Debug.e("User Prefs Startup Failed: " + e);
+			}
 		}
-	
+    	
 		// Reinstall Dictionary
 		else if (item.getItemId() == R.id.dictionary_reinstall_menu)  {
 			WordlistDatabase.deleteDatabaseFile(this);
@@ -424,6 +424,12 @@ public class WordPlayActivity extends HostActivity
 				createDatabaseExceptionDialog(this, e);
 			}
 		}
+	
+		// Exit
+		else if (item.getItemId() == R.id.exit_menu)  {
+//			removeNotification();
+			finish();
+		}
 		
 		return true;
 		
@@ -432,6 +438,27 @@ public class WordPlayActivity extends HostActivity
     //
     // Menu Helpers
     //
+
+    private void showHelp()
+    {
+
+    	if (lastAdded == null)
+    		return;
+
+    	HostFragment host = (HostFragment) lastAdded;
+    	int helpId = host.getFragmentHelp();
+    	if (helpId != 0)  {
+
+    		Bundle args = new Bundle();
+    		args.putString("content", Utils.getHelpText(this, "Release Notes", helpId));
+
+    		WebViewFragment fragment = new WebViewFragment();
+    		fragment.setArguments(args);
+    		host.pushToStack(fragment);
+
+    	}
+
+    }
 
     private void showDictionaries()
     {
@@ -452,36 +479,6 @@ public class WordPlayActivity extends HostActivity
     		startActivity(intent);
     	}
     	catch (Exception e) {}
-    }
-
-    private void showHelp()
-    {
-    	
-//    	String str = null;
-//    	Intent intent = null;
-//    	
-//    	if (currentTab == DictionaryTab)  {
-//    		DictionaryType dict =
-//    			DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
-//    		if (dict.isThesaurus())
-//    			str = getHelpText("Thesaurus", R.raw.thesaurus_help);
-//    		else
-//    			str = getHelpText("Dictionary", R.raw.dictionary_help);
-//    	}
-//    	else if (currentTab == WordJudgeTab)
-//    		str = getHelpText("Word Judge", R.raw.wordjudge_help);
-//    	else if (currentTab == AnagramTab)
-//    		str = getHelpText("Anagrams", R.raw.anagrams_help);
-//    	else if (currentTab == CrosswordTab)
-//    		str = getHelpText("Crosswords", R.raw.crosswords_help);
-//    	
-//		intent = new Intent(this, HelpViewer.class);
-//		intent.putExtra("HelpText", str);
-//		try {
-//			startActivity(intent);
-//		}
-//		catch (Exception e) {}
-    	
     }
 
     //

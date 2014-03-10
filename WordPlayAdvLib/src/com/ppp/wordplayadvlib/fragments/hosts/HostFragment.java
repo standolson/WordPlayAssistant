@@ -65,6 +65,7 @@ public class HostFragment extends Fragment
     
     public static int getFragmentContainer() { return R.id.fragment_content; }
     public BaseFragment getInitialFragment() { return null; }
+    public int getFragmentHelp() { return 0; }
     
     public boolean isSuppressPageView() { return suppressPageView; }
 	public void setSuppressPageView(boolean b) { suppressPageView = b; }
@@ -163,7 +164,7 @@ public class HostFragment extends Fragment
     	if (host == null)
     		return;
     	
-    	if (host instanceof WordPlayActivity) {
+    	if (host instanceof WordPlayActivity)  {
     		
     		final ActionBarDrawerToggle toggle = (((WordPlayActivity) host)).getDrawerToggle();
     		DrawerLayout drawer = (((WordPlayActivity) host)).getDrawerLayout();
