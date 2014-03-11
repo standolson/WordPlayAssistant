@@ -85,6 +85,16 @@ public class BaseFragment extends Fragment {
 	public BaseFragment() { super(); }
 
 	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+
+		super.onCreate(savedInstanceState);
+
+		setHasOptionsMenu(true);
+
+	}
+
+	@Override
 	public void onAttach(Activity activity)
 	{
 
