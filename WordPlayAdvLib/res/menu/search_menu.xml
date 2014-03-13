@@ -8,11 +8,6 @@
 		android:icon="@android:drawable/ic_menu_help" />
 
 	<item
-		android:id="@+id/showhistory_menu"
-		android:title="@string/showhistory_menu_str"
-		android:icon="@drawable/ic_menu_history" />
-
-	<item
 		android:id="@+id/clearhistory_menu"
 		android:title="@string/clearhistory_menu_str"
 		android:icon="@android:drawable/ic_menu_close_clear_cancel" />

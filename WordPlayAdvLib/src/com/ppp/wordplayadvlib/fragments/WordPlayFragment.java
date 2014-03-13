@@ -415,11 +415,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 			}
 		}
 
-    	// History
-    	else if (item.getItemId() == R.id.showhistory_menu)  {
-			showHistory();
-		}
-
     	// Clear history
     	else if (item.getItemId() == R.id.clearhistory_menu)  {
 			if (currentTab == WordJudgeTab)  {

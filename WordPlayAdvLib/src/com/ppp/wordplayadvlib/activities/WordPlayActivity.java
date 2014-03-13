@@ -52,6 +52,7 @@ import com.ppp.wordplayadvlib.fragments.hosts.AboutHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.AnagramsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.CrosswordsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.DictionaryHostFragment;
+import com.ppp.wordplayadvlib.fragments.hosts.HistoryHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.HostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.ThesaurusHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.WordJudgeHostFragment;
@@ -113,6 +114,7 @@ public class WordPlayActivity extends HostActivity
         menuItems.add(new DrawerMenuItem(getString(R.string.Thesaurus), R.drawable.ic_tab_thesaurus, ThesaurusHostFragment.class));
         menuItems.add(new DrawerMenuItem(getString(R.string.Crosswords), R.drawable.ic_tab_crosswords, CrosswordsHostFragment.class));
         menuItems.add(new DrawerMenuItem(Constants.BLANK, 0, null));
+        menuItems.add(new DrawerMenuItem(getString(R.string.showhistory_menu_str), 0, HistoryHostFragment.class));
         menuItems.add(new DrawerMenuItem(getString(R.string.showabout_menu_str), 0, AboutHostFragment.class));
 
         // Create and show the initial fragment or the last
@@ -383,10 +385,6 @@ public class WordPlayActivity extends HostActivity
 		// Help
 		else if (item.getItemId() == R.id.showhelp_menu)
 			showHelp();
-	
-		// History
-		else if (item.getItemId() == R.id.showhistory_menu)
-			showHistory();
 	
 		// Clear history
 		else if (item.getItemId() == R.id.clearhistory_menu)  {

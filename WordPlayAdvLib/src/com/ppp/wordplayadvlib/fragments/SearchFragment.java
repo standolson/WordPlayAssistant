@@ -30,6 +30,7 @@ import com.ppp.wordplayadvlib.adapters.ScoredWordListAdapter;
 import com.ppp.wordplayadvlib.adapters.WordDefinitionsAdapter;
 import com.ppp.wordplayadvlib.adapters.WordListAdapter;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
+import com.ppp.wordplayadvlib.appdata.History;
 import com.ppp.wordplayadvlib.appdata.ScoredWord;
 import com.ppp.wordplayadvlib.appdata.SearchObject;
 import com.ppp.wordplayadvlib.appdata.SearchThread;
@@ -150,6 +151,14 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 		// server used for this search
 	    searchObject = new SearchObject(getArguments());
     	dictServer = new RFC2229();
+
+		// Add this search to the history
+		History.getInstance().addHistory(searchString,
+											boardString,
+											searchType,
+											dictionary,
+											wordScore,
+											wordSort);
 
     	// Execute the search
     	switch (searchObject.getSearchType())  {
