@@ -11,6 +11,8 @@ import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.utils.Debug;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 public class JudgeHistory {
@@ -37,9 +39,10 @@ public class JudgeHistory {
 		judge_history.clear();
 	}
 
-	public void saveJudgeHistory(SharedPreferences prefs)
+	public void saveJudgeHistory(Activity activity)
 	{
 
+		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 
 		StringBuilder judgeBuf = new StringBuilder();
@@ -58,9 +61,10 @@ public class JudgeHistory {
 
 	}
 
-	public void loadJudgeHistory(SharedPreferences prefs)
+	public void loadJudgeHistory(Activity activity)
 	{
 
+		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
 		String judgeHistoryStr = prefs.getString("wordjudge_history", "");
 
 		Debug.v("LOAD JUDGE_HISTORY = '" + judgeHistoryStr + "'");

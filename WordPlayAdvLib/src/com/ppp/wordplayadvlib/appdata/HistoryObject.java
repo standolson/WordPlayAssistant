@@ -9,8 +9,12 @@ public class HistoryObject {
 	private WordScoreState wordScore;
 	private WordSortState wordSort;
 	
-	public HistoryObject(String str, String boardStr, SearchType type,
-							DictionaryType dict, WordScoreState score, WordSortState sort)
+	public HistoryObject(String str,
+							String boardStr,
+							SearchType type,
+							DictionaryType dict,
+							WordScoreState score,
+							WordSortState sort)
 	{
 		searchType = type;
 		searchString = str;

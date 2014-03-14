@@ -1684,8 +1684,8 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 
-		History.getInstance().saveHistory(prefs);
-		JudgeHistory.getInstance().saveJudgeHistory(prefs);
+		History.getInstance().saveHistory(getActivity());
+		JudgeHistory.getInstance().saveJudgeHistory(getActivity());
 
 		// Save versioning information
 		editor.putInt("history_version", Constants.CurrentHistoryVersion);
@@ -1867,10 +1867,10 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 		((EditText)activity.findViewById(R.id.CrosswordsText)).setText(str);
 
 		// Read in the regular history
-		History.getInstance().loadHistory(prefs);
+		History.getInstance().loadHistory(getActivity());
 
 		// Read in the WordJudge history
-		JudgeHistory.getInstance().loadJudgeHistory(prefs);		
+		JudgeHistory.getInstance().loadJudgeHistory(getActivity());		
 		wjAdapter.updateHistory();
 		updateJudgeHistoryAdapter();
 		

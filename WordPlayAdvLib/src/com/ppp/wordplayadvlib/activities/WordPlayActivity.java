@@ -44,6 +44,8 @@ import android.widget.TextView;
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.appdata.History;
+import com.ppp.wordplayadvlib.appdata.JudgeHistory;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
@@ -117,6 +119,10 @@ public class WordPlayActivity extends HostActivity
         menuItems.add(new DrawerMenuItem(getString(R.string.showhistory_menu_str), 0, HistoryHostFragment.class));
         menuItems.add(new DrawerMenuItem(getString(R.string.showabout_menu_str), 0, AboutHostFragment.class));
 
+        // Clear and load history
+        History.getInstance().loadHistory(this);
+        JudgeHistory.getInstance().loadJudgeHistory(this);
+
         // Create and show the initial fragment or the last
         // fragment seen
         if (savedInstanceState == null)  {
@@ -185,6 +191,17 @@ public class WordPlayActivity extends HostActivity
                 @Override
                 public void run() { menuDrawer.openDrawer(menuListView); }
             }, 500);
+
+    }
+
+    @Override
+	public void onStop()
+    {
+
+    	super.onStop();
+
+    	History.getInstance().saveHistory(this);
+    	JudgeHistory.getInstance().saveJudgeHistory(this);
 
     }
 
@@ -331,8 +348,7 @@ public class WordPlayActivity extends HostActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-    	MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search_menu, menu);
+    	getMenuInflater().inflate(R.menu.search_menu, menu);
         return true;
     }
 
@@ -350,11 +366,16 @@ public class WordPlayActivity extends HostActivity
         		menu.findItem(R.id.showhelp_menu).setVisible(false);
     	}
 
+    	// Let child fragments turn on the "Clear History" item
+    	item = menu.findItem(R.id.clearhistory_menu);
+    	item.setVisible(false);
+
     	// If the notification bar is turned off, don't show "Exit"
     	item = menu.findItem(R.id.exit_menu);
-    	item.setVisible(prefs.getBoolean("notification_bar", false));
+    	if (item != null)
+    		item.setVisible(prefs.getBoolean("notification_bar", false));
 
-    	return true;
+    	return super.onPrepareOptionsMenu(menu);
 
     }
 
@@ -388,13 +409,8 @@ public class WordPlayActivity extends HostActivity
 	
 		// Clear history
 		else if (item.getItemId() == R.id.clearhistory_menu)  {
-//			if (currentTab == WordJudgeTab)  {
-//				clearJudgeHistory(true);
-//				updateJudgeHistoryAdapter();
-//				wjAdapter.notifyDataSetChanged();
-//			}
-//			else
-//				clearHistory(true);
+//			History.getInstance().clearHistory();
+//			JudgeHistory.getInstance().clearJudgeHistory();
 		}
 	
 		// Dictionaries
@@ -425,11 +441,11 @@ public class WordPlayActivity extends HostActivity
 	
 		// Exit
 		else if (item.getItemId() == R.id.exit_menu)  {
-//			removeNotification();
+			removeNotification();
 			finish();
 		}
 		
-		return true;
+		return super.onOptionsItemSelected(item);
 		
 	}
 

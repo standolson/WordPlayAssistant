@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
@@ -65,6 +67,29 @@ public class WordJudgeFragment extends BaseFragment implements View.OnClickListe
         imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
     	startWordJudgeSearch();
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu)
+    {
+    	MenuItem item = menu.findItem(R.id.clearhistory_menu);
+    	if (item != null)
+    		item.setVisible(true);
+    }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+
+		// Handle clearing history
+		if (item.getItemId() == R.id.clearhistory_menu)  {
+			JudgeHistory.getInstance().clearJudgeHistory();
+			wjAdapter.notifyDataSetChanged();
+			return true;
+		}
+
+		return false;
+			
+	}
 
     //
     // UI Setup

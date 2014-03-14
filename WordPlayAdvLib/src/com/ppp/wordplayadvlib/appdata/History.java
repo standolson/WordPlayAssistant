@@ -5,11 +5,12 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.appdata.HistoryObject;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.utils.Debug;
 
@@ -37,9 +38,10 @@ public class History {
 		history.clear();
 	}
 
-	public void saveHistory(SharedPreferences prefs)
+	public void saveHistory(Activity activity)
 	{
 
+		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 		StringBuilder historyBuf = new StringBuilder();
 
@@ -62,9 +64,10 @@ public class History {
 
 	}
 
-	public void loadHistory(SharedPreferences prefs)
+	public void loadHistory(Activity activity)
 	{
 
+		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
 		String historyStr = prefs.getString("history", "");
 
 		Debug.v("LOAD HISTORY = '" + historyStr + "'");
@@ -110,11 +113,20 @@ public class History {
 
 	}
 
-	public void addHistory(String str, String boardStr, SearchType type,
-							DictionaryType dict, WordScoreState score, WordSortState sort)
+	public void addHistory(String str,
+							String boardStr,
+							SearchType type,
+							DictionaryType dict,
+							WordScoreState score,
+							WordSortState sort)
 	{
 		HistoryObject newHistory = new HistoryObject(str, boardStr, type, dict, score, sort);
 		addHistory(newHistory);
+	}
+
+	public HistoryObject getHistory(int position)
+	{
+		return history.get(position);
 	}
 
 }

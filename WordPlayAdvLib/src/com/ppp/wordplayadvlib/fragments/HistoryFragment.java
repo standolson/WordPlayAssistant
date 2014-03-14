@@ -2,14 +2,11 @@ package com.ppp.wordplayadvlib.fragments;
 
 import java.util.LinkedList;
 
-import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.appdata.History;
-import com.ppp.wordplayadvlib.appdata.HistoryObject;
-import com.ppp.wordplayadvlib.appdata.SearchType;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +14,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.appdata.History;
+import com.ppp.wordplayadvlib.appdata.HistoryObject;
+import com.ppp.wordplayadvlib.appdata.SearchType;
 
 public class HistoryFragment extends BaseFragment
 	implements OnItemClickListener
@@ -41,9 +43,46 @@ public class HistoryFragment extends BaseFragment
 
 	}
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu)
+    {
+    	MenuItem item = menu.findItem(R.id.clearhistory_menu);
+    	if (item != null)
+    		item.setVisible(true);
+    }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+
+		// Handle clearing history
+		if (item.getItemId() == R.id.clearhistory_menu)  {
+			History.getInstance().clearHistory();
+			adapter.notifyDataSetChanged();
+			return true;
+		}
+
+		return false;
+			
+	}
+
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
+
+		HistoryObject element = History.getInstance().getHistory(position);
+
+		Bundle args = new Bundle();
+		args.putInt("SearchType", SearchType.OPTION_ANAGRAMS.ordinal());
+		args.putString("SearchString", element.getSearchString());
+		args.putString("BoardString", element.getBoardString());
+		args.putInt("Dictionary", element.getDictionary().ordinal());
+		args.putInt("WordScores", element.getScoreState().ordinal());
+		args.putInt("WordSort", element.getSortState().ordinal());
+
+		BaseFragment fragment = new SearchFragment();
+		fragment.setArguments(args);
+		pushToStack(fragment);
 
 	}
 
