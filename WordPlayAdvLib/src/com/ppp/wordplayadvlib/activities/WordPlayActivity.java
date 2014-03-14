@@ -29,7 +29,6 @@ import android.support.v7.app.ActionBar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -358,6 +357,10 @@ public class WordPlayActivity extends HostActivity
 
     	MenuItem item = null;
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+    	// Close the drawer
+    	if (isDrawerOpen())
+    		menuDrawer.closeDrawer(menuListView);
 
     	// If there is no help, don't show it
     	if (lastAdded != null)  {
