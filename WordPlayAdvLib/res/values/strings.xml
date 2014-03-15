@@ -85,7 +85,7 @@
 	<string name="clearhistory_menu_str">Clear History</string>
 	<string name="dictionary_menu_str">Dictionaries</string>
 	<string name="exit_menu_str">Exit</string>
-	<string name="prefs_menu_str">Preferences</string>
+	<string name="settings_menu_str">Settings</string>
 	<string name="dictionary_reinstall_str">Reinstall Dictionary</string>
 	
 	<string name="app_description">Online dictionary, thesaurus, crossword puzzle solver, and anagram generator</string>

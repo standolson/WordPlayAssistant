@@ -405,7 +405,7 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     	Activity activity = getActivity();
 
     	// Preferences
-    	if (item.getItemId() == R.id.prefs_menu)  {
+    	if (item.getItemId() == R.id.settings_menu)  {
 			Intent intent = new Intent(activity, UserPreferenceActivity.class);
 			try {
 				startActivityForResult(intent, UserPrefsActivity);

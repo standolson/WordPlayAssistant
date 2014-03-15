@@ -3,9 +3,9 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@+id/showhelp_menu"
-		android:title="@string/showhelp_menu_str"
-		android:icon="@android:drawable/ic_menu_help" />
+		android:id="@+id/dictionary_menu"
+		android:title="@string/dictionary_menu_str"
+		android:icon="@drawable/ic_menu_dictionaries" />
 
 	<item
 		android:id="@+id/clearhistory_menu"
@@ -13,18 +13,18 @@
 		android:icon="@android:drawable/ic_menu_close_clear_cancel" />
 
 	<item
-		android:id="@+id/dictionary_menu"
-		android:title="@string/dictionary_menu_str"
-		android:icon="@drawable/ic_menu_dictionaries" />
-
-	<item
-		android:id="@+id/prefs_menu"
-		android:title="@string/prefs_menu_str"
+		android:id="@+id/settings_menu"
+		android:title="@string/settings_menu_str"
 		android:icon="@android:drawable/ic_menu_preferences" />
 
 	<item
 		android:id="@+id/dictionary_reinstall_menu"
 		android:title="@string/dictionary_reinstall_str" />
+
+	<item
+		android:id="@+id/showhelp_menu"
+		android:title="@string/showhelp_menu_str"
+		android:icon="@android:drawable/ic_menu_help" />
 
 	<item
 		android:id="@+id/exit_menu"

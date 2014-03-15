@@ -166,6 +166,16 @@ public class WordPlayActivity extends HostActivity
         // Initialize the drawer seen state
         drawerSeen = getPreferences(Context.MODE_PRIVATE).getBoolean("drawerSeen", false);
 
+        // Initialize the notification icon
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		notificationIconEnabled = prefs.getBoolean("notification_bar", false);
+		if (notificationIconEnabled)  {
+	    	Intent intent = new Intent(this, getClass());
+	    	addRestartNotification(intent);
+		}
+		else
+			removeNotification();
+
     }
 
     @Override
@@ -415,7 +425,7 @@ public class WordPlayActivity extends HostActivity
 			showDictionaries();
 
 		// Preferences
-    	else if (item.getItemId() == R.id.prefs_menu)  {
+    	else if (item.getItemId() == R.id.settings_menu)  {
 			Intent intent = new Intent(this, UserPreferenceActivity.class);
 			try {
 				startActivityForResult(intent, UserPrefsActivity);
