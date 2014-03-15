@@ -46,9 +46,17 @@ public class HistoryFragment extends BaseFragment
     @Override
     public void onPrepareOptionsMenu(Menu menu)
     {
-    	MenuItem item = menu.findItem(R.id.clearhistory_menu);
+
+    	MenuItem item = null;
+
+    	item = menu.findItem(R.id.clearhistory_menu);
     	if (item != null)
     		item.setVisible(true);
+
+    	item = menu.findItem(R.id.dictionary_menu);
+    	if (item != null)
+    		item.setVisible(false);
+
     }
 
 	@Override
@@ -73,7 +81,7 @@ public class HistoryFragment extends BaseFragment
 		HistoryObject element = History.getInstance().getHistory(position);
 
 		Bundle args = new Bundle();
-		args.putInt("SearchType", SearchType.OPTION_ANAGRAMS.ordinal());
+		args.putInt("SearchType", element.getSearchType().ordinal());
 		args.putString("SearchString", element.getSearchString());
 		args.putString("BoardString", element.getBoardString());
 		args.putInt("Dictionary", element.getDictionary().ordinal());
