@@ -1,15 +1,18 @@
 package com.ppp.wordplayadvlib.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -23,7 +26,9 @@ import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
 public class AnagramsFragment extends BaseFragment
-	implements View.OnClickListener
+	implements
+		View.OnClickListener,
+		OnItemSelectedListener
 {
 
 	private RelativeLayout rootView;
@@ -52,12 +57,41 @@ public class AnagramsFragment extends BaseFragment
     	startSearchFragment();
     }
 
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+
+    	if (item.getItemId() == R.id.dictionary_menu)
+    		anagramSpinner.performClick();
+
+    	return true;
+
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+	{
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		DictionaryType dict = DictionaryType.fromInt(position + 1);
+
+		editor.putInt("anagrams_dict", dict.ordinal());
+		editor.commit();
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {}
+
     //
     // UI Setup
     //
 
 	private void setupAnagramTab()
 	{
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         anagramButton = (Button)rootView.findViewById(R.id.AnagramsButton);
         anagramButton.setOnClickListener(this);
@@ -122,10 +156,9 @@ public class AnagramsFragment extends BaseFragment
     	});
 
     	anagramSpinner = (Spinner)rootView.findViewById(R.id.anagrams_dict_spinner);
-    	anagramSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    		public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {}
-    		public void onNothingSelected(AdapterView<?> parent) {}
-    	});
+    	int anagramsDict = prefs.getInt("anagrams_dict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	anagramSpinner.setSelection(anagramsDict - 1);
+    	anagramSpinner.setOnItemSelectedListener(this);
 
 	}
 

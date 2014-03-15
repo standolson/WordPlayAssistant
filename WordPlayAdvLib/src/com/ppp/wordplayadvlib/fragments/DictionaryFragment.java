@@ -1,14 +1,18 @@
 package com.ppp.wordplayadvlib.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -21,7 +25,11 @@ import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
-public class DictionaryFragment extends BaseFragment implements View.OnClickListener {
+public class DictionaryFragment extends BaseFragment
+	implements
+		View.OnClickListener,
+		OnItemSelectedListener
+{
 
 	private RelativeLayout rootView;
 	private Button dictButton = null;
@@ -49,12 +57,41 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
     	startSearchFragment(v);
     }
 
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+
+    	if (item.getItemId() == R.id.dictionary_menu)
+    		dictSpinner.performClick();
+
+    	return true;
+
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+	{
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		DictionaryType dict = DictionaryType.fromInt(position + 1);
+
+		editor.putInt("dictionary_dict", dict.ordinal());
+		editor.commit();
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {}
+
     //
     // UI Setup
     //
 
 	private void setupDictionaryTab()
 	{
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         dictButton = (Button)rootView.findViewById(R.id.DictionaryButton);
         dictButton.setOnClickListener(this);
@@ -97,6 +134,9 @@ public class DictionaryFragment extends BaseFragment implements View.OnClickList
         });
     	
     	dictSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
+    	int dictionaryDict = prefs.getInt("dictionary_dict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	dictSpinner.setSelection(dictionaryDict - 1);
+    	dictSpinner.setOnItemSelectedListener(this);
 
 	}
 

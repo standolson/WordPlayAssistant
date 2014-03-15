@@ -7,21 +7,28 @@ import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
-public class CrosswordsFragment extends BaseFragment implements View.OnClickListener {
+public class CrosswordsFragment extends BaseFragment
+	implements
+		View.OnClickListener,
+		OnItemSelectedListener
+{
 
 	private RelativeLayout rootView;
 	private Button crosswordsButton = null;
@@ -48,12 +55,41 @@ public class CrosswordsFragment extends BaseFragment implements View.OnClickList
     	startSearchFragment(v);
     }
 
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+
+    	if (item.getItemId() == R.id.dictionary_menu)
+    		crosswordsSpinner.performClick();
+
+    	return true;
+
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+	{
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		DictionaryType dict = DictionaryType.fromInt(position + 1);
+
+		editor.putInt("crosswords_dict", dict.ordinal());
+		editor.commit();
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {}
+
     //
     // UI Setup
     //
 
 	private void setupCrosswordsTab()
 	{
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
 		crosswordsButton = (Button)rootView.findViewById(R.id.CrosswordsButton);
         crosswordsButton.setOnClickListener(this);
@@ -79,10 +115,9 @@ public class CrosswordsFragment extends BaseFragment implements View.OnClickList
 		});
 
     	crosswordsSpinner = (Spinner)rootView.findViewById(R.id.crosswords_dict_spinner);
-    	crosswordsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    		public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {}
-    		public void onNothingSelected(AdapterView<?> parent) {}
-		});
+    	int crosswordsDict = prefs.getInt("crosswords_dict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	crosswordsSpinner.setSelection(crosswordsDict - 1);
+    	crosswordsSpinner.setOnItemSelectedListener(this);
 
 	}
 

@@ -1,10 +1,13 @@
 package com.ppp.wordplayadvlib.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
@@ -24,10 +27,7 @@ import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 public class ThesaurusFragment extends BaseFragment implements View.OnClickListener {
 
 	private RelativeLayout rootView;
-	private Button dictButton = null;
-	private MultiStateButton dictScoreToggle = null;
-	private MultiStateButton dictSortToggle = null;
-	private Spinner dictSpinner = null;
+	private Button thesaurusButton = null;
 
 	//
 	// Activity Methods
@@ -49,6 +49,14 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
     	startSearchFragment(v);
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu)
+    {
+    	MenuItem item = menu.findItem(R.id.dictionary_menu);
+    	if (item != null)
+    		item.setVisible(false);
+    }
+
     //
     // UI Setup
     //
@@ -56,9 +64,17 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 	private void setupThesaurusTab()
 	{
 
-        dictButton = (Button)rootView.findViewById(R.id.DictionaryButton);
-        dictButton.setOnClickListener(this);
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
+        thesaurusButton = (Button)rootView.findViewById(R.id.DictionaryButton);
+        thesaurusButton.setOnClickListener(this);
+
+        MultiStateButton dictScoreToggle = (MultiStateButton)rootView.findViewById(R.id.DictionaryWordScores);
+        dictScoreToggle.setVisibility(View.GONE);
+
+        MultiStateButton dictSortToggle = (MultiStateButton)rootView.findViewById(R.id.DictionarySortOrder);
+        dictSortToggle.setVisibility(View.GONE);
+        		 
         final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
         dictText.setFilters(new InputFilter[] { alphaFilter });
         dictText.setOnKeyListener(new OnKeyListener() {
@@ -79,15 +95,9 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 			@Override
 			public void onClick(View v) { dictText.setText(""); }
 		});
-
-        dictScoreToggle = (MultiStateButton)rootView.findViewById(R.id.DictionaryWordScores);
-		dictScoreToggle.setVisibility(View.GONE);
-
-        dictSortToggle = (MultiStateButton)rootView.findViewById(R.id.DictionarySortOrder);
-		dictSortToggle.setVisibility(View.GONE);
     	
-    	dictSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
-		dictSpinner.setVisibility(View.GONE);
+    	Spinner thesaurusSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
+		thesaurusSpinner.setVisibility(View.GONE);
 
 	}
 

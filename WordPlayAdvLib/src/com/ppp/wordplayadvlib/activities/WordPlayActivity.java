@@ -410,12 +410,6 @@ public class WordPlayActivity extends HostActivity
 		else if (item.getItemId() == R.id.showhelp_menu)
 			showHelp();
 	
-		// Clear history
-		else if (item.getItemId() == R.id.clearhistory_menu)  {
-//			History.getInstance().clearHistory();
-//			JudgeHistory.getInstance().clearJudgeHistory();
-		}
-	
 		// Dictionaries
 		else if (item.getItemId() == R.id.dictionary_menu)
 			showDictionaries();
@@ -487,15 +481,6 @@ public class WordPlayActivity extends HostActivity
 //    		anagramSpinner.performClick();
 //    	else if (currentTab == CrosswordTab)
 //    		crosswordsSpinner.performClick();
-    }
-    
-    private void showHistory()
-    {
-    	Intent intent = new Intent(this, SearchHistoryActivity.class);
-    	try {
-    		startActivity(intent);
-    	}
-    	catch (Exception e) {}
     }
 
     //

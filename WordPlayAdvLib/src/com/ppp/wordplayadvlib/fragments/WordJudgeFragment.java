@@ -3,6 +3,7 @@ package com.ppp.wordplayadvlib.fragments;
 import java.util.LinkedList;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputFilter;
@@ -16,6 +17,7 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,13 +39,16 @@ import com.ppp.wordplayadvlib.appdata.JudgeSearch;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.utils.Debug;
 
-public class WordJudgeFragment extends BaseFragment implements View.OnClickListener {
+public class WordJudgeFragment extends BaseFragment
+	implements
+		View.OnClickListener,
+		OnItemSelectedListener
+{
 
 	private RelativeLayout rootView;
 	private Button wjButton = null;
 	private Spinner wjSpinner = null;
 	private EditText wjText = null;
-	private AdView wordJudgeAdView;
 	private static ListView wjListview = null;
 	private static WordJudgeAdapter wjAdapter = null;
 	private JudgeSearch wjSearchObj = null;
@@ -87,9 +92,29 @@ public class WordJudgeFragment extends BaseFragment implements View.OnClickListe
 			return true;
 		}
 
+		// Handle dictionary selection
+		else if (item.getItemId() == R.id.dictionary_menu)
+			wjSpinner.performClick();
+
 		return false;
 			
 	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+	{
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		DictionaryType dict = DictionaryType.fromInt(position + 1);
+
+		editor.putInt("wordjudge_dict", dict.ordinal());
+		editor.commit();
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {}
 
     //
     // UI Setup
@@ -97,6 +122,8 @@ public class WordJudgeFragment extends BaseFragment implements View.OnClickListe
 
 	private void setupWordJudgeTab()
 	{
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         wjButton = (Button)rootView.findViewById(R.id.WordJudgeButton);
         wjButton.setOnClickListener(new OnClickListener() {
@@ -133,15 +160,12 @@ public class WordJudgeFragment extends BaseFragment implements View.OnClickListe
 		});
 
     	wjSpinner = (Spinner)rootView.findViewById(R.id.wordjudge_dict_spinner);
-    	wjSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    		public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {}
-    		public void onNothingSelected(AdapterView<?> parent) {}
-    	});
+    	int wjDict = prefs.getInt("wordjudge_dict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	wjSpinner.setSelection(wjDict - 1);
+    	wjSpinner.setOnItemSelectedListener(this);
 
         if (WordPlayApp.getInstance().isFreeMode())  {
         	LinearLayout headerLayout = (LinearLayout)View.inflate(getActivity(), R.layout.admob_listview_footer, null);
-        	wordJudgeAdView = (AdView)headerLayout.findViewById(R.id.listview_ad);
-//			wordJudgeAdView.loadAd(new AdRequest());
             wjListview.addHeaderView(headerLayout);
         }
 
