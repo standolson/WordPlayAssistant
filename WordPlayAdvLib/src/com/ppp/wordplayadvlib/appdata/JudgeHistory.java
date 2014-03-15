@@ -33,10 +33,11 @@ public class JudgeHistory {
 
 	public LinkedList<JudgeHistoryObject> getJudgeHistory() { return judge_history; }
 
-	public void clearJudgeHistory()
+	public void clearJudgeHistory(Activity activity)
 	{
 		Debug.d("clearJudgeHistory: history cleared");
 		judge_history.clear();
+		saveJudgeHistory(activity);
 	}
 
 	public void saveJudgeHistory(Activity activity)
@@ -54,7 +55,7 @@ public class JudgeHistory {
 			judgeBuf.append("\n");
 		}
 
-		editor.putString("wordjudge_history", judgeBuf.toString());
+		editor.putString("wordjudgeHistory", judgeBuf.toString());
 		Debug.v("SAVE JUDGE_HISTORY = '" + judgeBuf.toString() + "'");
 
 		editor.commit();
@@ -65,11 +66,11 @@ public class JudgeHistory {
 	{
 
 		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
-		String judgeHistoryStr = prefs.getString("wordjudge_history", "");
+		String judgeHistoryStr = prefs.getString("wordjudgeHistory", "");
 
 		Debug.v("LOAD JUDGE_HISTORY = '" + judgeHistoryStr + "'");
 
-		clearJudgeHistory();
+		clearJudgeHistory(activity);
 
 		BufferedReader judgeBuf = new BufferedReader(new StringReader(judgeHistoryStr), Constants.BufSize);
 		try {

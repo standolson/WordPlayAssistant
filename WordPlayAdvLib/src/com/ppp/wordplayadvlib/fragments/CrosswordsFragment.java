@@ -5,6 +5,7 @@ import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.utils.Debug;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -74,7 +75,8 @@ public class CrosswordsFragment extends BaseFragment
 		SharedPreferences.Editor editor = prefs.edit();
 		DictionaryType dict = DictionaryType.fromInt(position + 1);
 
-		editor.putInt("crosswords_dict", dict.ordinal());
+		editor.putInt("crosswordsDict", dict.ordinal());
+		Debug.v("SAVE crosswordsDict = " + dict.ordinal());
 		editor.commit();
 
 	}
@@ -95,6 +97,9 @@ public class CrosswordsFragment extends BaseFragment
         crosswordsButton.setOnClickListener(this);
 
         crosswordsText = (EditText)rootView.findViewById(R.id.CrosswordsText);
+        String crosswordsStr = prefs.getString("crosswordsStr", "");
+        Debug.v("LOAD crosswordsStr = " + crosswordsStr);
+        crosswordsText.setText(crosswordsStr);
         crosswordsText.setFilters(new InputFilter[] { searchFilter });
         crosswordsText.setOnKeyListener(new OnKeyListener() {
 			@Override
@@ -115,7 +120,7 @@ public class CrosswordsFragment extends BaseFragment
 		});
 
     	crosswordsSpinner = (Spinner)rootView.findViewById(R.id.crosswords_dict_spinner);
-    	int crosswordsDict = prefs.getInt("crosswords_dict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	int crosswordsDict = prefs.getInt("crosswordsDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
     	crosswordsSpinner.setSelection(crosswordsDict - 1);
     	crosswordsSpinner.setOnItemSelectedListener(this);
 
@@ -128,6 +133,9 @@ public class CrosswordsFragment extends BaseFragment
     private void startSearchFragment(View v)
     {
 
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+
     	String searchString = "";
     	String boardString = "";
     	WordScoreState wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
@@ -138,6 +146,13 @@ public class CrosswordsFragment extends BaseFragment
 		dictionary = DictionaryType.fromInt((int)crosswordsSpinner.getSelectedItemId() + 1);
 		wordScores = WordScoreState.WORD_SCORE_STATE_OFF;
 		wordSort = WordSortState.WORD_SORT_BY_ALPHA;
+
+		if (!validateString(searchString, dictionary, false))
+			return;
+
+		// Save state
+		editor.putString("crosswordsStr", (searchString == null) ? "" : searchString);
+		editor.commit();
 
 		Bundle args = new Bundle();
 		args.putInt("SearchType", SearchType.OPTION_CROSSWORDS.ordinal());

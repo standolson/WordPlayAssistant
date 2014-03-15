@@ -23,6 +23,7 @@ import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
 public class DictionaryFragment extends BaseFragment
@@ -76,7 +77,8 @@ public class DictionaryFragment extends BaseFragment
 		SharedPreferences.Editor editor = prefs.edit();
 		DictionaryType dict = DictionaryType.fromInt(position + 1);
 
-		editor.putInt("dictionary_dict", dict.ordinal());
+		editor.putInt("dictionaryDict", dict.ordinal());
+		Debug.v("SAVE dictionaryDict = " + dict.ordinal());
 		editor.commit();
 
 	}
@@ -97,6 +99,9 @@ public class DictionaryFragment extends BaseFragment
         dictButton.setOnClickListener(this);
 
         final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
+        String dictStr = prefs.getString("dictStr", "");
+		Debug.v("LOAD dictStr = " + dictStr);
+        dictText.setText(dictStr);
         dictText.setFilters(new InputFilter[] { alphaFilter });
         dictText.setOnKeyListener(new OnKeyListener() {
 			@Override
@@ -119,9 +124,17 @@ public class DictionaryFragment extends BaseFragment
 
         dictScoreToggle = (MultiStateButton)rootView.findViewById(R.id.DictionaryWordScores);
         dictScoreToggle.setStateNames(getResources().getStringArray(R.array.word_score_toggle_states));
+		int dictScore =
+			prefs.getInt("dictScore", WordScoreState.WORD_SCORE_STATE_ON.ordinal() - 1);
+		Debug.v("LOAD dictScore = " + dictScore);
+		dictScoreToggle.setState(dictScore);
 
         dictSortToggle = (MultiStateButton)rootView.findViewById(R.id.DictionarySortOrder);
         dictSortToggle.setStateNames(getResources().getStringArray(R.array.sort_order_toggle_states));
+		int dictSort =
+			prefs.getInt("dictSort", WordSortState.WORD_SORT_BY_WORD_SCORE.ordinal() - 1);
+		Debug.v("LOAD dictSort = " + dictSort);
+		dictSortToggle.setState(dictSort);
         dictScoreToggle.setOnChangeListener(new View.OnClickListener() {
         	public void onClick(View v) {
         		MultiStateButton button = (MultiStateButton)v;
@@ -134,7 +147,7 @@ public class DictionaryFragment extends BaseFragment
         });
     	
     	dictSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
-    	int dictionaryDict = prefs.getInt("dictionary_dict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	int dictionaryDict = prefs.getInt("dictionaryDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
     	dictSpinner.setSelection(dictionaryDict - 1);
     	dictSpinner.setOnItemSelectedListener(this);
 
@@ -146,6 +159,9 @@ public class DictionaryFragment extends BaseFragment
 
     private void startSearchFragment(View v)
     {
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
 
     	String searchString = "";
     	String boardString = "";
@@ -168,6 +184,18 @@ public class DictionaryFragment extends BaseFragment
 			wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
 			wordSort = WordSortState.WORD_SORT_UNKNOWN;
 		}
+
+		if (!validateString(searchString, dictionary, false))
+			return;
+
+		// Save state
+		editor.putString("dictStr", (searchString == null) ? "" : searchString);
+		Debug.v("SAVE dictStr " + searchString);
+		editor.putInt("dictScore", dictScoreToggle.getState());
+		Debug.v("SAVE dictScore = " + dictScoreToggle.getState());
+		editor.putInt("dictSort", dictSortToggle.getState());
+		Debug.v("SAVE dictSort = " + dictSortToggle.getState());
+		editor.commit();
 
 		Bundle args = new Bundle();
 		args.putInt("SearchType", searchType.ordinal());

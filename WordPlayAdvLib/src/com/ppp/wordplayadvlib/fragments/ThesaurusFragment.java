@@ -22,6 +22,7 @@ import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
 public class ThesaurusFragment extends BaseFragment implements View.OnClickListener {
@@ -76,6 +77,9 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
         dictSortToggle.setVisibility(View.GONE);
         		 
         final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
+        String thesaurusStr = prefs.getString("thesaurusStr", "");
+        Debug.v("LOAD thesaurusStr = " + thesaurusStr);
+        dictText.setText(thesaurusStr);
         dictText.setFilters(new InputFilter[] { alphaFilter });
         dictText.setOnKeyListener(new OnKeyListener() {
 			@Override
@@ -108,6 +112,9 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
     private void startSearchFragment(View v)
     {
 
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+
     	String searchString = "";
     	String boardString = "";
     	WordScoreState wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
@@ -120,6 +127,14 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 		dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
 		wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
 		wordSort = WordSortState.WORD_SORT_UNKNOWN;
+
+		if (!validateString(searchString, dictionary, false))
+			return;
+
+		// Save state
+		editor.putString("thesaurusStr", (searchString == null) ? "" : searchString);
+		Debug.v("SAVE thesaurusStr = " + searchString);
+		editor.commit();
 
 		Bundle args = new Bundle();
 		args.putInt("SearchType", SearchType.OPTION_THESAURUS.ordinal());

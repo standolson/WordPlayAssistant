@@ -1654,7 +1654,7 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 		editor.putString("history", "");
 		editor.commit();
 		
-		History.getInstance().clearHistory();
+		History.getInstance().clearHistory(getActivity());
 
 		Debug.v("clearHistory: history cleared");
 		if (doToast)
@@ -1670,7 +1670,7 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 		editor.putString("wordjudge_history", "");
 		editor.commit();
 		
-		JudgeHistory.getInstance().clearJudgeHistory();
+		JudgeHistory.getInstance().clearJudgeHistory(getActivity());
 
 		if (doToast)
 			Toast.makeText(getActivity(), "History Cleared", Toast.LENGTH_SHORT).show();
@@ -1812,7 +1812,7 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 		
 		// Get and set the dictionary tab's score and sort button states
 		int dictionary_score =
-				prefs.getInt("dictionary_score", WordScoreState.WORD_SCORE_STATE_ON.ordinal() - 1);
+			prefs.getInt("dictionary_score", WordScoreState.WORD_SCORE_STATE_ON.ordinal() - 1);
 		Debug.v("LOAD DICTIONARY_SCORE = " + dictionary_score);
 		dictScoreToggle.setState(dictionary_score);
 		int dictionary_sort =

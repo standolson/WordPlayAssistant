@@ -23,6 +23,7 @@ import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
 public class AnagramsFragment extends BaseFragment
@@ -76,7 +77,8 @@ public class AnagramsFragment extends BaseFragment
 		SharedPreferences.Editor editor = prefs.edit();
 		DictionaryType dict = DictionaryType.fromInt(position + 1);
 
-		editor.putInt("anagrams_dict", dict.ordinal());
+		editor.putInt("anagramsDict", dict.ordinal());
+		Debug.v("SAVE anagramsDict = " + dict.ordinal());
 		editor.commit();
 
 	}
@@ -97,6 +99,9 @@ public class AnagramsFragment extends BaseFragment
         anagramButton.setOnClickListener(this);
 
         final EditText anagramsTrayText = (EditText)rootView.findViewById(R.id.AnagramsTrayText);
+        String anagramsStr = prefs.getString("anagramsStr", "");
+        Debug.v("LOAD anagramsStr = " + anagramsStr);
+        anagramsTrayText.setText(anagramsStr);
         anagramsTrayText.setFilters(new InputFilter[] { searchFilter });
         anagramsTrayText.setOnKeyListener(new OnKeyListener() {
 			@Override
@@ -111,6 +116,9 @@ public class AnagramsFragment extends BaseFragment
         });
 
         final EditText anagramsBoardText = (EditText)rootView.findViewById(R.id.AnagramsBoardText);
+        String anagramsBoard = prefs.getString("anagramsBoard", "");
+        Debug.v("LOAD anagramsBoard = " + anagramsBoard);
+        anagramsBoardText.setText(anagramsBoard);
         anagramsBoardText.setFilters(new InputFilter[] { alphaFilter });
         anagramsBoardText.setOnKeyListener(new OnKeyListener() {
 			@Override
@@ -138,9 +146,17 @@ public class AnagramsFragment extends BaseFragment
 
     	anagramSortToggle = (MultiStateButton)rootView.findViewById(R.id.AnagramsSortOrder);
     	anagramSortToggle.setStateNames(getResources().getStringArray(R.array.sort_order_toggle_states));
+		int anagramsSort =
+			prefs.getInt("anagramsSort", WordScoreState.WORD_SCORE_STATE_ON.ordinal() - 1);
+		Debug.v("LOAD anagramsSort = " + anagramsSort);
+		anagramSortToggle.setState(anagramsSort);
  
     	anagramScoreToggle = (MultiStateButton)rootView.findViewById(R.id.AnagramsWordScores);
     	anagramScoreToggle.setStateNames(getResources().getStringArray(R.array.word_score_toggle_states));
+		int anagramsScore =
+			prefs.getInt("anagramsScore", WordSortState.WORD_SORT_BY_WORD_SCORE.ordinal() - 1);
+		Debug.v("LOAD anagrmasScore = " + anagramsScore);
+		anagramScoreToggle.setState(anagramsScore);
     	anagramScoreToggle.setOnChangeListener(new View.OnClickListener() {
     		public void onClick(View v)
     		{
@@ -156,7 +172,7 @@ public class AnagramsFragment extends BaseFragment
     	});
 
     	anagramSpinner = (Spinner)rootView.findViewById(R.id.anagrams_dict_spinner);
-    	int anagramsDict = prefs.getInt("anagrams_dict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	int anagramsDict = prefs.getInt("anagramsDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
     	anagramSpinner.setSelection(anagramsDict - 1);
     	anagramSpinner.setOnItemSelectedListener(this);
 
@@ -168,6 +184,9 @@ public class AnagramsFragment extends BaseFragment
 
     private void startSearchFragment()
     {
+
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
 
     	String searchString = "";
     	String boardString = "";
@@ -186,6 +205,17 @@ public class AnagramsFragment extends BaseFragment
 
 		if (!validateString(searchString + boardString, dictionary, true))
 			return;
+
+		// Save state
+		editor.putString("anagramsStr", (searchString == null) ? "" : searchString);
+		Debug.v("SAVE anagramsStr = " + searchString);
+		editor.putString("anagramsBoard", (boardString == null) ? "" : boardString);
+		Debug.v("SAVE anagramsBoard = " + boardString);
+		editor.putInt("anagramsScore", anagramScoreToggle.getState());
+		Debug.v("SAVE anagramsScore = " + anagramScoreToggle.getState());
+		editor.putInt("anagramsSort", anagramSortToggle.getState());
+		Debug.v("SAVE anagramsSort = " + anagramSortToggle.getState());
+		editor.commit();
 
 		Bundle args = new Bundle();
 		args.putInt("SearchType", SearchType.OPTION_ANAGRAMS.ordinal());

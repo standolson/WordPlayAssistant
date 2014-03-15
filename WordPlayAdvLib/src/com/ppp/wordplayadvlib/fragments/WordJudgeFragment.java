@@ -29,7 +29,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.ads.AdView;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
@@ -87,7 +86,7 @@ public class WordJudgeFragment extends BaseFragment
 
 		// Handle clearing history
 		if (item.getItemId() == R.id.clearhistory_menu)  {
-			JudgeHistory.getInstance().clearJudgeHistory();
+			JudgeHistory.getInstance().clearJudgeHistory(getActivity());
 			wjAdapter.notifyDataSetChanged();
 			return true;
 		}
@@ -108,7 +107,8 @@ public class WordJudgeFragment extends BaseFragment
 		SharedPreferences.Editor editor = prefs.edit();
 		DictionaryType dict = DictionaryType.fromInt(position + 1);
 
-		editor.putInt("wordjudge_dict", dict.ordinal());
+		editor.putInt("wordjudgeDict", dict.ordinal());
+		Debug.v("SAVE wordjudgeDict = " + dict.ordinal());
 		editor.commit();
 
 	}
@@ -160,7 +160,7 @@ public class WordJudgeFragment extends BaseFragment
 		});
 
     	wjSpinner = (Spinner)rootView.findViewById(R.id.wordjudge_dict_spinner);
-    	int wjDict = prefs.getInt("wordjudge_dict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	int wjDict = prefs.getInt("wordjudgeDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
     	wjSpinner.setSelection(wjDict - 1);
     	wjSpinner.setOnItemSelectedListener(this);
 
@@ -213,7 +213,8 @@ public class WordJudgeFragment extends BaseFragment
 
 	public void updateJudgeHistoryAdapter()
 	{
-		wjAdapter = new WordJudgeAdapter(getActivity(), R.layout.judge_history, JudgeHistory.getInstance().getJudgeHistory());
+		wjAdapter =
+			new WordJudgeAdapter(getActivity(), R.layout.judge_history, JudgeHistory.getInstance().getJudgeHistory());
         wjListview.setAdapter(wjAdapter);	
 	}
 

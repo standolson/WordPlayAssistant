@@ -65,7 +65,7 @@ public class HistoryFragment extends BaseFragment
 
 		// Handle clearing history
 		if (item.getItemId() == R.id.clearhistory_menu)  {
-			History.getInstance().clearHistory();
+			History.getInstance().clearHistory(getActivity());
 			adapter.notifyDataSetChanged();
 			return true;
 		}

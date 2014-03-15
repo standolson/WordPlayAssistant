@@ -32,10 +32,11 @@ public class History {
 
 	public LinkedList<HistoryObject> getHistory() { return history; }
 
-	public void clearHistory()
+	public void clearHistory(Activity activity)
 	{
 		Debug.d("clearHistory: history cleared");
 		history.clear();
+		saveHistory(activity);
 	}
 
 	public void saveHistory(Activity activity)
@@ -57,7 +58,7 @@ public class History {
 			historyBuf.append("\n");
 		}
 
-		editor.putString("history", historyBuf.toString());
+		editor.putString("savedHistory", historyBuf.toString());
 		Debug.v("SAVE HISTORY = '" + historyBuf.toString() + "'");
 
 		editor.commit();
@@ -68,11 +69,11 @@ public class History {
 	{
 
 		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
-		String historyStr = prefs.getString("history", "");
+		String historyStr = prefs.getString("savedHistory", "");
 
 		Debug.v("LOAD HISTORY = '" + historyStr + "'");
 
-		clearHistory();
+		clearHistory(activity);
 
 		BufferedReader historyBuf = new BufferedReader(new StringReader(historyStr), Constants.BufSize);
 		try {
