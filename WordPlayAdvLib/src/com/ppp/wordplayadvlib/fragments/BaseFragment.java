@@ -150,39 +150,6 @@ public class BaseFragment extends Fragment {
 
 	}
 
-	@Override
-	public void onStop()
-    {
-    	super.onStop();
-//    	saveHistory();
-    }
-
-    @Override
-    public void onResume()
-    {
-
-    	super.onResume();
-
-    	// Load a new ad when we resume
-//    	if (WordPlayApp.getInstance().isFreeMode())  {
-//	    	if (currentTab != WordJudgeTab)
-//	    		adView.loadAd(new AdRequest());
-//	    	else
-//	    		wordJudgeAdView.loadAd(new AdRequest());
-//    	}
-
-    }
-
-    @Override
-    public void onDestroy()
-    {
-//    	if (adView != null)
-//    		adView.destroy();
-//    	if (wordJudgeAdView != null)
-//    		wordJudgeAdView.destroy();
-    	super.onDestroy();
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {

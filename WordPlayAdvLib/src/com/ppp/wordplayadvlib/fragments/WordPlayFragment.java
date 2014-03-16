@@ -51,8 +51,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
@@ -111,9 +109,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 	private MultiStateButton dictSortToggle = null;
 	private MultiStateButton anagramScoreToggle = null;
 	private MultiStateButton anagramSortToggle = null;
-
-	private AdView adView;
-	private AdView wordJudgeAdView;
 	
 	private static ListView wjListview = null;
 	private static WordJudgeAdapter wjAdapter = null;
@@ -160,26 +155,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
         // Get important view elements
         flipper = (ViewFlipper)getActivity().findViewById(R.id.view_flipper);
         flipper.setDisplayedChild(currentTab);
-
-        // Initialize the ads.  If this is the paid app, there are
-        // no ads so we remove the view object.  For the free app,
-        // load an initial ad for the current tab.
-    	adView = (AdView)getActivity().findViewById(R.id.tabbed_main_ad);
-        if (WordPlayApp.getInstance().isPaidMode())  {
-        	LinearLayout rootView =
-        		(LinearLayout)getActivity().findViewById(R.id.wordplay_activity);
-        	rootView.removeView(adView);
-        }
-        else {
-        	if (currentTab == WordJudgeTab)  {
-    			adView.setVisibility(View.GONE);
-    			wordJudgeAdView.loadAd(new AdRequest());
-    		}
-    		else {
-    			adView.setVisibility(View.VISIBLE);
-    			adView.loadAd(new AdRequest());
-    		}
-		}
 
         // Load the history
 		loadHistory();
@@ -265,30 +240,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     {
     	super.onStop();
     	saveHistory();
-    }
-
-    public void onResume()
-    {
-
-    	super.onResume();
-
-    	// Load a new ad when we resume
-    	if (WordPlayApp.getInstance().isFreeMode())  {
-	    	if (currentTab != WordJudgeTab)
-	    		adView.loadAd(new AdRequest());
-	    	else
-	    		wordJudgeAdView.loadAd(new AdRequest());
-    	}
-
-    }
-
-    public void onDestroy()
-    {
-    	if (adView != null)
-    		adView.destroy();
-    	if (wordJudgeAdView != null)
-    		wordJudgeAdView.destroy();
-    	super.onDestroy();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -642,8 +593,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 
         if (WordPlayApp.getInstance().isFreeMode())  {
         	LinearLayout headerLayout = (LinearLayout)View.inflate(activity, R.layout.admob_listview_footer, null);
-        	wordJudgeAdView = (AdView)headerLayout.findViewById(R.id.listview_ad);
-//			wordJudgeAdView.loadAd(new AdRequest());
             wjListview.addHeaderView(headerLayout);
         }
         updateJudgeHistoryAdapter();
@@ -763,21 +712,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 
 	private void changeTab(View v)
 	{
-
-		// When in free mode, if changing to the word judge
-		// tab, we want to hide the other ad and load a new
-		// ad for the word judge tab.  If going the other way,
-		// load a new ad for the fixed ad.
-		if (WordPlayApp.getInstance().isFreeMode())  {
-			if (v.getId() == R.id.wj_tab_button)  {
-				adView.setVisibility(View.GONE);
-				wordJudgeAdView.loadAd(new AdRequest());
-			}
-			else {
-				adView.setVisibility(View.VISIBLE);
-				adView.loadAd(new AdRequest());
-			}
-		}
 
 		// Map view ID to ViewFlipper child
 		if (v.getId() == R.id.anagram_tab_button)
