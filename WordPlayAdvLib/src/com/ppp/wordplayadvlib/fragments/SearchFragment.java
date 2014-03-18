@@ -3,24 +3,15 @@ package com.ppp.wordplayadvlib.fragments;
 import java.util.ArrayList;
 
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.ClipboardManager;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -33,6 +24,7 @@ import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.History;
 import com.ppp.wordplayadvlib.appdata.ScoredWord;
 import com.ppp.wordplayadvlib.appdata.SearchObject;
+import com.ppp.wordplayadvlib.appdata.SearchTask;
 import com.ppp.wordplayadvlib.appdata.SearchThread;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordDefinition;
@@ -42,11 +34,11 @@ import com.ppp.wordplayadvlib.database.ScrabbleDatabaseClient;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.exceptions.WifiAuthException;
 import com.ppp.wordplayadvlib.exceptions.WordPlayException;
+import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment;
 import com.ppp.wordplayadvlib.networking.NetworkUtils;
 import com.ppp.wordplayadvlib.networking.RFC2229;
 import com.ppp.wordplayadvlib.networking.ScrabbleClient;
 import com.ppp.wordplayadvlib.utils.Debug;
-import com.ppp.wordplayadvlib.utils.Utils;
 
 public class SearchFragment extends BaseFragment implements OnItemClickListener {
 	
@@ -250,182 +242,6 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 
 		}
 
-	}
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
-    {
-
-    	super.onCreateContextMenu(menu, v, menuInfo);
-    	getActivity().getMenuInflater().inflate(R.menu.exact_match_context, menu);
-    	
-    	if (searchObject.getSearchType() == SearchType.OPTION_DICTIONARY_EXACT_MATCH)
-    		menu.setHeaderTitle("Definitions");
-    	else
-    		menu.setHeaderTitle("Words");
-    	
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item)
-    {
-    	
-    	ClipboardManager clippy;
-    	Intent intent;
-    	AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
-    	String text;
-
-		if (searchObject.getSearchType() == SearchType.OPTION_DICTIONARY_EXACT_MATCH)
-			text = searchObject.getDefinition().getDefinitionAt((int)info.id);
-		else
-			if (searchObject.getWordScores().isScored())
-				text = searchObject.getScoredWordList().get((int)info.id).getWord();
-			else
-				text = searchObject.getWordList().get((int)info.id);
-
-    	if (item.getItemId() == R.id.exact_match_copy)  {
-			clippy = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-			clippy.setText(text);
-			return true;
-		}
-    	else if (item.getItemId() == R.id.exact_match_email)  {
-			intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("message/rfc822");
-			intent.putExtra(Intent.EXTRA_SUBJECT, getMessageSubject(true));
-			intent.putExtra(android.content.Intent.EXTRA_TEXT, text);
-			try {
-				startActivity(intent);
-			}
-			catch (ActivityNotFoundException exception) {
-				Utils.configureEmailAlert(getActivity());
-			}
-			return true;
-		}
-    	
-    	return super.onOptionsItemSelected(item);
-    	
-    }
-
-//	@Override
-//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-//	{
-//	
-//		// No search object?
-//		if (searchObject == null)
-//	    	return;
-//	
-//		// If we did a regular dictionary search and there aren't any
-//		// results, show no menu
-//		if (searchObject.getSearchType() == SearchType.OPTION_DICTIONARY_EXACT_MATCH)  {
-//	    	if (searchObject.getDictionary().isNormalDict() &&
-//	    		(searchObject.getDefinition().size() == 0))
-//	    		return;
-//	    }
-//	    else {
-//	
-//	    	// For all other searches, for no results, show no
-//	    	// menu
-//	    	if (searchObject.getWordScores().isScored())  {
-//	    		if (searchObject.getScoredWordList().size() == 0)
-//	    			return;
-//	    	}
-//	    	else
-//	    		if (searchObject.getWordList().size() == 0)
-//	    			return;
-//	
-//	    }
-//	    
-//	    inflater.inflate(R.menu.exact_match_context, menu);
-//	    return;
-//	    
-//	}
-    
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item)
-//	{
-//	
-//		ClipboardManager clippy;
-//		Intent intent;
-//		String text = "";
-//		
-//		if (searchObject.getSearchType() == SearchType.OPTION_DICTIONARY_EXACT_MATCH)  {
-//			if (searchObject.getDictionary().isNormalDict())  {
-//				WordDefinition d = searchObject.getDefinition();
-//				ArrayList<String> defns = d.getDefinitionsList();
-//				for (int i = 0; i < defns.size(); i += 1)
-//					text += d.getDefinitionAt(i) + "\n";
-//			}
-//			else {
-//				if (searchObject.getWordScores().isScored())
-//					for (ScoredWord w : searchObject.getScoredWordList())
-//						text += w.getWord() + " (" + w.getScore() + ")\n";
-//				else
-//					for (String w : searchObject.getWordList())
-//						text += w + "\n";			
-//			}
-//		}
-//		else {
-//			if (searchObject.getWordScores().isScored())
-//				for (ScoredWord w : searchObject.getScoredWordList())
-//					text += w.getWord() + " (" + w.getScore() + ")";
-//			else
-//				for (String w : searchObject.getWordList())
-//					text += w + "\n";
-//		}
-//		
-//		if (item.getItemId() == R.id.exact_match_copy)  {
-//			clippy = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-//			clippy.setText(text);
-//		}
-//		else if (item.getItemId() == R.id.exact_match_email)  {
-//			intent = new Intent(Intent.ACTION_SEND);
-//			intent.setType("message/rfc822");
-//			intent.putExtra(Intent.EXTRA_SUBJECT, getMessageSubject(false));
-//			intent.putExtra(android.content.Intent.EXTRA_TEXT, text);
-//			try {
-//				startActivity(intent);
-//			}
-//			catch (ActivityNotFoundException exception) {
-//				Utils.configureEmailAlert(getActivity());
-//			}
-//		}
-//		
-//		return true;
-//		
-//	}
-
-	public String getMessageSubject(boolean isContext)
-	{
-
-		String str = "Unknown Subject";
-		String ss = searchObject.getSearchString();
-		
-		switch (searchObject.getSearchType()) {
-			case OPTION_DICTIONARY_EXACT_MATCH:
-				str = (isContext ? "A definition" : "Definitions") + " of '" + ss + "'";
-				break;
-			case OPTION_DICTIONARY_STARTS_WITH:
-				str = (isContext ? "A word " : "Words") + " starting with '" + ss + "'";
-				break;
-			case OPTION_DICTIONARY_ENDS_WITH:
-				str = (isContext ? "A word" : "Words") + " ending with '" + ss + "'";
-				break;
-			case OPTION_DICTIONARY_CONTAINS:
-				str = (isContext ? "A word" : "Words") + " containing '" + ss + "'";
-				break;
-			case OPTION_ANAGRAMS:
-				str = (isContext ? "An anagram" : "Anagrams") + " of '" + ss + "'";
-				break;
-			case OPTION_THESAURUS:
-				str = (isContext ? "A synonym" : "Synonyms") + " of '" + ss + "'";
-				break;
-			case OPTION_CROSSWORDS:
-				str = (isContext ? "A word" : "Words") + " matching crossword pattern of '" + ss + "'";
-				break;
-		}
-		
-		return str;
-		
 	}
 
 	//
@@ -1157,9 +973,11 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	
 	private void onScrabbleDictAnagram()
 	{
-		
-		Runnable r = new Runnable() {
-			public void run()
+
+		SearchTask task = new SearchTask() {
+
+			@Override
+			protected Bundle doInBackground(Bundle... args)
 			{
 
 				ScrabbleClient client = null;
@@ -1195,11 +1013,61 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 				
 				if ((searchObject != null) && (searchObject.getSearchHandler() != null))
 					searchObject.getSearchHandler().sendEmptyMessage(0);
-				
+
+				return null;
+
 			}
+
 		};
-		
-		startBackgroundSearch(r, false);
+
+		SearchProgressDialogFragment dialog =
+			SearchProgressDialogFragment.newInstance(getClass().getName());
+	    dialog.show(getFragmentManager(), SearchProgressDialogFragment.class.getName());
+
+		task.execute(getArguments());
+
+//		Runnable r = new Runnable() {
+//			public void run()
+//			{
+//
+//				ScrabbleClient client = null;
+//
+//				if (WordPlayApp.getInstance().getUseGoogleAppEngine())
+//					client = new ScrabbleClient();
+//				else
+//					client = new ScrabbleDatabaseClient();
+//
+//				while (!cancel)  {
+//					try {
+//						if (searchObject.getWordScores().isScored())
+//							searchObject.setScoredWordList(
+//									client.getScoredAnagrams(
+//											searchObject.getSearchString() + searchObject.getBoardString(),
+//											searchObject.getDictionary(),
+//											searchObject.getWordSort()));
+//						else
+//							searchObject.setWordList(
+//									client.getAnagrams(
+//											searchObject.getSearchString() + searchObject.getBoardString(),
+//											searchObject.getDictionary(),
+//											searchObject.getWordSort()));
+//						break;
+//					}
+//					catch (Exception e) {
+//						if (NetworkUtils.isRetryException(e))
+//							continue;
+//						searchObject.setException(e);
+//						break;
+//					}
+//				}
+//				
+//				if ((searchObject != null) && (searchObject.getSearchHandler() != null))
+//					searchObject.getSearchHandler().sendEmptyMessage(0);
+//				
+//			}
+//		};
+//		
+//		startBackgroundSearch(r, false);
 		
 	}
 
