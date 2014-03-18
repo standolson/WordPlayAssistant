@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,12 +36,17 @@ import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.exceptions.WifiAuthException;
 import com.ppp.wordplayadvlib.exceptions.WordPlayException;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment;
+import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment.SearchProgressListener;
 import com.ppp.wordplayadvlib.networking.NetworkUtils;
 import com.ppp.wordplayadvlib.networking.RFC2229;
 import com.ppp.wordplayadvlib.networking.ScrabbleClient;
 import com.ppp.wordplayadvlib.utils.Debug;
 
-public class SearchFragment extends BaseFragment implements OnItemClickListener {
+public class SearchFragment extends BaseFragment
+	implements
+		OnItemClickListener,
+		SearchProgressListener
+{
 	
 	RFC2229 dictServer;
 	
@@ -247,6 +253,12 @@ public class SearchFragment extends BaseFragment implements OnItemClickListener 
 	//
 	// Search
 	//
+
+	@Override
+	public void onProgressCancel()
+	{
+		Log.e(getClass().getSimpleName(), "onProgressCancel");
+	}
 
 	private void startBackgroundSearch(Runnable r, boolean isAnagrams)
 	{
