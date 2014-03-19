@@ -5,8 +5,10 @@ import java.util.Date;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class SearchObject {
+public class SearchObject implements Parcelable {
 
 	// input
 	public SearchType searchType;
@@ -90,5 +92,76 @@ public class SearchObject {
 	public Handler getSearchHandler() { return searchHandler; }
 
 	public long getElapsedTime() { return endTime.getTime() - startTime.getTime(); }
+
+	//
+	// Parcelable
+	//
+
+	public static final Parcelable.Creator<SearchObject> CREATOR = new Parcelable.Creator<SearchObject>() 
+	{
+		@Override
+		public SearchObject createFromParcel(Parcel in) { return new SearchObject(in); }
+		@Override
+		public SearchObject[] newArray(int size) { return new SearchObject[size]; }
+	};   
+
+	@Override
+	public int describeContents() { return 0; }
+
+	public SearchObject(Parcel in)
+	{
+
+		int size;
+
+		searchType = SearchType.fromInt(in.readInt());
+		dictionary = DictionaryType.fromInt(in.readInt());
+		searchString = in.readString();
+		boardString = in.readString();
+		wordScores = WordScoreState.fromInt(in.readInt());
+		wordSort = WordSortState.fromInt(in.readInt());
+
+		definition = in.readParcelable(WordDefinition.class.getClassLoader());
+		size = in.readInt();
+		wordList = new ArrayList<String>();
+		for (int i = 0; i < size; i += 1)
+			wordList.add(in.readString());
+		size = in.readInt();
+		defnList = new ArrayList<String>();
+		for (int i = 0; i < size; i += 1)
+			defnList.add(in.readString());
+		size = in.readInt();
+		scoredWordList = new ArrayList<ScoredWord>();
+		for (int i = 0; i < size; i += 1)
+			scoredWordList.add((ScoredWord) in.readParcelable(ScoredWord.class.getClassLoader()));
+		startTime = new Date(in.readLong());
+		endTime = new Date(in.readLong());
+
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags)
+	{
+
+		dest.writeInt(searchType.ordinal());
+		dest.writeInt(dictionary.ordinal());
+		dest.writeString(searchString);
+		dest.writeString(boardString);
+		dest.writeInt(wordScores.ordinal());
+		dest.writeInt(wordSort.ordinal());
+
+		dest.writeParcelable(definition, flags);
+		dest.writeInt(wordList.size());
+		for (int i = 0; i < wordList.size(); i += 1)
+			dest.writeString(wordList.get(i));
+		dest.writeInt(defnList.size());
+		for (int i = 0; i < defnList.size(); i += 1)
+			dest.writeString(defnList.get(i));
+		dest.writeInt(scoredWordList.size());
+		for (int i = 0; i < scoredWordList.size(); i += 1)
+			dest.writeParcelable(scoredWordList.get(i), flags);
+		dest.writeLong(startTime.getTime());
+		dest.writeLong(endTime.getTime());
+
+	}
 
 }

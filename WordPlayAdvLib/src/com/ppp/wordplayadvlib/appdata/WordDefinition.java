@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.utils.Debug;
 
-public class WordDefinition {
+public class WordDefinition implements Parcelable {
 	
 	public String word;
 	public String[] definitions;
@@ -113,6 +116,41 @@ public class WordDefinition {
 	}
 	
 	public int size() { return currentIndex; }
+
+	//
+	// Parcelable
+	//
+
+	public static final Parcelable.Creator<WordDefinition> CREATOR = new Parcelable.Creator<WordDefinition>() 
+	{
+		@Override
+		public WordDefinition createFromParcel(Parcel in) { return new WordDefinition(in); }
+		@Override
+		public WordDefinition[] newArray(int size) { return new WordDefinition[size]; }
+	};   
+
+	@Override
+	public int describeContents() { return 0; }
+
+	public WordDefinition(Parcel in)
+	{
+		word = in.readString();
+		int len = in.readInt();
+		definitions = new String[len];
+		in.readStringArray(definitions);
+		currentIndex = in.readInt();
+		maxIndex = in.readInt();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags)
+	{
+		dest.writeString(word);
+		dest.writeInt(definitions.length);
+		dest.writeStringArray(definitions);
+		dest.writeInt(currentIndex);
+		dest.writeInt(maxIndex);
+	}
 
 }
 

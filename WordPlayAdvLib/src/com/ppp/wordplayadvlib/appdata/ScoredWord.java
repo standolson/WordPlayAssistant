@@ -1,6 +1,9 @@
 package com.ppp.wordplayadvlib.appdata;
 
-public class ScoredWord {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ScoredWord implements Parcelable {
 	
 	private String word;
 	private int score;
@@ -32,5 +35,33 @@ public class ScoredWord {
 	}
 
 	public int hashCode() { return word.hashCode(); }
+
+	//
+	// Parcelable
+	//
+
+	public static final Parcelable.Creator<ScoredWord> CREATOR = new Parcelable.Creator<ScoredWord>() 
+	{
+		@Override
+		public ScoredWord createFromParcel(Parcel in) { return new ScoredWord(in); }
+		@Override
+		public ScoredWord[] newArray(int size) { return new ScoredWord[size]; }
+	};   
+
+	@Override
+	public int describeContents() { return 0; }
+
+	public ScoredWord(Parcel in)
+	{
+		word = in.readString();
+		score = in.readInt();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags)
+	{
+		dest.writeString(word);
+		dest.writeInt(score);
+	}
 
 }
