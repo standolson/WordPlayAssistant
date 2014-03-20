@@ -67,6 +67,8 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 
 		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
+		rootView.findViewById(R.id.dictionary_dict_spinner).setVisibility(View.GONE);
+
         thesaurusButton = (Button)rootView.findViewById(R.id.DictionaryButton);
         thesaurusButton.setOnClickListener(this);
 

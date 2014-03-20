@@ -26,14 +26,11 @@ public class SearchProgressDialogFragment extends DialogFragment
 	private View rootView;
 
 	private String listener;
-	private AsyncTask<?, ?, ?> task;
 
-	public static SearchProgressDialogFragment newInstance(String listener, AsyncTask<?, ?, ?> task)
+	public static SearchProgressDialogFragment newInstance(String listener)
 	{
 
 		SearchProgressDialogFragment dialog = new SearchProgressDialogFragment();
-
-		dialog.task = task;
 
 		Bundle args = new Bundle();
 		args.putString("listener", listener);
@@ -101,11 +98,6 @@ public class SearchProgressDialogFragment extends DialogFragment
 
         if (l != null)
             l.onProgressCancel();
- 
-        if (task != null)  {
-        	Log.e(getClass().getSimpleName(), "cancelling task");
-        	task.cancel(true);
-        }
 
     }
 

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import android.util.Log;
+
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.ScoredWord;
@@ -95,8 +97,11 @@ public class ScrabbleDatabaseClient extends ScrabbleClient {
 		if (word.contains(".") || word.contains("?"))  {
 			ArrayList<ScoredWord> sublist = new ArrayList<ScoredWord>();
 			for (char c = 'a'; c <= 'z'; c += 1)  {
-				if (Thread.currentThread().isInterrupted())
+				Log.e(getClass().getSimpleName(), "getScoredAnagrams: wildcard '" + c + "'");
+				if (Thread.currentThread().isInterrupted())  {
+					Log.e(getClass().getSimpleName(), "getScoredAnagrams: interrupted");
 					return retval;
+				}
 				String newWord = word.replace('.', c);
 				newWord = newWord.replace('?', c);
 				primeVal = getPrimeValue(newWord);

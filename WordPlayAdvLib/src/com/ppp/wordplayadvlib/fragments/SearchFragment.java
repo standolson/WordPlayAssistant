@@ -2,8 +2,6 @@ package com.ppp.wordplayadvlib.fragments;
 
 import java.util.ArrayList;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,10 +46,12 @@ public class SearchFragment extends BaseFragment
 		OnItemClickListener,
 		SearchProgressListener
 {
-	
-	RFC2229 dictServer;
-	
-	private SearchObject searchObject;
+
+	private View rootView;
+	private ListView searchListView;
+	private Handler searchHandler;
+//	private ProgressDialog progressDialog;
+	private SearchProgressDialogFragment progressDialog;
 
 	private SearchType searchType;
 	private DictionaryType dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
@@ -59,20 +59,22 @@ public class SearchFragment extends BaseFragment
 	private String boardString;
 	private WordScoreState wordScore;
 	private WordSortState wordSort;
+	private boolean cancel = false;
+	
+	private RFC2229 dictServer;	
+	private SearchObject searchObject;
 	
 	private SearchThread searchThread;
-
-	private View rootView;
-	private ListView searchListView;
-	private Handler searchHandler;
-	private ProgressDialog progressDialog;
-	private boolean cancel = false;
+	private static AsyncTask<Void, Void, Void> task;
+	private static SearchFragment taskListener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 
 		super.onCreate(savedInstanceState);
+
+		taskListener = this;
 
 		setHasOptionsMenu(true);
 
@@ -277,6 +279,36 @@ public class SearchFragment extends BaseFragment
 	public void onProgressCancel()
 	{
 		Log.e(getClass().getSimpleName(), "onProgressCancel");
+		task.cancel(true);
+	}
+
+	private void onSearchComplete(SearchObject searchObject)
+	{
+
+		FragmentManager fm = getFragmentManager();
+		SearchProgressDialogFragment dialog = null;
+
+		// Do nothing if we've been cancelled
+		if (task.isCancelled())  {
+			popStack();
+			return;
+		}
+
+		// Find the dialog in the FragmentManager
+		if (fm != null)
+			dialog =
+				(SearchProgressDialogFragment) fm.findFragmentByTag(SearchProgressDialogFragment.class.getName());
+
+		// Dismiss the dialog and display the results
+		if (dialog != null)  {
+			dialog.dismiss();
+			displayResults(searchObject, true);
+		}
+		
+	}
+
+	private void onSearchCancelled(SearchObject so)
+	{
 		popStack();
 	}
 
@@ -309,40 +341,68 @@ public class SearchFragment extends BaseFragment
 	public void openProgressDialog()
 	{
 
-		cancel = false;
-
-		progressDialog = new ProgressDialog(getActivity());
-		progressDialog.setTitle("Please wait...");
-		progressDialog.setMessage("Retrieving data...");
-		progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE,
-								getString(android.R.string.cancel),
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which)
-									{
-										if (searchThread != null)
-											searchThread.interrupt();
-										cancel = true;
-									}
-								});
-		progressDialog.show();
+//		cancel = false;
+//
+//		progressDialog = new ProgressDialog(getActivity());
+//		progressDialog.setTitle("Please wait...");
+//		progressDialog.setMessage("Retrieving data...");
+//		progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE,
+//								getString(android.R.string.cancel),
+//								new DialogInterface.OnClickListener() {
+//									public void onClick(DialogInterface dialog, int which)
+//									{
+//										if (searchThread != null)
+//											searchThread.interrupt();
+//										cancel = true;
+//									}
+//								});
+//		progressDialog.show();
 
 	}
 	
 	private void closeProgressDialog()
 	{
 
-		if (progressDialog != null)  {
-			if (!getActivity().isFinishing())  {
-				try {
-					progressDialog.dismiss();
-				}
-				catch (Exception e) {}
-			}
-		}
-		progressDialog = null;
+//		if (progressDialog != null)  {
+//			if (!getActivity().isFinishing())  {
+//				try {
+//					progressDialog.dismiss();
+//				}
+//				catch (Exception e) {}
+//			}
+//		}
+//		progressDialog = null;
 
 	}
-	
+
+	private void displayResults(SearchObject so, boolean showToast)
+	{
+
+		if (task.isCancelled())  {
+			popStack();
+			return;
+		}
+
+		searchObject = so;
+
+		if (searchObject.getDefinition() != null)
+			showDefinitionList(showToast);
+		else if (searchObject.getWordList() != null)
+			showWordList(showToast);
+		else if (searchObject.getDefinitionList() != null)
+			showDefinitionList(showToast);
+		else if (searchObject.getScoredWordList() != null)
+			showScoredWordList(showToast);
+		else if (searchObject.getException() != null)
+			if (!getActivity().isFinishing())  {
+				Exception e = searchObject.getException();
+				if (e instanceof WifiAuthException)
+					searchObject.setException(new WordPlayException(getString(R.string.wifi_auth_error)));
+				showAppErrDialog();
+			}
+
+	}
+
 	private void displayResults(Boolean showToast)
 	{
 
@@ -480,12 +540,10 @@ public class SearchFragment extends BaseFragment
 
 	private void onExactMatch()
 	{
-
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictExactMatch();
 		else
 			onDictExactMatch();
-		
 	}
 	
 	private void onScrabbleDictExactMatch()
@@ -579,12 +637,10 @@ public class SearchFragment extends BaseFragment
 
 	private void onStartsWith()
 	{
-		
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictStartsWith();
 		else
 			onDictStartsWith();
-		
 	}
 	
 	private void onScrabbleDictStartsWith()
@@ -676,12 +732,10 @@ public class SearchFragment extends BaseFragment
 	
 	private void onContains()
 	{
-		
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictContains();
 		else
 			onDictContains();
-		
 	}
 	
 	private void onScrabbleDictContains()
@@ -773,12 +827,11 @@ public class SearchFragment extends BaseFragment
 	
 	private void onEndsWith()
 	{
-		
+
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictEndsWith();
 		else
 			onDictEndsWith();
-		
 	}
 	
 	private void onScrabbleDictEndsWith()
@@ -871,24 +924,32 @@ public class SearchFragment extends BaseFragment
 
 	private void onCrosswords()
 	{
-
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleCrosswords();
 		else
 			onDictCrosswords();
-
 	}
 
 	private void onDictCrosswords()
 	{
 
-		Runnable r = new Runnable() {
-			public void run()
+		task = new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected void onPreExecute()
+			{
+				SearchProgressDialogFragment dialog =
+					SearchProgressDialogFragment.newInstance(SearchFragment.class.getName());
+			    dialog.show(getFragmentManager(), SearchProgressDialogFragment.class.getName());		
+			}
+
+			@Override
+			protected Void doInBackground(Void... args)
 			{
 
 				String newSearchString = searchObject.getSearchString().replace("?", ".");
 
-				while (!cancel)  {
+				while (!isCancelled())  {
 					try {
 						StringBuilder resp =
 							dictServer.matchWord("^" + newSearchString + "$",
@@ -904,115 +965,76 @@ public class SearchFragment extends BaseFragment
 						break;
 					}
 				}
-				
-				if ((searchObject != null) && (searchObject.getSearchHandler() != null))
-					searchObject.getSearchHandler().sendEmptyMessage(0);
+
+				return null;
 
 			}
+
+			@Override
+			protected void onPostExecute(Void result)
+			{
+				taskListener.onSearchComplete(searchObject);
+			}
+
+			@Override
+			protected void onCancelled(Void result)
+			{
+				taskListener.onSearchCancelled(searchObject);
+			}
+
+			@Override
+			protected void onCancelled()
+			{
+				taskListener.onSearchCancelled(searchObject);
+			}
+
 		};
 
-		startBackgroundSearch(r, false);
+		task.execute();
+
+//		Runnable r = new Runnable() {
+//			public void run()
+//			{
+//
+//				String newSearchString = searchObject.getSearchString().replace("?", ".");
+//
+//				while (!cancel)  {
+//					try {
+//						StringBuilder resp =
+//							dictServer.matchWord("^" + newSearchString + "$",
+//													searchObject.getDictionary(),
+//													false);
+//						searchObject.setWordList(RFC2229.parseWordList(resp));
+//						break;
+//					}
+//					catch (Exception e)  {
+//						if (NetworkUtils.isRetryException(e))
+//							continue;
+//						searchObject.setException(e);
+//						break;
+//					}
+//				}
+//				
+//				if ((searchObject != null) && (searchObject.getSearchHandler() != null))
+//					searchObject.getSearchHandler().sendEmptyMessage(0);
+//
+//			}
+//		};
+//
+//		startBackgroundSearch(r, false);
 		
 	}
 
 	private void onScrabbleCrosswords()
 	{
 
-		Runnable r = new Runnable() {
-			public void run()
-			{
-
-				ScrabbleClient client;
-				String searchString;
-				String newSearchString = searchObject.getSearchString().replace("?", ".");
-
-				if (WordPlayApp.getInstance().getUseGoogleAppEngine())  {
-					client = new ScrabbleClient();
-					searchString = "^" + newSearchString + "$";
-				}
-				else {
-					client = new ScrabbleDatabaseClient();
-					searchString = newSearchString.replace(".", "_");
-				}
-
-				while (!cancel)  {
-					try {
-						searchObject.setWordList(
-								client.getWordList(
-										searchString,
-										searchObject.getDictionary(),
-										searchObject.getWordSort()));
-						break;
-					}
-					catch (Exception e) {
-						if (NetworkUtils.isRetryException(e))
-							continue;
-						searchObject.setException(e);
-						break;
-					}
-				}
-
-				if ((searchObject != null) && (searchObject.getSearchHandler() != null))
-					searchObject.getSearchHandler().sendEmptyMessage(0);
-				
-			}
-		};
-		
-		startBackgroundSearch(r, false);
-
-	}
-
-	private void onThesaurus()
-	{
-		
-		Runnable r = new Runnable() {
-			public void run()
-			{
-				
-				while (!cancel)  {
-					try {
-						StringBuilder resp = dictServer.thesaurus("^" + searchObject.getSearchString() + "$");
-						searchObject.setWordList(RFC2229.parseThesaurusList(resp));
-						break;
-					}
-					catch (Exception e)  {
-						if (NetworkUtils.isRetryException(e))
-							continue;
-						searchObject.setException(e);
-						break;
-					}
-				}
-				
-				if ((searchObject != null) && (searchObject.getSearchHandler() != null))
-					searchObject.getSearchHandler().sendEmptyMessage(0);
-
-			}
-		};
-		
-		startBackgroundSearch(r, false);
-		
-	}
-	
-	private void onAnagram()
-	{
-
-		if (searchObject.getDictionary().isScrabbleDict())
-			onScrabbleDictAnagram();
-		else
-			Toast.makeText(getActivity(), "onAnagram: Bad Dictionary Selected", Toast.LENGTH_SHORT).show();
-		
-	}
-	
-	private void onScrabbleDictAnagram()
-	{
-
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
 			{
 				SearchProgressDialogFragment dialog =
-					SearchProgressDialogFragment.newInstance(SearchFragment.class.getName(), this);
+					SearchProgressDialogFragment.newInstance(SearchFragment.class.getName());
 			    dialog.show(getFragmentManager(), SearchProgressDialogFragment.class.getName());		
 			}
 
@@ -1020,26 +1042,16 @@ public class SearchFragment extends BaseFragment
 			protected Void doInBackground(Void... args)
 			{
 
-				ScrabbleClient client = null;
-
-				if (WordPlayApp.getInstance().getUseGoogleAppEngine())
-					client = new ScrabbleClient();
-				else
-					client = new ScrabbleDatabaseClient();
-		
+				ScrabbleDatabaseClient client = new ScrabbleDatabaseClient();
+				String newSearchString = searchObject.getSearchString().replace("?", ".");
+				String searchString = newSearchString.replace(".", "_");
+ 
 				try {
-					if (searchObject.getWordScores().isScored())
-						searchObject.setScoredWordList(
-								client.getScoredAnagrams(
-										searchObject.getSearchString() + searchObject.getBoardString(),
-										searchObject.getDictionary(),
-										searchObject.getWordSort()));
-					else
-						searchObject.setWordList(
-								client.getAnagrams(
-										searchObject.getSearchString() + searchObject.getBoardString(),
-										searchObject.getDictionary(),
-										searchObject.getWordSort()));
+					searchObject.setWordList(
+						client.getWordList(
+								searchString,
+								searchObject.getDictionary(),
+								searchObject.getWordSort()));
 				}
 				catch (Exception e) {
 					searchObject.setException(e);
@@ -1052,32 +1064,220 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
+				taskListener.onSearchComplete(searchObject);
+			}
 
-				FragmentManager fm = getFragmentManager();
-				SearchProgressDialogFragment dialog = null;
+			@Override
+			protected void onCancelled(Void result)
+			{
+				taskListener.onSearchCancelled(searchObject);
+			}
 
-				// Do nothing if we've been cancelled
-				if (isCancelled())
-					return;
+			@Override
+			protected void onCancelled()
+			{
+				taskListener.onSearchCancelled(searchObject);
+			}
 
-				// Find the dialog in the FragmentManager
-				if (fm != null)
-					dialog =
-						(SearchProgressDialogFragment) fm.findFragmentByTag(SearchProgressDialogFragment.class.getName());
+		};
 
-				// Dismiss the dialog and display the results
-				if (dialog != null)  {
-					dialog.dismiss();
-					displayResults(true);
+		task.execute();
+
+//		Runnable r = new Runnable() {
+//			public void run()
+//			{
+//
+//				ScrabbleClient client;
+//				String searchString;
+//				String newSearchString = searchObject.getSearchString().replace("?", ".");
+//
+//				if (WordPlayApp.getInstance().getUseGoogleAppEngine())  {
+//					client = new ScrabbleClient();
+//					searchString = "^" + newSearchString + "$";
+//				}
+//				else {
+//					client = new ScrabbleDatabaseClient();
+//					searchString = newSearchString.replace(".", "_");
+//				}
+//
+//				while (!cancel)  {
+//					try {
+//						searchObject.setWordList(
+//								client.getWordList(
+//										searchString,
+//										searchObject.getDictionary(),
+//										searchObject.getWordSort()));
+//						break;
+//					}
+//					catch (Exception e) {
+//						if (NetworkUtils.isRetryException(e))
+//							continue;
+//						searchObject.setException(e);
+//						break;
+//					}
+//				}
+//
+//				if ((searchObject != null) && (searchObject.getSearchHandler() != null))
+//					searchObject.getSearchHandler().sendEmptyMessage(0);
+//				
+//			}
+//		};
+//		
+//		startBackgroundSearch(r, false);
+
+	}
+
+	private void onThesaurus()
+	{
+
+		task = new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected void onPreExecute()
+			{
+				SearchProgressDialogFragment dialog =
+					SearchProgressDialogFragment.newInstance(SearchFragment.class.getName());
+			    dialog.show(getFragmentManager(), SearchProgressDialogFragment.class.getName());		
+			}
+
+			@Override
+			protected Void doInBackground(Void... args)
+			{
+
+				while (!isCancelled())  {
+					try {
+						StringBuilder resp = dictServer.thesaurus("^" + searchObject.getSearchString() + "$");
+						searchObject.setWordList(RFC2229.parseThesaurusList(resp));
+						break;
+					}
+					catch (Exception e)  {
+						if (NetworkUtils.isRetryException(e))
+							continue;
+						searchObject.setException(e);
+						break;
+					}
 				}
+
+				return null;
 
 			}
 
 			@Override
-			protected void onCancelled(Void result) { popStack(); }
+			protected void onPostExecute(Void result)
+			{
+				taskListener.onSearchComplete(searchObject);
+			}
 
 			@Override
-			protected void onCancelled() { popStack(); }
+			protected void onCancelled(Void result)
+			{
+				taskListener.onSearchCancelled(searchObject);
+			}
+
+			@Override
+			protected void onCancelled()
+			{
+				taskListener.onSearchCancelled(searchObject);
+			}
+
+		};
+
+		task.execute();
+		
+//		Runnable r = new Runnable() {
+//			public void run()
+//			{
+//				
+//				while (!cancel)  {
+//					try {
+//						StringBuilder resp = dictServer.thesaurus("^" + searchObject.getSearchString() + "$");
+//						searchObject.setWordList(RFC2229.parseThesaurusList(resp));
+//						break;
+//					}
+//					catch (Exception e)  {
+//						if (NetworkUtils.isRetryException(e))
+//							continue;
+//						searchObject.setException(e);
+//						break;
+//					}
+//				}
+//				
+//				if ((searchObject != null) && (searchObject.getSearchHandler() != null))
+//					searchObject.getSearchHandler().sendEmptyMessage(0);
+//
+//			}
+//		};
+//		
+//		startBackgroundSearch(r, false);
+		
+	}
+	
+	private void onAnagram()
+	{
+		if (searchObject.getDictionary().isScrabbleDict())
+			onScrabbleDictAnagram();
+		else
+			Toast.makeText(getActivity(), "onAnagram: Bad Dictionary Selected", Toast.LENGTH_SHORT).show();
+	}
+	
+	private void onScrabbleDictAnagram()
+	{
+
+		task = new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected void onPreExecute()
+			{
+				SearchProgressDialogFragment dialog =
+					SearchProgressDialogFragment.newInstance(SearchFragment.class.getName());
+			    dialog.show(getFragmentManager(), SearchProgressDialogFragment.class.getName());		
+			}
+
+			@Override
+			protected Void doInBackground(Void... args)
+			{
+
+				ScrabbleDatabaseClient client = new ScrabbleDatabaseClient();
+		
+				try {
+					if (searchObject.getWordScores().isScored())
+						searchObject.setScoredWordList(
+							client.getScoredAnagrams(
+									searchObject.getSearchString() + searchObject.getBoardString(),
+									searchObject.getDictionary(),
+									searchObject.getWordSort()));
+					else
+						searchObject.setWordList(
+							client.getAnagrams(
+									searchObject.getSearchString() + searchObject.getBoardString(),
+									searchObject.getDictionary(),
+									searchObject.getWordSort()));
+				}
+				catch (Exception e) {
+					searchObject.setException(e);
+				}
+
+				return null;
+
+			}
+
+			@Override
+			protected void onPostExecute(Void result)
+			{
+				taskListener.onSearchComplete(searchObject);
+			}
+
+			@Override
+			protected void onCancelled(Void result)
+			{
+				taskListener.onSearchCancelled(searchObject);
+			}
+
+			@Override
+			protected void onCancelled()
+			{
+				taskListener.onSearchCancelled(searchObject);
+			}
 
 		};
 
