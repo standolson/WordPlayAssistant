@@ -2,9 +2,11 @@ package com.ppp.wordplayadvlib.fragments.dialog;
 
 import com.ppp.wordplayadvlib.R;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,11 +26,14 @@ public class SearchProgressDialogFragment extends DialogFragment
 	private View rootView;
 
 	private String listener;
+	private AsyncTask<?, ?, ?> task;
 
-	public static SearchProgressDialogFragment newInstance(String listener)
+	public static SearchProgressDialogFragment newInstance(String listener, AsyncTask<?, ?, ?> task)
 	{
 
 		SearchProgressDialogFragment dialog = new SearchProgressDialogFragment();
+
+		dialog.task = task;
 
 		Bundle args = new Bundle();
 		args.putString("listener", listener);
@@ -96,7 +101,12 @@ public class SearchProgressDialogFragment extends DialogFragment
 
         if (l != null)
             l.onProgressCancel();
-    	
+ 
+        if (task != null)  {
+        	Log.e(getClass().getSimpleName(), "cancelling task");
+        	task.cancel(true);
+        }
+
     }
 
 }

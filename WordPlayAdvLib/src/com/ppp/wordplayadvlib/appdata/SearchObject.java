@@ -150,15 +150,18 @@ public class SearchObject implements Parcelable {
 		dest.writeInt(wordSort.ordinal());
 
 		dest.writeParcelable(definition, flags);
-		dest.writeInt(wordList.size());
-		for (int i = 0; i < wordList.size(); i += 1)
-			dest.writeString(wordList.get(i));
-		dest.writeInt(defnList.size());
-		for (int i = 0; i < defnList.size(); i += 1)
-			dest.writeString(defnList.get(i));
-		dest.writeInt(scoredWordList.size());
-		for (int i = 0; i < scoredWordList.size(); i += 1)
-			dest.writeParcelable(scoredWordList.get(i), flags);
+		dest.writeInt(wordList == null ? 0 : wordList.size());
+		if (wordList != null)
+			for (int i = 0; i < wordList.size(); i += 1)
+				dest.writeString(wordList.get(i));
+		dest.writeInt(defnList == null ? 0 : defnList.size());
+		if (defnList != null)
+			for (int i = 0; i < defnList.size(); i += 1)
+				dest.writeString(defnList.get(i));
+		dest.writeInt(scoredWordList == null ? 0 : scoredWordList.size());
+		if (scoredWordList != null)
+			for (int i = 0; i < scoredWordList.size(); i += 1)
+				dest.writeParcelable(scoredWordList.get(i), flags);
 		dest.writeLong(startTime.getTime());
 		dest.writeLong(endTime.getTime());
 
