@@ -372,7 +372,7 @@ public class BaseFragment extends Fragment {
 				hasNagged = true;
 			}
 			else
-				startSearchActivity(args);
+				startNewSearch(args);
 
     	}
     	else {
@@ -382,7 +382,7 @@ public class BaseFragment extends Fragment {
 		
 	}
 
-	public void startSearchActivity(Bundle args)
+	public void startNewSearch(Bundle args)
 	{
 		SearchFragment fragment = new SearchFragment();
 		fragment.setArguments(args);
@@ -393,57 +393,6 @@ public class BaseFragment extends Fragment {
     // Menu Helpers
     //
 
-    private void showDictionaries()
-    {
-//    	if (currentTab == DictionaryTab)
-//    		dictSpinner.performClick();
-//    	else if (currentTab == WordJudgeTab)
-//    		wjSpinner.performClick();
-//    	else if (currentTab == AnagramTab)
-//    		anagramSpinner.performClick();
-//    	else if (currentTab == CrosswordTab)
-//    		crosswordsSpinner.performClick();
-    }
-    
-    private void showHistory()
-    {
-//    	Intent intent = new Intent(getActivity(), SearchHistoryActivity.class);
-//    	try {
-//    		startActivity(intent);
-//    	}
-//    	catch (Exception e) {}
-    }
-
-    private void showHelp()
-    {
-    	
-//    	String str = null;
-//    	Intent intent = null;
-//    	
-//    	if (currentTab == DictionaryTab)  {
-//    		DictionaryType dict =
-//    			DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
-//    		if (dict.isThesaurus())
-//    			str = getHelpText("Thesaurus", R.raw.thesaurus_help);
-//    		else
-//    			str = getHelpText("Dictionary", R.raw.dictionary_help);
-//    	}
-//    	else if (currentTab == WordJudgeTab)
-//    		str = getHelpText("Word Judge", R.raw.wordjudge_help);
-//    	else if (currentTab == AnagramTab)
-//    		str = getHelpText("Anagrams", R.raw.anagrams_help);
-//    	else if (currentTab == CrosswordTab)
-//    		str = getHelpText("Crosswords", R.raw.crosswords_help);
-//    	
-//		intent = new Intent(getActivity(), HelpViewer.class);
-//		intent.putExtra("HelpText", str);
-//		try {
-//			startActivity(intent);
-//		}
-//		catch (Exception e) {}
-    	
-    }
- 
     private String getHelpText(String whichHelp, int id)
     {
 
@@ -649,7 +598,7 @@ public class BaseFragment extends Fragment {
     	            			startActivityForResult(intent, EmailActivity);
     	            	}
     	            	catch (Exception e) {
-    	            		startSearchActivity(BaseFragment.savedSearchBundle);
+    	            		startNewSearch(BaseFragment.savedSearchBundle);
     	            	}
                 	}
 
@@ -668,7 +617,7 @@ public class BaseFragment extends Fragment {
 				if (fragment.searchBundle != null)  {
 					try {
 						if (!getActivity().isFinishing())
-							startSearchActivity(searchBundle);
+							startNewSearch(searchBundle);
 					}
 					catch (Exception e) {}
 				}

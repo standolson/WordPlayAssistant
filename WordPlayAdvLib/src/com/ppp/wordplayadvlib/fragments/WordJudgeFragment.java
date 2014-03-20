@@ -286,7 +286,7 @@ public class WordJudgeFragment extends BaseFragment
 			args.putInt("SearchType", SearchType.OPTION_DICTIONARY_EXACT_MATCH.ordinal());
 			args.putInt("Dictionary", DictionaryType.DICTIONARY_DICT_DOT_ORG.ordinal());
 
-    		startSearchActivity(args);
+    		startNewSearch(args);
 
     	}
     	else
