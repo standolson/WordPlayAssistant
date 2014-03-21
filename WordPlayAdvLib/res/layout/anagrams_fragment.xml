@@ -20,81 +20,79 @@
 		<LinearLayout
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
-		    android:orientation="horizontal">
-				
-			<EditText
-			    style="@style/EditTextStyle"
-				android:id="@+id/AnagramsTrayText"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="3"
-				android:scrollHorizontally="true"
-				android:hint="@string/anagrams_tray_edit_hint"
-				android:inputType="textFilter"/>
+		    android:orientation="horizontal" >
 
-			<Button
-			    style="@style/ButtonStyle"
-				android:id="@+id/AnagramsTrayTextClear"
+		    <FrameLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/clear_button_text"/>
+				android:layout_weight="3" >
+				
+				<EditText
+				    style="@style/EditTextStyle"
+					android:id="@+id/AnagramsTrayText"
+					android:layout_width="fill_parent"
+					android:layout_height="@dimen/edit_text_height"
+					android:hint="@string/anagrams_tray_edit_hint"
+					android:inputType="textFilter"
+                    android:imeOptions="actionDone" />
+	
+				<Button
+				    style="@style/ClearButtonStyle"
+					android:id="@+id/AnagramsTrayTextClear"
+					android:layout_width="@dimen/clear_button_size"
+					android:layout_height="@dimen/clear_button_size" />
+
+			</FrameLayout>
 			
 			<Button
 			    style="@style/ButtonStyle"
 				android:id="@+id/AnagramsButton"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_height="@dimen/button_height"
 				android:layout_weight="1"
-				android:text="@string/search_button_text"/>
+				android:text="@string/search_button_text" />
 				
 		</LinearLayout>
 
-		<LinearLayout
+		<FrameLayout
 		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:orientation="horizontal">
+		    android:layout_height="wrap_content" >
 
 			<EditText
 			    style="@style/EditTextStyle"
 				android:id="@+id/AnagramsBoardText"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="4"
-				android:scrollHorizontally="true"
+				android:layout_width="fill_parent"
+				android:layout_height="@dimen/edit_text_height"
 				android:hint="@string/anagrams_board_edit_hint"
 				android:inputType="textFilter"/>
 
 			<Button
-			    style="@style/ButtonStyle"
+			    style="@style/ClearButtonStyle"
 				android:id="@+id/AnagramsBoardTextClear"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/clear_button_text"/>
+				android:layout_width="@dimen/clear_button_size"
+				android:layout_height="@dimen/clear_button_size" />
 
-		</LinearLayout>
+		</FrameLayout>
 
 		<LinearLayout
 			android:id="@+id/DictionaryToggleButtons"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
+			android:padding="10dip"
 			android:orientation="horizontal">
 		
 			<com.ppp.wordplayadvlib.widgets.MultiStateButton
-			    style="@style/ButtonStyle"
+			    style="@style/MultiStateButtonStyle"
 				android:id="@+id/AnagramsWordScores"
 				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="10dip"/>
+				android:layout_height="@dimen/button_height" />
 				
 			<com.ppp.wordplayadvlib.widgets.MultiStateButton
-			    style="@style/ButtonStyle"
+			    style="@style/MultiStateButtonStyle"
 				android:id="@+id/AnagramsSortOrder"
 				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="10dip"/>
+				android:layout_height="@dimen/button_height" />
 
 		</LinearLayout>
 			

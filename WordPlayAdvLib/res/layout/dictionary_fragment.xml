@@ -20,31 +20,35 @@
 		<LinearLayout
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
-		    android:orientation="horizontal">
-				
-			<EditText
-			    style="@style/EditTextStyle"
-				android:id="@+id/DictionaryText"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="3"
-				android:scrollHorizontally="true"
-				android:hint="@string/dictionary_edit_hint"
-				android:inputType="textFilter"/>
+		    android:orientation="horizontal" >
 
-			<Button
-			    style="@style/ButtonStyle"
-				android:id="@+id/DictionaryTextClear"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/clear_button_text"/>
+		    <FrameLayout
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="3" >
+				
+				<EditText
+				    style="@style/EditTextStyle"
+					android:id="@+id/DictionaryText"
+					android:layout_width="fill_parent"
+					android:layout_height="@dimen/edit_text_height"
+					android:hint="@string/dictionary_edit_hint"
+					android:inputType="textFilter"
+                    android:imeOptions="actionDone" />
+	
+				<Button
+				    style="@style/ClearButtonStyle"
+					android:id="@+id/DictionaryTextClear"
+					android:layout_width="@dimen/clear_button_size"
+					android:layout_height="@dimen/clear_button_size" />
+
+			</FrameLayout>
 			
 			<Button
 			    style="@style/ButtonStyle"
 				android:id="@+id/DictionaryButton"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_height="@dimen/button_height"
 				android:layout_weight="1"
 				android:text="@string/search_button_text"/>
 
@@ -67,14 +71,16 @@
 			android:orientation="horizontal">
 		
 			<com.ppp.wordplayadvlib.widgets.MultiStateButton
+			    style="@style/MultiStateButtonStyle"
 				android:id="@+id/DictionaryWordScores"
 				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"/>
+				android:layout_height="@dimen/button_height"/>
 				
 			<com.ppp.wordplayadvlib.widgets.MultiStateButton
+			    style="@style/MultiStateButtonStyle"
 				android:id="@+id/DictionarySortOrder"
 				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"/>
+				android:layout_height="@dimen/button_height"/>
 
 		</LinearLayout>
 		

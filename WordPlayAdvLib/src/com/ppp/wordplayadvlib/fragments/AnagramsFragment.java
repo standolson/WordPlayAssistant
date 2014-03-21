@@ -53,7 +53,8 @@ public class AnagramsFragment extends BaseFragment
 	@Override
     public void onClick(View v)
     {
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm =
+        	(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
     	startSearchFragment();
     }
