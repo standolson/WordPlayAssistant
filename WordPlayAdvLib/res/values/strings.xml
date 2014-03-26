@@ -54,12 +54,12 @@
  		<item>Collins (4/2007)</item>
  	</string-array>
  
- 	<string name="dictionary_edit_hint">Enter a search string...</string>
- 	<string name="thesaurus_edit_hint">Enter a word...</string>
+ 	<string name="dictionary_edit_hint">Enter search string...</string>
+ 	<string name="thesaurus_edit_hint">Enter word...</string>
 	<string name="wordjudge_edit_hint">Enter words...</string>
 	<string name="anagrams_tray_edit_hint">Enter tray letters...</string>
 	<string name="anagrams_board_edit_hint">Enter board letters...</string>
-	<string name="crosswords_edit_hint">Enter a word pattern...</string>
+	<string name="crosswords_edit_hint">Enter word pattern...</string>
 	
 	<string-array name="word_score_toggle_states">
 		<item>Word Scores Off</item>

@@ -147,6 +147,9 @@ public class CrosswordsFragment extends BaseFragment
 		wordScores = WordScoreState.WORD_SCORE_STATE_OFF;
 		wordSort = WordSortState.WORD_SORT_BY_ALPHA;
 
+		if (!validateString(searchString, dictionary, false))
+			return;
+
 		// Save state
 		editor.putString("crosswordsStr", (searchString == null) ? "" : searchString);
 		editor.commit();

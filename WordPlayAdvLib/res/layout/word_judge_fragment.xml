@@ -26,31 +26,26 @@
 		    <FrameLayout
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_weight="3" >
+		        android:layout_marginRight="10dip"
+		        android:layout_weight="65" >
 				
 				<EditText
 				    style="@style/EditTextStyle"
 					android:id="@+id/WordJudgeText"
-					android:layout_width="fill_parent"
-					android:layout_height="@dimen/edit_text_height"
 					android:hint="@string/wordjudge_edit_hint"
 					android:inputType="textFilter"
                     android:imeOptions="actionDone" />
 	
 				<Button
 				    style="@style/ClearButtonStyle"
-					android:id="@+id/WordJudgeTextClear"
-					android:layout_width="@dimen/clear_button_size"
-					android:layout_height="@dimen/clear_button_size" />
+					android:id="@+id/WordJudgeTextClear" />
 
 			</FrameLayout>
 			
 			<Button
 			    style="@style/ButtonStyle"
 				android:id="@+id/WordJudgeButton"
-				android:layout_width="wrap_content"
-				android:layout_height="@dimen/button_height"
-				android:layout_weight="1"
+				android:layout_weight="35"
 				android:text="@string/judge_button_text"/>
 
 		</LinearLayout>

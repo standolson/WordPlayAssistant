@@ -16,40 +16,32 @@
 		android:id="@+id/crosswords"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:orientation="vertical">
+		android:orientation="horizontal">
 
-		<LinearLayout
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:orientation="horizontal">
-				
+	    <FrameLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="10dip"
+			android:layout_weight="65" >
+			
 			<EditText
 			    style="@style/EditTextStyle"
 				android:id="@+id/CrosswordsText"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="3"
 				android:scrollHorizontally="true"
 				android:hint="@string/crosswords_edit_hint"
 				android:inputType="textFilter"/>
 
 			<Button
-			    style="@style/ButtonStyle"
-				android:id="@+id/CrosswordsTextClear"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/clear_button_text"/>
-			
-			<Button
-			    style="@style/ButtonStyle"
-				android:id="@+id/CrosswordsButton"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/search_button_text"/>
-				
-		</LinearLayout>
+			    style="@style/ClearButtonStyle"
+				android:id="@+id/CrosswordsTextClear" />
+
+		</FrameLayout>
+		
+		<Button
+		    style="@style/ButtonStyle"
+			android:id="@+id/CrosswordsButton"
+			android:layout_weight="35"
+			android:text="@string/search_button_text"/>
 		
 	</LinearLayout>
 
