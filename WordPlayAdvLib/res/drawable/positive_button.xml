@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true">
+        <shape>
+            <gradient android:angle="270" android:endColor="@color/positiveButtonPressedEnd" android:startColor="@color/positiveButtonPressedStart" />
+            <padding android:bottom="7dp" android:top="7dp" />
+            <stroke android:width="2dp" android:color="@color/positiveButtonPressedStroke" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <item android:state_focused="true">
+        <shape>
+            <gradient android:angle="270" android:endColor="@color/positiveButtonFocusedEnd" android:startColor="@color/positiveButtonFocusedStart" />
+            <padding android:bottom="7dp" android:top="7dp" />
+            <stroke android:width="2dp" android:color="@color/positiveButtonFocusedStroke" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <item android:state_enabled="false">
+        <shape>
+            <gradient android:angle="270" android:endColor="@color/positiveButtonDisabledEnd" android:startColor="@color/positiveButtonDisabledStart" />
+            <padding android:bottom="7dp" android:top="7dp" />
+            <stroke android:width="2dp" android:color="@color/positiveButtonDisabledStroke" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+    <item>
+    	<shape>
+            <gradient android:angle="270" android:endColor="@color/positiveButtonEnd" android:startColor="@color/positiveButtonStart" />
+            <padding android:bottom="7dp" android:top="7dp" />
+            <stroke android:width="2dp" android:color="@color/positiveButtonStroke" />
+            <corners android:radius="4dp" />
+        </shape>
+    </item>
+
+</selector>
