@@ -49,6 +49,13 @@ public class CrosswordsFragment extends BaseFragment
 	}
 
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setButtonState();
+	}
+
+	@Override
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -112,6 +119,7 @@ public class CrosswordsFragment extends BaseFragment
 				return false;
 			}
         });
+        crosswordsText.addTextChangedListener(buttonTextWatcher);
 
         final Button crosswordsClearButton = (Button)rootView.findViewById(R.id.CrosswordsTextClear);
         crosswordsClearButton.setOnClickListener(new View.OnClickListener() {
@@ -166,6 +174,17 @@ public class CrosswordsFragment extends BaseFragment
 		fragment.setArguments(args);
 		pushToStack(fragment);
 
+    }
+
+    @Override
+    protected void setButtonState()
+    {
+
+		String searchString = crosswordsText.getText().toString();
+		DictionaryType dictionary = DictionaryType.fromInt((int)crosswordsSpinner.getSelectedItemId() + 1);
+
+		crosswordsButton.setEnabled(validateString(searchString, dictionary, false));
+    	
     }
 
 }

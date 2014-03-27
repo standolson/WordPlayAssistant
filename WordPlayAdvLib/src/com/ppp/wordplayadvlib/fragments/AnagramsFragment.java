@@ -3,7 +3,9 @@ package com.ppp.wordplayadvlib.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -48,6 +50,13 @@ public class AnagramsFragment extends BaseFragment
 		rootView = (RelativeLayout)inflater.inflate(R.layout.anagrams_fragment, container, false);
 		setupAnagramTab();
 		return rootView;
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setButtonState();
 	}
 
 	@Override
@@ -115,6 +124,7 @@ public class AnagramsFragment extends BaseFragment
 				return false;
 			}
         });
+        anagramsTrayText.addTextChangedListener(buttonTextWatcher);
 
         final EditText anagramsBoardText = (EditText)rootView.findViewById(R.id.AnagramsBoardText);
         String anagramsBoard = prefs.getString("anagramsBoard", "");
@@ -132,6 +142,7 @@ public class AnagramsFragment extends BaseFragment
 				return false;
 			}
         });
+        anagramsBoardText.addTextChangedListener(buttonTextWatcher);
 
         final Button anagramsTrayClearButton = (Button)rootView.findViewById(R.id.AnagramsTrayTextClear);
         anagramsTrayClearButton.setOnClickListener(new View.OnClickListener() {
@@ -204,9 +215,6 @@ public class AnagramsFragment extends BaseFragment
 		wordScores = WordScoreState.fromInt(anagramScoreToggle.getState() + 1);
 		wordSort = WordSortState.fromInt(anagramSortToggle.getState() + 1);
 
-		if (!validateString(searchString + boardString, dictionary, true))
-			return;
-
 		// Save state
 		editor.putString("anagramsStr", (searchString == null) ? "" : searchString);
 		Debug.v("SAVE anagramsStr = " + searchString);
@@ -229,6 +237,20 @@ public class AnagramsFragment extends BaseFragment
 		BaseFragment fragment = new SearchFragment();
 		fragment.setArguments(args);
 		pushToStack(fragment);
+
+    }
+
+    @Override
+    protected void setButtonState()
+    {
+ 
+		final EditText anagramsTrayText = (EditText)rootView.findViewById(R.id.AnagramsTrayText);
+		final EditText anagramsBoardText = (EditText)rootView.findViewById(R.id.AnagramsBoardText);
+		String searchString = anagramsTrayText.getText().toString();
+		String boardString = anagramsBoardText.getText().toString();
+		DictionaryType dictionary = DictionaryType.fromInt((int)anagramSpinner.getSelectedItemId() + 1);
+
+		anagramButton.setEnabled(validateString(searchString + boardString, dictionary, true));
 
     }
 

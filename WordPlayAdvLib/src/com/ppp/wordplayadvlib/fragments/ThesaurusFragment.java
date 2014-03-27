@@ -43,6 +43,13 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 	}
 
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setButtonState();
+	}
+
+	@Override
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -95,6 +102,7 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 			}
         });
 		dictText.setHint(R.string.thesaurus_edit_hint);
+		dictText.addTextChangedListener(buttonTextWatcher);
 
         final Button dictClearButton = (Button)rootView.findViewById(R.id.DictionaryTextClear);
         dictClearButton.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +158,19 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 		fragment.setArguments(args);
 		pushToStack(fragment);
 
+    }
+
+    @Override
+    protected void setButtonState()
+    {
+
+    	final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
+    	String searchString = dictText.getText().toString();
+    	Spinner thesaurusSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
+		DictionaryType dictionary = DictionaryType.fromInt((int)thesaurusSpinner.getSelectedItemId() + 1);
+
+		thesaurusButton.setEnabled(validateString(searchString, dictionary, false));
+   	
     }
 
 }

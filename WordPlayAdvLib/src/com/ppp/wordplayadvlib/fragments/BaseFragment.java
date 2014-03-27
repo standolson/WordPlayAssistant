@@ -25,9 +25,11 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -126,27 +128,6 @@ public class BaseFragment extends Fragment {
 			freeDialogCheck();
 		else
 			createDatabaseIfMissing();
-
-	}
-
-	@Override
-	public void onDetach()
-	{
-
-		super.onDetach();
-
-		// On device reorientation, we need close the progress dialog
-		// for any open WordJudge search and reset the search handler
-		// before allowing reorientation to happen.
-		//
-		// The search object is retained because the fragment is retained
-		// during orientation.
-//		if (wjSearchObj != null)  {
-//			Debug.v("WordPlay: onDetach executing");
-//			if (wjSearchObj.getProgressDialog() != null)
-//				wjSearchObj.closeProgressDialog();
-//			wjSearchObj.getSearchThread().getSearchObject().setSearchHandler(null);
-//		}
 
 	}
 
@@ -964,84 +945,28 @@ public class BaseFragment extends Fragment {
 
 		int wildcardCount = 0;
 
-		if (!isAnagram && (searchString.length() < Constants.MinAnagramLength))  {
-			AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-			alertDialog.setTitle("Error");
-			alertDialog.setMessage("Please enter more than one letter.");
-			alertDialog.setButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {}
-			});
-			alertDialog.show();
+		if (!isAnagram && (searchString.length() < Constants.MinAnagramLength))
 			return false;
-		}
 
 		if (isAnagram &&
 				(searchString.length() < Constants.MinAnagramLength) ||
-				(searchString.length() > Constants.MaxAnagramLength))  {
-			AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-			alertDialog.setTitle("Error");
-			alertDialog.setMessage("There must be more than 1 and not more than 20 letters total between the tray and board letters.");
-			alertDialog.setButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {}
-			});
-			alertDialog.show();
+				(searchString.length() > Constants.MaxAnagramLength))
 			return false;
-		}
 
 		if (dictionary.isScrabbleDict())  {
 			for (int i = 0; i < searchString.length(); i += 1)
 				if ((searchString.charAt(i) == '.') || (searchString.charAt(i) == '?'))
 					wildcardCount += 1;
-			if (wildcardCount > 1)  {
-				AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-				alertDialog.setTitle("Error");
-				alertDialog.setMessage("Only one wildcard character allowed using the current dictionary.");
-				alertDialog.setButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {}
-				});
-				alertDialog.show();
+			if (wildcardCount > 1)
 				return false;
-			}
 		}
 		else {
-			if (searchString.contains(".") || searchString.contains("?"))  {
-				AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-				alertDialog.setTitle("Error");
-				alertDialog.setMessage("No wildcards are allowed when finding anagrams with the current dictionary.");
-				alertDialog.setButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {}
-				});
-				alertDialog.show();
+			if (searchString.contains(".") || searchString.contains("?"))
 				return false;
-			}
 		}
 		
 		return true;
 		
-    }
-   
-    private void setDictionaryTabMode()
-    {
-
-//    	if (WordPlayApp.getInstance().isFreeMode())
-//    		return;
-//
-//    	ViewGroup buttonArea = (ViewGroup)getActivity().findViewById(R.id.button_area);
-//    	Button button = (Button)buttonArea.getChildAt(DictionaryTab);
-//		EditText textEntry = (EditText)getActivity().findViewById(R.id.DictionaryText);
-//		
-//		int dictionary = (int)dictSpinner.getSelectedItemId() + 1;
-//		if (dictionary == DictionaryType.DICTIONARY_THESAURUS.ordinal())  {
-//			button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_tab_thesaurus, 0, 0);
-//			button.setText("Thesaurus");
-//			textEntry.setHint(R.string.thesaurus_edit_hint);
-//		}
-//		else {
-//			button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_tab_dictionary, 0, 0);
-//			button.setText("Dictionary");
-//			textEntry.setHint(R.string.dictionary_edit_hint);
-//		}
-    	
     }
 
 	//
@@ -1149,6 +1074,25 @@ public class BaseFragment extends Fragment {
     		return null;
     	}
     };
+
+    // A TextWatcher for updating the query submit button state
+	public TextWatcher buttonTextWatcher = new TextWatcher() {
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+		@Override
+		public void afterTextChanged(Editable s)
+		{
+			setButtonState();
+		}
+    	
+    };
+
+    protected void setButtonState() {}
 
 	protected boolean checkForEnterKey(View v, int keyCode, KeyEvent event)
 	{

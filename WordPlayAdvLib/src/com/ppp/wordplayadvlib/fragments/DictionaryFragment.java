@@ -51,6 +51,13 @@ public class DictionaryFragment extends BaseFragment
 	}
 
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setButtonState();
+	}
+
+	@Override
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -114,7 +121,7 @@ public class DictionaryFragment extends BaseFragment
 				return false;
 			}
         });
-		dictText.setHint(R.string.dictionary_edit_hint);
+        dictText.addTextChangedListener(buttonTextWatcher);
 
         final Button dictClearButton = (Button)rootView.findViewById(R.id.DictionaryTextClear);
         dictClearButton.setOnClickListener(new View.OnClickListener() {
@@ -185,9 +192,6 @@ public class DictionaryFragment extends BaseFragment
 			wordSort = WordSortState.WORD_SORT_UNKNOWN;
 		}
 
-		if (!validateString(searchString, dictionary, false))
-			return;
-
 		// Save state
 		editor.putString("dictStr", (searchString == null) ? "" : searchString);
 		Debug.v("SAVE dictStr " + searchString);
@@ -208,6 +212,18 @@ public class DictionaryFragment extends BaseFragment
 		BaseFragment fragment = new SearchFragment();
 		fragment.setArguments(args);
 		pushToStack(fragment);
+
+    }
+
+    @Override
+    protected void setButtonState()
+    {
+
+    	final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
+    	String searchString = dictText.getText().toString();
+		DictionaryType dictionary = DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
+
+		dictButton.setEnabled(validateString(searchString, dictionary, false));
 
     }
 

@@ -65,6 +65,13 @@ public class WordJudgeFragment extends BaseFragment
 	}
 
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		setButtonState();
+	}
+
+	@Override
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -144,6 +151,7 @@ public class WordJudgeFragment extends BaseFragment
 				return false;
 			}
         });
+        wjText.addTextChangedListener(buttonTextWatcher);
 		
         wjListview = (ListView)rootView.findViewById(R.id.wordjudge_listview);
         wjListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -180,14 +188,8 @@ public class WordJudgeFragment extends BaseFragment
     private void startWordJudgeSearch()
     {
 
-    	String searchString = "";
-    	DictionaryType dictionary = DictionaryType.DICTIONARY_UNKNOWN;
-
-		searchString = wjText.getText().toString();
-		dictionary = DictionaryType.fromInt((int)wjSpinner.getSelectedItemId() + 1);
-
-		if (!validateString(searchString, dictionary, false))
-			return;
+		String searchString = wjText.getText().toString();
+		DictionaryType dictionary = DictionaryType.fromInt((int)wjSpinner.getSelectedItemId() + 1);
 
 		searchCount += 1;
 		Debug.v("SEARCH_COUNT " + searchCount);
@@ -201,6 +203,17 @@ public class WordJudgeFragment extends BaseFragment
 		wjSearchObj.execute(this, searchString, dictionary);
 		wjText.setText("");
 
+    }
+
+    @Override
+    protected void setButtonState()
+    {
+
+		String searchString = wjText.getText().toString();
+		DictionaryType dictionary = DictionaryType.fromInt((int)wjSpinner.getSelectedItemId() + 1);
+
+		wjButton.setEnabled(validateString(searchString, dictionary, false));
+    	
     }
 
     //

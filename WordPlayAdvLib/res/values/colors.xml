@@ -7,16 +7,17 @@
 	<color name="yellow">#FFFF00</color>
 
 	<color name="positiveButtonTextColor">@color/black</color>
-    <color name="positiveButtonPressedStart">#EF8221</color>
-    <color name="positiveButtonPressedEnd">#EE8629</color>
-    <color name="positiveButtonPressedStroke">#E97B21</color>
-    <color name="positiveButtonFocusedStart">#F4B352</color>
-    <color name="positiveButtonFocusedEnd">#EE7C21</color>
-    <color name="positiveButtonFocusedStroke">#E97B21</color>
-    <color name="positiveButtonDisabledStart">#80F4B352</color>
-    <color name="positiveButtonDisabledEnd">#80EE7C21</color>
-    <color name="positiveButtonDisabledStroke">#80E97B21</color>
-    <color name="positiveButtonStart">#F4B352</color>
-    <color name="positiveButtonEnd">#EE7C21</color>
-    <color name="positiveButtonStroke">#E97B21</color>
+    <color name="positiveButtonPressedStart">#FFFF00</color>
+    <color name="positiveButtonPressedEnd">#FFFF00</color>
+    <color name="positiveButtonPressedStroke">#FFFF00</color>
+    <color name="positiveButtonFocusedStart">#FFFF66</color>
+    <color name="positiveButtonFocusedEnd">#FFFF33</color>
+    <color name="positiveButtonFocusedStroke">#80FFFF00</color>
+    <color name="positiveButtonDisabledStart">#B0FFFF66</color>
+    <color name="positiveButtonDisabledEnd">#B0FFFF33</color>
+    <color name="positiveButtonDisabledStroke">#B0FFFF00</color>
+    <color name="positiveButtonStart">#FFFF66</color>
+    <color name="positiveButtonEnd">#FFFF33</color>
+    <color name="positiveButtonStroke">#FFFF00</color>
+
 </resources>
