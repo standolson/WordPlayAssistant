@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-	xmlns:android="http://schemas.android.com/apk/res/android">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ppp="http://schemas.android.com/apk/res-auto" >
 
 	<item
 		android:id="@+id/dictionary_menu"
 		android:title="@string/dictionary_menu_str"
-		android:icon="@drawable/ic_menu_dictionaries" />
+		ppp:showAsAction="always"
+		android:icon="@drawable/ic_menu_dictionaries_ab" />
 
 	<item
 		android:id="@+id/clearhistory_menu"
