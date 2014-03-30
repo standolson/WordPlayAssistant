@@ -940,7 +940,10 @@ public class BaseFragment extends Fragment {
 
     }
 
-    protected boolean validateString(String searchString, DictionaryType dictionary, boolean isAnagram)
+    protected boolean validateString(String searchString,
+    									DictionaryType dictionary,
+    									boolean isAnagram,
+    									boolean isCrossword)
     {
 
 		int wildcardCount = 0;
@@ -953,16 +956,18 @@ public class BaseFragment extends Fragment {
 				(searchString.length() > Constants.MaxAnagramLength))
 			return false;
 
-		if (dictionary.isScrabbleDict())  {
-			for (int i = 0; i < searchString.length(); i += 1)
-				if ((searchString.charAt(i) == '.') || (searchString.charAt(i) == '?'))
-					wildcardCount += 1;
-			if (wildcardCount > 1)
-				return false;
-		}
-		else {
-			if (searchString.contains(".") || searchString.contains("?"))
-				return false;
+		if (!isCrossword)  {
+			if (dictionary.isScrabbleDict())  {
+				for (int i = 0; i < searchString.length(); i += 1)
+					if ((searchString.charAt(i) == '.') || (searchString.charAt(i) == '?'))
+						wildcardCount += 1;
+				if (wildcardCount > 1)
+					return false;
+			}
+			else {
+				if (searchString.contains(".") || searchString.contains("?"))
+					return false;
+			}
 		}
 		
 		return true;

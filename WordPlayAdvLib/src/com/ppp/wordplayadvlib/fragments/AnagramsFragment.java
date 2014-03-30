@@ -250,7 +250,7 @@ public class AnagramsFragment extends BaseFragment
 		String boardString = anagramsBoardText.getText().toString();
 		DictionaryType dictionary = DictionaryType.fromInt((int)anagramSpinner.getSelectedItemId() + 1);
 
-		anagramButton.setEnabled(validateString(searchString + boardString, dictionary, true));
+		anagramButton.setEnabled(validateString(searchString + boardString, dictionary, true, false));
 
     }
 

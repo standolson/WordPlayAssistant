@@ -223,7 +223,7 @@ public class DictionaryFragment extends BaseFragment
     	String searchString = dictText.getText().toString();
 		DictionaryType dictionary = DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
 
-		dictButton.setEnabled(validateString(searchString, dictionary, false));
+		dictButton.setEnabled(validateString(searchString, dictionary, false, false));
 
     }
 

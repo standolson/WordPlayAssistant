@@ -3,12 +3,6 @@
 
  	<style name="AppTheme" parent="@style/Theme.AppCompat" />
 
-    <style name="TabStyle">
-        <item name="android:paddingTop">5dip</item>
-        <item name="android:paddingLeft">5dip</item>
-        <item name="android:paddingRight">5dip</item>
-    </style>
-
     <style name="MenuDrawerTitle">
         <item name="android:background">@color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearance</item>

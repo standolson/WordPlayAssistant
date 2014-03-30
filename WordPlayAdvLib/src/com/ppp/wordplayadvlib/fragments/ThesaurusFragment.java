@@ -27,7 +27,7 @@ import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
 public class ThesaurusFragment extends BaseFragment implements View.OnClickListener {
 
-	private RelativeLayout rootView;
+	private View rootView;
 	private Button thesaurusButton = null;
 
 	//
@@ -37,7 +37,7 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		rootView = (RelativeLayout)inflater.inflate(R.layout.dictionary_fragment, container, false);
+		rootView = inflater.inflate(R.layout.thesaurus_fragment, container, false);
 		setupThesaurusTab();
 		return rootView;
 	}
@@ -74,16 +74,8 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 
 		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
-		rootView.findViewById(R.id.dictionary_dict_spinner).setVisibility(View.GONE);
-
         thesaurusButton = (Button)rootView.findViewById(R.id.DictionaryButton);
         thesaurusButton.setOnClickListener(this);
-
-        MultiStateButton dictScoreToggle = (MultiStateButton)rootView.findViewById(R.id.DictionaryWordScores);
-        dictScoreToggle.setVisibility(View.GONE);
-
-        MultiStateButton dictSortToggle = (MultiStateButton)rootView.findViewById(R.id.DictionarySortOrder);
-        dictSortToggle.setVisibility(View.GONE);
         		 
         final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
         String thesaurusStr = prefs.getString("thesaurusStr", "");
@@ -109,9 +101,6 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 			@Override
 			public void onClick(View v) { dictText.setText(""); }
 		});
-    	
-    	Spinner thesaurusSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
-		thesaurusSpinner.setVisibility(View.GONE);
 
 	}
 
@@ -129,7 +118,7 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
     	String boardString = "";
     	WordScoreState wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
     	WordSortState wordSort = WordSortState.WORD_SORT_UNKNOWN;
-    	DictionaryType dictionary = DictionaryType.DICTIONARY_UNKNOWN;
+    	DictionaryType dictionary = DictionaryType.DICTIONARY_THESAURUS;
 
 		final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
 
@@ -137,9 +126,6 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 		dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
 		wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
 		wordSort = WordSortState.WORD_SORT_UNKNOWN;
-
-		if (!validateString(searchString, dictionary, false))
-			return;
 
 		// Save state
 		editor.putString("thesaurusStr", (searchString == null) ? "" : searchString);
@@ -166,10 +152,8 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 
     	final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
     	String searchString = dictText.getText().toString();
-    	Spinner thesaurusSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
-		DictionaryType dictionary = DictionaryType.fromInt((int)thesaurusSpinner.getSelectedItemId() + 1);
 
-		thesaurusButton.setEnabled(validateString(searchString, dictionary, false));
+		thesaurusButton.setEnabled(validateString(searchString, DictionaryType.DICTIONARY_THESAURUS, false, false));
    	
     }
 

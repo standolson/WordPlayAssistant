@@ -212,7 +212,7 @@ public class WordJudgeFragment extends BaseFragment
 		String searchString = wjText.getText().toString();
 		DictionaryType dictionary = DictionaryType.fromInt((int)wjSpinner.getSelectedItemId() + 1);
 
-		wjButton.setEnabled(validateString(searchString, dictionary, false));
+		wjButton.setEnabled(validateString(searchString, dictionary, false, false));
     	
     }
 

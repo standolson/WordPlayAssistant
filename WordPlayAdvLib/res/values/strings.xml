@@ -32,18 +32,7 @@
  		<item>Collins (2/2007)</item>
  		<item>Collins (4/2007)</item>
 		<item>All DICT.ORG Dictionaries</item>
- 		<item>Moby Thesaurus II</item>
  	</string-array>
-
-	<string-array name="crosswords_names">
-		<item>ENABLE (Words With Friends)</item>
-     	<item>SOWPODS</item>
- 		<item>TWL06</item>
- 		<item>TWL98</item>
- 		<item>Collins (2/2007)</item>
- 		<item>Collins (4/2007)</item>
-		<item>All DICT.ORG Dictionaries</item>
-	</string-array>
 
     <string-array name="word_list_names">
  		<item>ENABLE (Words With Friends)</item>

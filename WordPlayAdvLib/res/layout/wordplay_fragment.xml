@@ -31,14 +31,6 @@
 		android:entries="@array/dictionary_names"
 		android:prompt="@string/dictionary_name_prompt"
 		android:visibility="invisible"/>
-
-    <Spinner
-		android:id="@+id/crosswords_dict_spinner"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:entries="@array/crosswords_names"
-		android:prompt="@string/dictionary_name_prompt"
-		android:visibility="invisible"/>
 	
     <!-- Button Area -->
 
