@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    style="@style/InitialFragmentStyle"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -69,28 +70,9 @@
 
 		</FrameLayout>
 
-		<LinearLayout
-			android:id="@+id/DictionaryToggleButtons"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:padding="10dip"
-			android:orientation="horizontal">
-		
-			<com.ppp.wordplayadvlib.widgets.MultiStateButton
-			    style="@style/MultiStateButtonStyle"
-				android:id="@+id/AnagramsWordScores"
-				android:layout_width="fill_parent"
-				android:layout_height="@dimen/button_height" />
-				
-			<com.ppp.wordplayadvlib.widgets.MultiStateButton
-			    style="@style/MultiStateButtonStyle"
-				android:id="@+id/AnagramsSortOrder"
-				android:layout_width="fill_parent"
-				android:layout_height="@dimen/button_height" />
+		<include
+		    layout="@layout/word_score_sort_layout" />
 
-		</LinearLayout>
-			
 	</LinearLayout>
 
 </RelativeLayout>

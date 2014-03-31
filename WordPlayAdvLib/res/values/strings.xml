@@ -62,8 +62,10 @@
 	</string-array>
 	
     <string name="sr_no_items">No Matches Found</string>
+	<string name="zero_results">No Results</string>
 
 	<string name="sh_no_items">No History Available</string>
+	<string name="zero_history">No History</string>
 	
 	<string name="exact_match_copy_str">Copy</string>	
 	<string name="exact_match_email_str">Email</string>

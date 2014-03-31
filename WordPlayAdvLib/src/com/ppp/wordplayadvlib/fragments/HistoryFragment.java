@@ -26,6 +26,7 @@ public class HistoryFragment extends BaseFragment
 
 	private View rootView;
 	private ListView listView;
+	private View zeroView;
 	private HistoryAdapter adapter;
 
 	@Override
@@ -35,12 +36,31 @@ public class HistoryFragment extends BaseFragment
 		rootView = inflater.inflate(R.layout.history_fragment, container, false);
 
 		listView = (ListView) rootView.findViewById(R.id.history_list);
-		listView.setOnItemClickListener(this);
-        adapter = new HistoryAdapter(getActivity(), R.layout.search_history, History.getInstance().getHistory());
-        listView.setAdapter(adapter);
+		zeroView = rootView.findViewById(R.id.zero_history);
 
 		return rootView;
 
+	}
+
+	@Override
+	public void onResume()
+	{
+
+		super.onResume();
+
+		// Show the list or the zero result view
+		if (History.getInstance().getHistory().size() > 0)  {
+			listView.setOnItemClickListener(this);
+	        adapter = new HistoryAdapter(getActivity(), R.layout.search_history, History.getInstance().getHistory());
+	        listView.setAdapter(adapter);
+	        listView.setVisibility(View.VISIBLE);
+	        zeroView.setVisibility(View.GONE);
+		}
+		else {
+			listView.setVisibility(View.GONE);
+			zeroView.setVisibility(View.VISIBLE);
+		}
+		
 	}
 
     @Override
@@ -67,6 +87,8 @@ public class HistoryFragment extends BaseFragment
 		if (item.getItemId() == R.id.clearhistory_menu)  {
 			History.getInstance().clearHistory(getActivity());
 			adapter.notifyDataSetChanged();
+			listView.setVisibility(View.GONE);
+			zeroView.setVisibility(View.VISIBLE);
 			return true;
 		}
 

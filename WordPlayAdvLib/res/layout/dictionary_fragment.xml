@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/InitialFragmentStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
@@ -53,32 +54,13 @@
 			android:id="@+id/DictionarySpinner"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-    		android:layout_marginTop="5dip"
+    		android:paddingTop="5dip"
 			android:entries="@array/search_types" 
     		android:prompt="@string/search_type_prompt"/>
 
-		<LinearLayout
-			android:id="@+id/DictionaryToggleButtons"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:layout_marginTop="10dip"
-			android:orientation="horizontal">
-		
-			<com.ppp.wordplayadvlib.widgets.MultiStateButton
-			    style="@style/MultiStateButtonStyle"
-				android:id="@+id/DictionaryWordScores"
-				android:layout_width="fill_parent"
-				android:layout_height="@dimen/button_height"/>
-				
-			<com.ppp.wordplayadvlib.widgets.MultiStateButton
-			    style="@style/MultiStateButtonStyle"
-				android:id="@+id/DictionarySortOrder"
-				android:layout_width="fill_parent"
-				android:layout_height="@dimen/button_height"/>
+		<include
+		    layout="@layout/word_score_sort_layout" />
 
-		</LinearLayout>
-		
 	</LinearLayout>
 	
 </RelativeLayout>

@@ -3,9 +3,7 @@ package com.ppp.wordplayadvlib.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -155,15 +153,8 @@ public class AnagramsFragment extends BaseFragment
 			@Override
 			public void onClick(View v) { anagramsBoardText.setText(""); }
 		});
-
-    	anagramSortToggle = (MultiStateButton)rootView.findViewById(R.id.AnagramsSortOrder);
-    	anagramSortToggle.setStateNames(getResources().getStringArray(R.array.sort_order_toggle_states));
-		int anagramsSort =
-			prefs.getInt("anagramsSort", WordScoreState.WORD_SCORE_STATE_ON.ordinal() - 1);
-		Debug.v("LOAD anagramsSort = " + anagramsSort);
-		anagramSortToggle.setState(anagramsSort);
  
-    	anagramScoreToggle = (MultiStateButton)rootView.findViewById(R.id.AnagramsWordScores);
+    	anagramScoreToggle = (MultiStateButton)rootView.findViewById(R.id.WordScoreButton);
     	anagramScoreToggle.setStateNames(getResources().getStringArray(R.array.word_score_toggle_states));
 		int anagramsScore =
 			prefs.getInt("anagramsScore", WordSortState.WORD_SORT_BY_WORD_SCORE.ordinal() - 1);
@@ -182,6 +173,13 @@ public class AnagramsFragment extends BaseFragment
     									button_state);
     		}
     	});
+
+    	anagramSortToggle = (MultiStateButton)rootView.findViewById(R.id.SortOrderButton);
+    	anagramSortToggle.setStateNames(getResources().getStringArray(R.array.sort_order_toggle_states));
+		int anagramsSort =
+			prefs.getInt("anagramsSort", WordScoreState.WORD_SCORE_STATE_ON.ordinal() - 1);
+		Debug.v("LOAD anagramsSort = " + anagramsSort);
+		anagramSortToggle.setState(anagramsSort);
 
     	anagramSpinner = (Spinner)rootView.findViewById(R.id.anagrams_dict_spinner);
     	int anagramsDict = prefs.getInt("anagramsDict", DictionaryType.DICTIONARY_ENABLE.ordinal());

@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
@@ -23,7 +21,6 @@ import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.utils.Debug;
-import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
 public class ThesaurusFragment extends BaseFragment implements View.OnClickListener {
 

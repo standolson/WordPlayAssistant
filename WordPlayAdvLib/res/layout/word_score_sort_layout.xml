@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/DictionaryToggleButtons"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingTop="10dip" >
+
+	<com.ppp.wordplayadvlib.widgets.MultiStateButton
+	    style="@style/MultiStateButtonStyle"
+		android:id="@+id/WordScoreButton"
+		android:layout_marginRight="5dip" />
+		
+	<com.ppp.wordplayadvlib.widgets.MultiStateButton
+	    style="@style/MultiStateButtonStyle"
+		android:id="@+id/SortOrderButton"
+		android:layout_marginLeft="5dip" />
+
+</LinearLayout>

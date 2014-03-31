@@ -84,6 +84,10 @@ public class DictionaryFragment extends BaseFragment
 		SharedPreferences.Editor editor = prefs.edit();
 		DictionaryType dict = DictionaryType.fromInt(position + 1);
 
+		int visible =
+			dict != DictionaryType.DICTIONARY_DICT_DOT_ORG ? View.VISIBLE : View.GONE;
+		rootView.findViewById(R.id.DictionaryToggleButtons).setVisibility(visible);
+
 		editor.putInt("dictionaryDict", dict.ordinal());
 		Debug.v("SAVE dictionaryDict = " + dict.ordinal());
 		editor.commit();
@@ -129,14 +133,14 @@ public class DictionaryFragment extends BaseFragment
 			public void onClick(View v) { dictText.setText(""); }
 		});
 
-        dictScoreToggle = (MultiStateButton)rootView.findViewById(R.id.DictionaryWordScores);
+        dictScoreToggle = (MultiStateButton)rootView.findViewById(R.id.WordScoreButton);
         dictScoreToggle.setStateNames(getResources().getStringArray(R.array.word_score_toggle_states));
 		int dictScore =
 			prefs.getInt("dictScore", WordScoreState.WORD_SCORE_STATE_ON.ordinal() - 1);
 		Debug.v("LOAD dictScore = " + dictScore);
 		dictScoreToggle.setState(dictScore);
 
-        dictSortToggle = (MultiStateButton)rootView.findViewById(R.id.DictionarySortOrder);
+        dictSortToggle = (MultiStateButton)rootView.findViewById(R.id.SortOrderButton);
         dictSortToggle.setStateNames(getResources().getStringArray(R.array.sort_order_toggle_states));
 		int dictSort =
 			prefs.getInt("dictSort", WordSortState.WORD_SORT_BY_WORD_SCORE.ordinal() - 1);
