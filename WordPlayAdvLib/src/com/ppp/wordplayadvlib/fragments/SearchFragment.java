@@ -46,6 +46,7 @@ public class SearchFragment extends BaseFragment
 
 	private View rootView;
 	private ListView searchListView;
+	private View zeroView;
 
 	private SearchType searchType;
 	private DictionaryType dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
@@ -113,6 +114,8 @@ public class SearchFragment extends BaseFragment
 
 		searchListView = (ListView) rootView.findViewById(R.id.search_result_list);
 	    searchListView.setOnItemClickListener(this);
+
+	    zeroView = rootView.findViewById(R.id.zero_results);
 
 		return rootView;
 
@@ -318,6 +321,13 @@ public class SearchFragment extends BaseFragment
     // Search Results
     //
 
+    private boolean zeroResults(int count)
+    {
+		zeroView.setVisibility(count > 0 ? View.GONE : View.VISIBLE);
+		searchListView.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+		return count == 0;
+    }
+
 	private void showDefinitionList(boolean showToast)
 	{
 		
@@ -329,6 +339,9 @@ public class SearchFragment extends BaseFragment
 			Toast.makeText(getActivity(),
 							defnList.size() + " definition" + ((defnList.size() == 1) ? "" : "s") + " found in " + getElapsedTime() + " seconds",
 							Toast.LENGTH_SHORT).show();
+
+		if (zeroResults(defnList.size()))
+			return;
 
 		adapter = new WordDefinitionsAdapter(
 						getActivity(),
@@ -352,6 +365,9 @@ public class SearchFragment extends BaseFragment
 							wordList.size() + " word" +
 								((wordList.size() == 1) ? "" : "s") + " found in " + getElapsedTime() + " seconds",
 							Toast.LENGTH_SHORT).show();
+
+		if (zeroResults(wordList.size()))
+			return;
 
 		if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)
 			searchListView.setFastScrollEnabled(true);
@@ -379,6 +395,9 @@ public class SearchFragment extends BaseFragment
 			Toast.makeText(getActivity(),
 							scoredWordList.size() + " word" + ((scoredWordList.size() == 1) ? "" : "s") + " found in " + getElapsedTime() + " seconds",
 							Toast.LENGTH_SHORT).show();
+
+		if (zeroResults(scoredWordList.size()))
+			return;
 		
 		if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)
 			searchListView.setFastScrollEnabled(true);
