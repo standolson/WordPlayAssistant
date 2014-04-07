@@ -95,6 +95,7 @@
 
 	<string name="PleaseWait">Please Wait</string>
 	<string name="Searching">Searching...</string>
+	<string name="InstallDb">Install Word Database</string>
 
 	<string name="nag_text">Thank you for using WordPlay Assistant!\n
 \n

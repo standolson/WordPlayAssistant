@@ -49,6 +49,8 @@ import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.fragments.WebViewFragment;
+import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialog;
+import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialog.DbInstallDialogListener;
 import com.ppp.wordplayadvlib.fragments.hosts.AboutHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.AnagramsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.CrosswordsHostFragment;
@@ -63,7 +65,8 @@ import com.ppp.wordplayadvlib.utils.Utils;
 @SuppressLint("ValidFragment")
 public class WordPlayActivity extends HostActivity
 	implements
-		OnItemClickListener
+		OnItemClickListener,
+		DbInstallDialogListener
 {
 
 	private static final int RestartNotificationId = 1;
@@ -258,7 +261,7 @@ public class WordPlayActivity extends HostActivity
 	    		// We're returning from showing the release notes from the
 	    		// free app installed dialog.  Proceed to creating the database
 	    		// if that is required.
-	    		createDatabaseIfMissing();
+	    		createOrUpgradeDatabase();
 	    		break;
 	
 	    	case UserPrefsActivity:
@@ -299,7 +302,7 @@ public class WordPlayActivity extends HostActivity
 
     }
 
-	protected void initUi() 
+	private void initUi() 
 	{
 
 		// App may have been killed while in the background.
@@ -313,6 +316,9 @@ public class WordPlayActivity extends HostActivity
         // Set the subtitle to the currently selected tab item
 		getSupportActionBar().setSubtitle(lastItemTitle);
 
+		// Create the database
+		createOrUpgradeDatabase();
+
 	}
 
     private void displayDialog(int id)
@@ -323,8 +329,7 @@ public class WordPlayActivity extends HostActivity
     	switch (id) {
 
 	    	case InstallDbDialog:
-	    	    newFragment = new DbInstallDialog(false);
-	    	    newFragment.setCancelable(false);
+	    	    newFragment = DbInstallDialog.newInstance(false);
 	    	    newFragment.show(getSupportFragmentManager(), "InstallDbDialog");
 	    		break;
 
@@ -335,7 +340,7 @@ public class WordPlayActivity extends HostActivity
 	    		break;
 
 	    	case UpgradeDbDialog:
-	    	    newFragment = new DbInstallDialog(true);
+	    	    newFragment = DbInstallDialog.newInstance(true);
 	    	    newFragment.setCancelable(false);
 	    	    newFragment.show(getSupportFragmentManager(), "UpgradeDbDialog");
 	    		break;
@@ -617,71 +622,71 @@ public class WordPlayActivity extends HostActivity
 
     }
 
-    private class DbInstallDialog extends DialogFragment {
-
-    	boolean isUpgrade = false;
-
-    	public DbInstallDialog() { super(); }
-
-    	public DbInstallDialog(boolean isUpgrade)
-    	{
-    		super();
-    		this.isUpgrade = isUpgrade;
-            Bundle args = new Bundle();
-            args.putBoolean("isUpgrade", isUpgrade);
-            setArguments(args);
-    	}
-
-    	@Override
-    	public void onSaveInstanceState(Bundle savedInstanceState)
-    	{
-    		savedInstanceState.putBoolean("isUpgrade", isUpgrade);
-    	}
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
-
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-        	boolean isUpgrade = getArguments().getBoolean("isUpgrade");
-
-        	if (savedInstanceState != null)
-        		isUpgrade = savedInstanceState.getBoolean("isUpgrade");
-
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.dictionary_install_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.dictionary_install_layout));
-
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-
-        	TextView textView = (TextView)layout.findViewById(R.id.dictionary_mode_text);
-        	String text = String.format(isUpgrade ?
-        									getString(R.string.dictionary_upgrade_dialog_text) :
-        									getString(R.string.dictionary_install_dialog_text),
-        								WordPlayApp.getInstance().isFreeMode() ?
-        									" Free" : "",
-        								WordPlayApp.appVersionName);
-        	textView.setText(text);
-
-        	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);
-        	okButton.setOnClickListener(new View.OnClickListener() {
-    			@Override
-    			public void onClick(View v)
-    			{
-    				startDatabaseInstallation(getActivity(), DbInstallDialog.this);
-    			}
-    		});
-
-        	return dialog;
-
-        }
-
-    }
+//    private class DbInstallDialog extends DialogFragment {
+//
+//    	boolean isUpgrade = false;
+//
+//    	public DbInstallDialog() { super(); }
+//
+//    	public DbInstallDialog(boolean isUpgrade)
+//    	{
+//    		super();
+//    		this.isUpgrade = isUpgrade;
+//            Bundle args = new Bundle();
+//            args.putBoolean("isUpgrade", isUpgrade);
+//            setArguments(args);
+//    	}
+//
+//    	@Override
+//    	public void onSaveInstanceState(Bundle savedInstanceState)
+//    	{
+//    		savedInstanceState.putBoolean("isUpgrade", isUpgrade);
+//    	}
+//
+//        @Override
+//        public Dialog onCreateDialog(Bundle savedInstanceState)
+//        {
+//
+//        	AlertDialog.Builder builder;
+//        	final AlertDialog dialog;
+//        	boolean isUpgrade = getArguments().getBoolean("isUpgrade");
+//
+//        	if (savedInstanceState != null)
+//        		isUpgrade = savedInstanceState.getBoolean("isUpgrade");
+//
+//        	LayoutInflater inflater =
+//        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+//        	final View layout =
+//        		inflater.inflate(R.layout.dictionary_install_dialog,
+//        							(ViewGroup)getActivity().findViewById(R.id.dictionary_install_layout));
+//
+//        	builder = new AlertDialog.Builder(getActivity());
+//        	builder.setView(layout);
+//        	dialog = builder.create();
+//
+//        	TextView textView = (TextView)layout.findViewById(R.id.dictionary_mode_text);
+//        	String text = String.format(isUpgrade ?
+//        									getString(R.string.dictionary_upgrade_dialog_text) :
+//        									getString(R.string.dictionary_install_dialog_text),
+//        								WordPlayApp.getInstance().isFreeMode() ?
+//        									" Free" : "",
+//        								WordPlayApp.appVersionName);
+//        	textView.setText(text);
+//
+//        	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);
+//        	okButton.setOnClickListener(new View.OnClickListener() {
+//    			@Override
+//    			public void onClick(View v)
+//    			{
+//    				startDatabaseInstallation(getActivity(), DbInstallDialog.this);
+//    			}
+//    		});
+//
+//        	return dialog;
+//
+//        }
+//
+//    }
 
     private class FreeDialog extends DialogFragment {
 
@@ -731,7 +736,7 @@ public class WordPlayActivity extends HostActivity
     			public void onClick(View v)
     			{
     				dismiss();
-    				createDatabaseIfMissing();
+    				createOrUpgradeDatabase();
     			}
     		});
 
@@ -745,12 +750,13 @@ public class WordPlayActivity extends HostActivity
     // Database Installation
     //
 
-    private void startDatabaseInstallation(Context context, DialogFragment dialog)
+    @Override
+    public void startDatabaseInstall()
     {
-		new DatabaseWaitTask(context, dialog).execute();    	
+		new DatabaseWaitTask(this).execute();    	
     }
 
-    private void createDatabaseIfMissing()
+    private void createOrUpgradeDatabase()
     {
 
     	WordlistDatabase db =
@@ -758,6 +764,7 @@ public class WordPlayActivity extends HostActivity
 
     	// If the database is old or missing, the version will be -1
     	int dbVersion = db.getDatabaseVersion();
+    	dbVersion = DatabaseInfo.INVALID_DB_VERSION;
 		if (dbVersion == DatabaseInfo.INVALID_DB_VERSION)  {
 			Debug.e("bad db version " + dbVersion);
 			displayDialog(InstallDbDialog);
@@ -774,23 +781,17 @@ public class WordPlayActivity extends HostActivity
     private class DatabaseWaitTask extends AsyncTask<Void, Void, Void> {
 
     	private Context context = null;
-    	private DialogFragment dialogFragment = null;
 
     	private Exception exception = null;
     	private ProgressDialog progressDialog = null;
 
-    	public DatabaseWaitTask(Context ctx, DialogFragment dialog)
+    	public DatabaseWaitTask(Context ctx)
     	{
     		context = ctx;
-    		dialogFragment = dialog;
     	}
 
     	protected void onPreExecute()
     	{
-
-    		if (dialogFragment != null)
-    			if (!isFinishing())
-    				dialogFragment.dismiss();
 
     		if (!isFinishing())  {
     			progressDialog = new ProgressDialog(context);

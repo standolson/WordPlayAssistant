@@ -186,9 +186,9 @@ public class BaseFragment extends Fragment {
     	switch (id) {
 
 	    	case InstallDbDialog:
-	    	    newFragment = new DbInstallDialog(this, false);
-	    	    newFragment.setCancelable(false);
-	    	    newFragment.show(getFragmentManager(), "InstallDbDialog");
+//	    	    newFragment = new DbInstallDialog(this, false);
+//	    	    newFragment.setCancelable(false);
+//	    	    newFragment.show(getFragmentManager(), "InstallDbDialog");
 	    		break;
 
 	    	case FreeDialog:
@@ -198,9 +198,9 @@ public class BaseFragment extends Fragment {
 	    		break;
 
 	    	case UpgradeDbDialog:
-	    	    newFragment = new DbInstallDialog(this, true);
-	    	    newFragment.setCancelable(false);
-	    	    newFragment.show(getFragmentManager(), "UpgradeDbDialog");
+//	    	    newFragment = new DbInstallDialog(this, true);
+//	    	    newFragment.setCancelable(false);
+//	    	    newFragment.show(getFragmentManager(), "UpgradeDbDialog");
 	    		break;
 
 	    	case AboutDialog:
@@ -607,70 +607,70 @@ public class BaseFragment extends Fragment {
 
     }
 
-    public static class DbInstallDialog extends DialogFragment {
-
-    	BaseFragment fragment;
-    	boolean isUpgrade = false;
-
-    	public DbInstallDialog(BaseFragment fragment, boolean isUpgrade)
-    	{
-    		this.fragment = fragment;
-    		this.isUpgrade = isUpgrade;
-            Bundle args = new Bundle();
-            args.putBoolean("isUpgrade", isUpgrade);
-            setArguments(args);
-    	}
-
-    	@Override
-    	public void onSaveInstanceState(Bundle savedInstanceState)
-    	{
-    		savedInstanceState.putBoolean("isUpgrade", isUpgrade);
-    	}
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
-
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-        	boolean isUpgrade = getArguments().getBoolean("isUpgrade");
-
-        	if (savedInstanceState != null)
-        		isUpgrade = savedInstanceState.getBoolean("isUpgrade");
-
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.dictionary_install_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.dictionary_install_layout));
-
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-
-        	TextView textView = (TextView)layout.findViewById(R.id.dictionary_mode_text);
-        	String text = String.format(isUpgrade ?
-        									getString(R.string.dictionary_upgrade_dialog_text) :
-        									getString(R.string.dictionary_install_dialog_text),
-        								WordPlayApp.getInstance().isFreeMode() ?
-        									" Free" : "",
-        								WordPlayApp.appVersionName);
-        	textView.setText(text);
-
-        	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);
-        	okButton.setOnClickListener(new View.OnClickListener() {
-    			@Override
-    			public void onClick(View v)
-    			{
-    				fragment.startDatabaseInstallation(getActivity(), DbInstallDialog.this);
-    			}
-    		});
-
-        	return dialog;
-
-        }
-
-    }
+//    public static class DbInstallDialog extends DialogFragment {
+//
+//    	BaseFragment fragment;
+//    	boolean isUpgrade = false;
+//
+//    	public DbInstallDialog(BaseFragment fragment, boolean isUpgrade)
+//    	{
+//    		this.fragment = fragment;
+//    		this.isUpgrade = isUpgrade;
+//            Bundle args = new Bundle();
+//            args.putBoolean("isUpgrade", isUpgrade);
+//            setArguments(args);
+//    	}
+//
+//    	@Override
+//    	public void onSaveInstanceState(Bundle savedInstanceState)
+//    	{
+//    		savedInstanceState.putBoolean("isUpgrade", isUpgrade);
+//    	}
+//
+//        @Override
+//        public Dialog onCreateDialog(Bundle savedInstanceState)
+//        {
+//
+//        	AlertDialog.Builder builder;
+//        	final AlertDialog dialog;
+//        	boolean isUpgrade = getArguments().getBoolean("isUpgrade");
+//
+//        	if (savedInstanceState != null)
+//        		isUpgrade = savedInstanceState.getBoolean("isUpgrade");
+//
+//        	LayoutInflater inflater =
+//        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+//        	final View layout =
+//        		inflater.inflate(R.layout.dictionary_install_dialog,
+//        							(ViewGroup)getActivity().findViewById(R.id.dictionary_install_layout));
+//
+//        	builder = new AlertDialog.Builder(getActivity());
+//        	builder.setView(layout);
+//        	dialog = builder.create();
+//
+//        	TextView textView = (TextView)layout.findViewById(R.id.dictionary_mode_text);
+//        	String text = String.format(isUpgrade ?
+//        									getString(R.string.dictionary_upgrade_dialog_text) :
+//        									getString(R.string.dictionary_install_dialog_text),
+//        								WordPlayApp.getInstance().isFreeMode() ?
+//        									" Free" : "",
+//        								WordPlayApp.appVersionName);
+//        	textView.setText(text);
+//
+//        	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);
+//        	okButton.setOnClickListener(new View.OnClickListener() {
+//    			@Override
+//    			public void onClick(View v)
+//    			{
+//    				fragment.startDatabaseInstallation(getActivity(), DbInstallDialog.this);
+//    			}
+//    		});
+//
+//        	return dialog;
+//
+//        }
+//
+//    }
 
     public static class FreeDialog extends DialogFragment {
 
