@@ -86,6 +86,8 @@ public class WordPlayActivity extends HostActivity
 	private ListView menuListView;
 	private MenuAdapter menuAdapter;
 
+	private DbInstallDialog dbInstallDialog = null;
+
     private String lastItemTitle = null;
     private boolean drawerSeen = false;
     private List<DrawerMenuItem> menuItems;
@@ -328,26 +330,10 @@ public class WordPlayActivity extends HostActivity
 
     	switch (id) {
 
-	    	case InstallDbDialog:
-	    	    newFragment = DbInstallDialog.newInstance(false);
-	    	    newFragment.show(getSupportFragmentManager(), "InstallDbDialog");
-	    		break;
-
 	    	case FreeDialog:
 	    		newFragment = new FreeDialog();
 	    		newFragment.setCancelable(false);
 	    		newFragment.show(getSupportFragmentManager(), "FreeDialog");
-	    		break;
-
-	    	case UpgradeDbDialog:
-	    	    newFragment = DbInstallDialog.newInstance(true);
-	    	    newFragment.setCancelable(false);
-	    	    newFragment.show(getSupportFragmentManager(), "UpgradeDbDialog");
-	    		break;
-
-	    	case AboutDialog:
-	    		newFragment = new AboutDialog();
-	    		newFragment.show(getSupportFragmentManager(), "AboutDialog");
 	    		break;
 
 	    	case NagDialog:
@@ -502,81 +488,19 @@ public class WordPlayActivity extends HostActivity
     // Dialogs
     //
 
-    private class AboutDialog extends DialogFragment {
+    private void showInstallDbDialog(boolean upgrade)
+    {
 
-    	public AboutDialog() { super(); }
+    	DbInstallDialog dbInstallDialog;
 
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
+    	// If we are already showing the dialog, don't do so again
+    	dbInstallDialog = (DbInstallDialog) getSupportFragmentManager().findFragmentByTag("InstallDbDialog");
+    	if (dbInstallDialog != null)
+    		return;
 
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.about_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.about_dialog_layout));
-
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-
-        	layout.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-        			if (!getActivity().isFinishing())
-        				dismiss();
-        		}
-        	});
-
-        	ImageView iconImage = (ImageView)layout.findViewById(R.id.about_dialog_image);
-        	iconImage.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-        			Intent myIntent =
-        				new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.WebAddress));
-        			if (!getActivity().isFinishing())  {
-        				dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())
-    	    					startActivity(myIntent);
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-        	    	
-        	final String appName = getString(R.string.app_name);
-        	TextView versionText = (TextView)layout.findViewById(R.id.about_dialog_version);
-        	
-        	TextView copyrightText = (TextView)layout.findViewById(R.id.about_dialog_copyright);
-        	copyrightText.setText(getString(R.string.copyright));
-        	
-        	TextView companyNameText = (TextView)layout.findViewById(R.id.about_dialog_company_name);
-        	companyNameText.setText(getString(R.string.company_name));
-        		
-        	ImageView dictOrgImage = (ImageView)layout.findViewById(R.id.powered_by_image);
-        	dictOrgImage.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-        			Intent myIntent =
-        				new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.DictOrgWebAddress));
-        			if (!getActivity().isFinishing())  {
-    	    			dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())
-    	    					startActivity(myIntent);
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-        	
-        	return dialog;
-
-        }
+    	// Create and show it
+    	dbInstallDialog = DbInstallDialog.newInstance(upgrade);
+		dbInstallDialog.show(getSupportFragmentManager(), "InstallDbDialog");
 
     }
 
@@ -621,72 +545,6 @@ public class WordPlayActivity extends HostActivity
         }
 
     }
-
-//    private class DbInstallDialog extends DialogFragment {
-//
-//    	boolean isUpgrade = false;
-//
-//    	public DbInstallDialog() { super(); }
-//
-//    	public DbInstallDialog(boolean isUpgrade)
-//    	{
-//    		super();
-//    		this.isUpgrade = isUpgrade;
-//            Bundle args = new Bundle();
-//            args.putBoolean("isUpgrade", isUpgrade);
-//            setArguments(args);
-//    	}
-//
-//    	@Override
-//    	public void onSaveInstanceState(Bundle savedInstanceState)
-//    	{
-//    		savedInstanceState.putBoolean("isUpgrade", isUpgrade);
-//    	}
-//
-//        @Override
-//        public Dialog onCreateDialog(Bundle savedInstanceState)
-//        {
-//
-//        	AlertDialog.Builder builder;
-//        	final AlertDialog dialog;
-//        	boolean isUpgrade = getArguments().getBoolean("isUpgrade");
-//
-//        	if (savedInstanceState != null)
-//        		isUpgrade = savedInstanceState.getBoolean("isUpgrade");
-//
-//        	LayoutInflater inflater =
-//        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-//        	final View layout =
-//        		inflater.inflate(R.layout.dictionary_install_dialog,
-//        							(ViewGroup)getActivity().findViewById(R.id.dictionary_install_layout));
-//
-//        	builder = new AlertDialog.Builder(getActivity());
-//        	builder.setView(layout);
-//        	dialog = builder.create();
-//
-//        	TextView textView = (TextView)layout.findViewById(R.id.dictionary_mode_text);
-//        	String text = String.format(isUpgrade ?
-//        									getString(R.string.dictionary_upgrade_dialog_text) :
-//        									getString(R.string.dictionary_install_dialog_text),
-//        								WordPlayApp.getInstance().isFreeMode() ?
-//        									" Free" : "",
-//        								WordPlayApp.appVersionName);
-//        	textView.setText(text);
-//
-//        	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);
-//        	okButton.setOnClickListener(new View.OnClickListener() {
-//    			@Override
-//    			public void onClick(View v)
-//    			{
-//    				startDatabaseInstallation(getActivity(), DbInstallDialog.this);
-//    			}
-//    		});
-//
-//        	return dialog;
-//
-//        }
-//
-//    }
 
     private class FreeDialog extends DialogFragment {
 
@@ -764,14 +622,13 @@ public class WordPlayActivity extends HostActivity
 
     	// If the database is old or missing, the version will be -1
     	int dbVersion = db.getDatabaseVersion();
-    	dbVersion = DatabaseInfo.INVALID_DB_VERSION;
 		if (dbVersion == DatabaseInfo.INVALID_DB_VERSION)  {
 			Debug.e("bad db version " + dbVersion);
-			displayDialog(InstallDbDialog);
+			showInstallDbDialog(false);
 		}
 		else if (dbVersion != DatabaseInfo.CURRENT_DB_VERSION)  {
 			Debug.e("old db version " + dbVersion);
-			displayDialog(UpgradeDbDialog);
+			showInstallDbDialog(true);
 		}
 
 		db.close();
@@ -819,21 +676,6 @@ public class WordPlayActivity extends HostActivity
 
 		protected void onPostExecute(Void result)
 		{
-
-			// Reset the dictionaries to ENABLE in preferences
-			// and in the spinners
-//			SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-//			SharedPreferences.Editor editor = prefs.edit();
-//			int defaultDict = DictionaryType.DICTIONARY_ENABLE.ordinal();
-//			editor.putInt("dictionary_dict", defaultDict - 1);
-//			dictSpinner.setSelection(defaultDict - 1);
-//			editor.putInt("anagrams_dict", defaultDict - 1);
-//			anagramSpinner.setSelection(defaultDict - 1);
-//			editor.putInt("wordjudge_dict", defaultDict - 1);
-//			wjSpinner.setSelection(defaultDict - 1);
-//			editor.putInt("crosswords_dict", defaultDict - 1);
-//			crosswordsSpinner.setSelection(defaultDict - 1);
-//			editor.commit();
 
 			// Dismiss the dialog
 			if (progressDialog != null)

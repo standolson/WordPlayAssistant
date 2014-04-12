@@ -185,27 +185,10 @@ public class BaseFragment extends Fragment {
 
     	switch (id) {
 
-	    	case InstallDbDialog:
-//	    	    newFragment = new DbInstallDialog(this, false);
-//	    	    newFragment.setCancelable(false);
-//	    	    newFragment.show(getFragmentManager(), "InstallDbDialog");
-	    		break;
-
 	    	case FreeDialog:
 	    		newFragment = new FreeDialog(this);
 	    		newFragment.setCancelable(false);
 	    		newFragment.show(getFragmentManager(), "FreeDialog");
-	    		break;
-
-	    	case UpgradeDbDialog:
-//	    	    newFragment = new DbInstallDialog(this, true);
-//	    	    newFragment.setCancelable(false);
-//	    	    newFragment.show(getFragmentManager(), "UpgradeDbDialog");
-	    		break;
-
-	    	case AboutDialog:
-	    		newFragment = new AboutDialog(this);
-	    		newFragment.show(getFragmentManager(), "AboutDialog");
 	    		break;
 
 	    	case NagDialog:
@@ -402,135 +385,6 @@ public class BaseFragment extends Fragment {
     // Dialogs
     //
 
-    public static class AboutDialog extends DialogFragment {
-
-    	BaseFragment fragment;
-
-		public AboutDialog(BaseFragment f)
-    	{
-    		super();
-    		fragment = f;
-    	}
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
-
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.about_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.about_dialog_layout));
-
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-
-        	layout.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-        			if (!getActivity().isFinishing())
-        				dismiss();
-        		}
-        	});
-
-        	ImageView iconImage = (ImageView)layout.findViewById(R.id.about_dialog_image);
-        	iconImage.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-        			Intent myIntent =
-        				new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.WebAddress));
-        			if (!getActivity().isFinishing())  {
-        				dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())
-    	    					startActivity(myIntent);
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-        	    	
-        	final String appName = getString(R.string.app_name);
-        	TextView versionText = (TextView)layout.findViewById(R.id.about_dialog_version);
-        	versionText.setText(appName + " v" + WordPlayApp.appVersionName);
-        	
-        	TextView copyrightText = (TextView)layout.findViewById(R.id.about_dialog_copyright);
-        	copyrightText.setText(getString(R.string.copyright));
-        	
-        	TextView companyNameText = (TextView)layout.findViewById(R.id.about_dialog_company_name);
-        	companyNameText.setText(getString(R.string.company_name));
-        	
-        	Button contactButton = (Button)layout.findViewById(R.id.contact_us);
-        	contactButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-    	    		Intent intent = new Intent(Intent.ACTION_SEND);
-    	    		intent.setType("message/rfc822");
-    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
-    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-    	    				"Comments on " + appName + " v" + WordPlayApp.appVersionName);
-                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
-                	if (!getActivity().isFinishing())  {
-                		dismiss();
-    	            	try {
-    	            		if (!getActivity().isFinishing())
-    	            			startActivity(intent);
-    	            	}
-    	            	catch (ActivityNotFoundException exception) {
-    	            		Utils.configureEmailAlert(getActivity());
-    	            	}
-                	}
-        		}
-        	});
-        	
-        	Button releaseNotesButton = (Button)layout.findViewById(R.id.release_notes);
-        	releaseNotesButton.setOnClickListener(new View.OnClickListener()  {
-        		public void onClick(View v)
-        		{
-        			String str = fragment.getHelpText("Release Notes", R.raw.release_notes);
-        			Intent intent = new Intent(getActivity(), HelpViewer.class);
-        			intent.putExtra("HelpText", str);
-        			if (!getActivity().isFinishing())  {
-        				dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())
-    	    					startActivity(intent);
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-
-        	Button buyItButton = (Button)layout.findViewById(R.id.buy_it);
-//        	fragment.setMarketButton(dialog, buyItButton, true);
-        		
-        	ImageView dictOrgImage = (ImageView)layout.findViewById(R.id.powered_by_image);
-        	dictOrgImage.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-        			Intent myIntent =
-        				new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.DictOrgWebAddress));
-        			if (!getActivity().isFinishing())  {
-    	    			dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())
-    	    					startActivity(myIntent);
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-        	
-        	return dialog;
-
-        }
-
-    }
-
     public class NagDialog extends DialogFragment {
 
     	BaseFragment fragment;
@@ -606,71 +460,6 @@ public class BaseFragment extends Fragment {
         }
 
     }
-
-//    public static class DbInstallDialog extends DialogFragment {
-//
-//    	BaseFragment fragment;
-//    	boolean isUpgrade = false;
-//
-//    	public DbInstallDialog(BaseFragment fragment, boolean isUpgrade)
-//    	{
-//    		this.fragment = fragment;
-//    		this.isUpgrade = isUpgrade;
-//            Bundle args = new Bundle();
-//            args.putBoolean("isUpgrade", isUpgrade);
-//            setArguments(args);
-//    	}
-//
-//    	@Override
-//    	public void onSaveInstanceState(Bundle savedInstanceState)
-//    	{
-//    		savedInstanceState.putBoolean("isUpgrade", isUpgrade);
-//    	}
-//
-//        @Override
-//        public Dialog onCreateDialog(Bundle savedInstanceState)
-//        {
-//
-//        	AlertDialog.Builder builder;
-//        	final AlertDialog dialog;
-//        	boolean isUpgrade = getArguments().getBoolean("isUpgrade");
-//
-//        	if (savedInstanceState != null)
-//        		isUpgrade = savedInstanceState.getBoolean("isUpgrade");
-//
-//        	LayoutInflater inflater =
-//        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-//        	final View layout =
-//        		inflater.inflate(R.layout.dictionary_install_dialog,
-//        							(ViewGroup)getActivity().findViewById(R.id.dictionary_install_layout));
-//
-//        	builder = new AlertDialog.Builder(getActivity());
-//        	builder.setView(layout);
-//        	dialog = builder.create();
-//
-//        	TextView textView = (TextView)layout.findViewById(R.id.dictionary_mode_text);
-//        	String text = String.format(isUpgrade ?
-//        									getString(R.string.dictionary_upgrade_dialog_text) :
-//        									getString(R.string.dictionary_install_dialog_text),
-//        								WordPlayApp.getInstance().isFreeMode() ?
-//        									" Free" : "",
-//        								WordPlayApp.appVersionName);
-//        	textView.setText(text);
-//
-//        	Button okButton = (Button)layout.findViewById(R.id.dictionary_ok_button);
-//        	okButton.setOnClickListener(new View.OnClickListener() {
-//    			@Override
-//    			public void onClick(View v)
-//    			{
-//    				fragment.startDatabaseInstallation(getActivity(), DbInstallDialog.this);
-//    			}
-//    		});
-//
-//        	return dialog;
-//
-//        }
-//
-//    }
 
     public static class FreeDialog extends DialogFragment {
 
