@@ -301,11 +301,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 	    		newFragment.show(getFragmentManager(), "FreeDialog");
 	    		break;
 
-	    	case NagDialog:
-	    		newFragment = new NagDialog();
-	    		newFragment.show(getFragmentManager(), "NagDialog");
-	    		break;
-
     	}
 
     }
@@ -950,81 +945,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     //
     // Dialogs
     //
-
-    public static class NagDialog extends DialogFragment {
-
-    	WordPlayFragment fragment;
-
-    	public NagDialog() { super(); }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
-
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-
-        	fragment =
-        		(WordPlayFragment)getFragmentManager().findFragmentById(R.id.wordplay_activity_fragment);
-        	
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.nag_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.nag_dialog_layout));
-
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-        	
-//        	Button contactButton = (Button)layout.findViewById(R.id.nag_button);
-//        	contactButton.setOnClickListener(new View.OnClickListener() {
-//        		public void onClick(View v)
-//        		{
-//
-//    	    		Intent intent = new Intent(Intent.ACTION_SEND);
-//    	        	String appName = getString(R.string.app_name);
-//
-//    	    		intent.setType("message/rfc822");
-//    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
-//    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-//    	    				"Comments on " + appName + " v" + Constants.AppMajorVersion + "." + Constants.AppMinorVersion);
-//                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
-//                	if (!getActivity().isFinishing())  {
-//    	            	dismiss();
-//    	            	fragment.savedSearchIntent = fragment.searchIntent;
-//    	            	try {
-//    	            		if (!getActivity().isFinishing())
-//    	            			startActivityForResult(intent, EmailActivity);
-//    	            	}
-//    	            	catch (Exception e) {
-//    	    	    		startActivity(fragment.savedSearchIntent);
-//    	            	}
-//                	}
-//
-//        		}
-//        	});
-
-        	return dialog;
-
-        }
-
-        @Override
-        public void onCancel(DialogInterface dialog)
-        {
-			if (!getActivity().isFinishing())  {
-				dismiss();
-				if (fragment.searchIntent != null)  {
-					try {
-						if (!getActivity().isFinishing())
-							startActivity(fragment.searchIntent);
-					}
-					catch (Exception e) {}
-				}
-			}
-        }
-
-    }
 
     public static class FreeDialog extends DialogFragment {
 

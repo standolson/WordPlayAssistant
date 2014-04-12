@@ -191,11 +191,6 @@ public class BaseFragment extends Fragment {
 	    		newFragment.show(getFragmentManager(), "FreeDialog");
 	    		break;
 
-	    	case NagDialog:
-	    		newFragment = new NagDialog(this);
-	    		newFragment.show(getFragmentManager(), "NagDialog");
-	    		break;
-
     	}
 
     }
@@ -384,82 +379,6 @@ public class BaseFragment extends Fragment {
     //
     // Dialogs
     //
-
-    public class NagDialog extends DialogFragment {
-
-    	BaseFragment fragment;
-
-    	public NagDialog(BaseFragment f)
-    	{
-    		super();
-    		fragment = f;
-    	}
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
-
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-        	
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.nag_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.nag_dialog_layout));
-
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-        	
-        	Button contactButton = (Button)layout.findViewById(R.id.nag_button);
-        	contactButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v)
-        		{
-
-    	    		Intent intent = new Intent(Intent.ACTION_SEND);
-    	        	String appName = getString(R.string.app_name);
-
-    	    		intent.setType("message/rfc822");
-    	    		intent.putExtra(Intent.EXTRA_EMAIL, new String[] { Constants.EmailAddress });
-    	    		intent.putExtra(Intent.EXTRA_SUBJECT,
-    	    				"Comments on " + appName + " v" + WordPlayApp.appVersionName);
-                	intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
-                	if (!getActivity().isFinishing())  {
-    	            	dismiss();
-    	            	BaseFragment.savedSearchBundle = fragment.searchBundle;
-    	            	try {
-    	            		if (!getActivity().isFinishing())
-    	            			startActivityForResult(intent, EmailActivity);
-    	            	}
-    	            	catch (Exception e) {
-    	            		startNewSearch(BaseFragment.savedSearchBundle);
-    	            	}
-                	}
-
-        		}
-        	});
-
-        	return dialog;
-
-        }
-
-        @Override
-        public void onCancel(DialogInterface dialog)
-        {
-			if (!getActivity().isFinishing())  {
-				dismiss();
-				if (fragment.searchBundle != null)  {
-					try {
-						if (!getActivity().isFinishing())
-							startNewSearch(searchBundle);
-					}
-					catch (Exception e) {}
-				}
-			}
-        }
-
-    }
 
     public static class FreeDialog extends DialogFragment {
 
