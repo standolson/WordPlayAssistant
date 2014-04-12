@@ -177,23 +177,6 @@ public class BaseFragment extends Fragment {
     	}
     	
     }
-
-    protected void showDialog(int id)
-    {
-
-    	DialogFragment newFragment = null;
-
-    	switch (id) {
-
-	    	case FreeDialog:
-	    		newFragment = new FreeDialog(this);
-	    		newFragment.setCancelable(false);
-	    		newFragment.show(getFragmentManager(), "FreeDialog");
-	    		break;
-
-    	}
-
-    }
     
 //	@Override
 //	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
@@ -322,16 +305,8 @@ public class BaseFragment extends Fragment {
     											wordScores,
     											wordSort);
 
-			// Update the search count and perform a nag dialog if required
-			searchCount += 1;
-			Debug.v("SEARCH_COUNT " + searchCount);
-			if (!hasNagged && ((searchCount % nagFrequency) == 0))  {
-				searchBundle = args;
-				showDialog(NagDialog);
-				hasNagged = true;
-			}
-			else
-				startNewSearch(args);
+			// Start the search
+			startNewSearch(args);
 
     	}
     	else {
@@ -377,75 +352,6 @@ public class BaseFragment extends Fragment {
     }
 
     //
-    // Dialogs
-    //
-
-    public static class FreeDialog extends DialogFragment {
-
-    	BaseFragment fragment;
-
-    	public FreeDialog(BaseFragment f)
-    	{
-    		super();
-    		fragment = f;
-    	}
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
-
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.free_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.free_mode_layout));
-
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-
-        	Button showRelNotesButton = (Button)layout.findViewById(R.id.free_mode_relnotes_button);
-        	showRelNotesButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v) {
-        			String str =
-        				fragment.getHelpText("Release Notes", R.raw.release_notes);
-        			Intent intent = new Intent(getActivity(), HelpViewer.class);
-        			intent.putExtra("HelpText", str);
-        			if (!getActivity().isFinishing())  {
-    	    			dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())  {
-    	    					try {
-    	    						fragment.startActivityForResult(intent, HelpViewerActivity);
-    	    					}
-    	    					catch (Exception e) {}
-    	    				}
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-
-        	Button continueButton = (Button)layout.findViewById(R.id.free_mode_continue_button);
-        	continueButton.setOnClickListener(new View.OnClickListener() {
-    			@Override
-    			public void onClick(View v)
-    			{
-    				dismiss();
-    				fragment.createDatabaseIfMissing();
-    			}
-    		});
-
-        	return dialog;
-
-        }
-
-    }
-
-    //
     // Database Installation
     //
 
@@ -457,21 +363,21 @@ public class BaseFragment extends Fragment {
     private void createDatabaseIfMissing()
     {
 
-    	WordlistDatabase db =
-    		(WordlistDatabase) new WordlistDatabase(getActivity()).openReadOnly();
-
-    	// If the database is old or missing, the version will be -1
-    	int dbVersion = db.getDatabaseVersion();
-		if (dbVersion == DatabaseInfo.INVALID_DB_VERSION)  {
-			Debug.e("bad db version " + dbVersion);
-			showDialog(InstallDbDialog);
-		}
-		else if (dbVersion != DatabaseInfo.CURRENT_DB_VERSION)  {
-			Debug.e("old db version " + dbVersion);
-			showDialog(UpgradeDbDialog);
-		}
-
-		db.close();
+//    	WordlistDatabase db =
+//    		(WordlistDatabase) new WordlistDatabase(getActivity()).openReadOnly();
+//
+//    	// If the database is old or missing, the version will be -1
+//    	int dbVersion = db.getDatabaseVersion();
+//		if (dbVersion == DatabaseInfo.INVALID_DB_VERSION)  {
+//			Debug.e("bad db version " + dbVersion);
+//			showDialog(InstallDbDialog);
+//		}
+//		else if (dbVersion != DatabaseInfo.CURRENT_DB_VERSION)  {
+//			Debug.e("old db version " + dbVersion);
+//			showDialog(UpgradeDbDialog);
+//		}
+//
+//		db.close();
 
     }
 
@@ -640,7 +546,7 @@ public class BaseFragment extends Fragment {
 			editor.commit();
 
 			// Show the dialog
-			showDialog(FreeDialog);
+//			showDialog(FreeDialog);
 
 		}
 		else

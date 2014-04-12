@@ -6,28 +6,22 @@ import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +29,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -51,6 +44,8 @@ import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.fragments.WebViewFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialog;
 import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialog.DbInstallDialogListener;
+import com.ppp.wordplayadvlib.fragments.dialog.FreeDialog;
+import com.ppp.wordplayadvlib.fragments.dialog.FreeDialog.FreeDialogListener;
 import com.ppp.wordplayadvlib.fragments.hosts.AboutHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.AnagramsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.CrosswordsHostFragment;
@@ -66,27 +61,18 @@ import com.ppp.wordplayadvlib.utils.Utils;
 public class WordPlayActivity extends HostActivity
 	implements
 		OnItemClickListener,
-		DbInstallDialogListener
+		DbInstallDialogListener,
+		FreeDialogListener
 {
 
 	private static final int RestartNotificationId = 1;
 
-	private static final int EmailActivity = 1;
-	private static final int HelpViewerActivity = 2;
-	private static final int UserPrefsActivity = 3;
-
-	private static final int InstallDbDialog = 1;
-	private static final int FreeDialog = 2;
-	private static final int UpgradeDbDialog = 3;
-	private static final int AboutDialog = 4;
-	private static final int NagDialog = 5;
+	private static final int UserPrefsActivity = 1;
 
     private DrawerLayout menuDrawer;
     private ActionBarDrawerToggle drawerToggle;
 	private ListView menuListView;
 	private MenuAdapter menuAdapter;
-
-	private DbInstallDialog dbInstallDialog = null;
 
     private String lastItemTitle = null;
     private boolean drawerSeen = false;
@@ -196,15 +182,20 @@ public class WordPlayActivity extends HostActivity
 
         super.onResume();
 
-        initUi();
         refreshHomeIcon();
+
+        // We want to show the drawer after we've shown all of
+        // the startup dialogs so quit early if we showed any dialog
+        if (initUi())
+        	return;
 
         // If the drawer has not been seen, show it
         if (!drawerSeen)
-            menuDrawer.postDelayed(new Runnable() {
-                @Override
-                public void run() { menuDrawer.openDrawer(menuListView); }
-            }, 500);
+        	showDrawer();
+//            menuDrawer.postDelayed(new Runnable() {
+//                @Override
+//                public void run() { menuDrawer.openDrawer(menuListView); }
+//            }, 500);
 
     }
 
@@ -245,27 +236,7 @@ public class WordPlayActivity extends HostActivity
     {
 
     	switch (requestCode)  {
-	
-	    	case EmailActivity:
-	
-	    		// When returning from email sent from the nag dialog, finish
-	    		// the search the user started
-//	    		if (savedSearchIntent != null)  {
-//	    			try {
-//	    				startActivity(savedSearchIntent);
-//	    			}
-//	    			catch (Exception e) {}
-//	    		}
-	    		break;
-	
-	    	case HelpViewerActivity:
-	 
-	    		// We're returning from showing the release notes from the
-	    		// free app installed dialog.  Proceed to creating the database
-	    		// if that is required.
-	    		createOrUpgradeDatabase();
-	    		break;
-	
+		
 	    	case UserPrefsActivity:
 	
 	    		// We've returned from setting preferences.  Apply the only one we
@@ -304,7 +275,7 @@ public class WordPlayActivity extends HostActivity
 
     }
 
-	private void initUi() 
+	private boolean initUi() 
 	{
 
 		// App may have been killed while in the background.
@@ -318,32 +289,16 @@ public class WordPlayActivity extends HostActivity
         // Set the subtitle to the currently selected tab item
 		getSupportActionBar().setSubtitle(lastItemTitle);
 
+		// If this the free version, check to see if we need to show
+		// the free dialog
+		if (WordPlayApp.getInstance().isFreeMode())
+			if (showFreeDialog())
+				return true;
+
 		// Create the database
-		createOrUpgradeDatabase();
+		return createOrUpgradeDatabase();
 
 	}
-
-    private void displayDialog(int id)
-    {
-
-    	DialogFragment newFragment = null;
-
-    	switch (id) {
-
-	    	case FreeDialog:
-	    		newFragment = new FreeDialog();
-	    		newFragment.setCancelable(false);
-	    		newFragment.show(getSupportFragmentManager(), "FreeDialog");
-	    		break;
-
-	    	case NagDialog:
-	    		newFragment = new NagDialog();
-	    		newFragment.show(getSupportFragmentManager(), "NagDialog");
-	    		break;
-
-    	}
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -410,10 +365,6 @@ public class WordPlayActivity extends HostActivity
 		// Help
 		else if (item.getItemId() == R.id.showhelp_menu)
 			showHelp();
-	
-		// Dictionaries
-		else if (item.getItemId() == R.id.dictionary_menu)
-			showDictionaries();
 
 		// Preferences
     	else if (item.getItemId() == R.id.settings_menu)  {
@@ -427,15 +378,8 @@ public class WordPlayActivity extends HostActivity
 		}
     	
 		// Reinstall Dictionary
-		else if (item.getItemId() == R.id.dictionary_reinstall_menu)  {
-			WordlistDatabase.deleteDatabaseFile(this);
-			try {
-				WordlistDatabase.createDatabaseFile(this);
-			}
-			catch (Exception e) {
-				createDatabaseExceptionDialog(this, e);
-			}
-		}
+		else if (item.getItemId() == R.id.dictionary_reinstall_menu)
+			startDatabaseInstall();
 	
 		// Exit
 		else if (item.getItemId() == R.id.exit_menu)  {
@@ -472,18 +416,6 @@ public class WordPlayActivity extends HostActivity
 
     }
 
-    private void showDictionaries()
-    {
-//    	if (currentTab == DictionaryTab)
-//    		dictSpinner.performClick();
-//    	else if (currentTab == WordJudgeTab)
-//    		wjSpinner.performClick();
-//    	else if (currentTab == AnagramTab)
-//    		anagramSpinner.performClick();
-//    	else if (currentTab == CrosswordTab)
-//    		crosswordsSpinner.performClick();
-    }
-
     //
     // Dialogs
     //
@@ -504,105 +436,54 @@ public class WordPlayActivity extends HostActivity
 
     }
 
-    private class NagDialog extends DialogFragment {
+    private boolean showFreeDialog()
+    {
 
-    	public NagDialog() { super(); }
+    	FreeDialog freeDialog;
 
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
+    	// If we are already showing the diaog, don't do so again
+    	freeDialog = (FreeDialog) getSupportFragmentManager().findFragmentByTag("FreeDialog");
+    	if (freeDialog != null)
+    		return true;
 
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-        	
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.nag_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.nag_dialog_layout));
+    	// Check the preference that tells us we've shown it before
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    	boolean hasShown = prefs.getBoolean("freeDialogShown", false);
+    	if (hasShown)
+    		return false;
 
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
+    	// Create and show it
+    	freeDialog = FreeDialog.newInstance();
+    	freeDialog.show(getSupportFragmentManager(), "FreeDialog");
 
-        	return dialog;
-
-        }
-
-        @Override
-        public void onCancel(DialogInterface dialog)
-        {
-			if (!getActivity().isFinishing())  {
-				dismiss();
-//				if (fragment.searchIntent != null)  {
-//					try {
-//						if (!this.isFinishing())
-//							startActivity(fragment.searchIntent);
-//					}
-//					catch (Exception e) {}
-//				}
-			}
-        }
+    	return true;
 
     }
 
-    private class FreeDialog extends DialogFragment {
+    //
+    // Free Dialog
+    //
 
-    	public FreeDialog() { super(); }
+	@Override
+	public void onFreeDialogDimissed()
+	{
 
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
+		// Update the preferences to indicate we've show the dialog
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor edit = prefs.edit();
+		edit.putBoolean("freeDialogShown", true);
+		edit.commit();
 
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
+		// Create or upgrade the database
+		if (createOrUpgradeDatabase())
+			return;
 
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.free_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.free_mode_layout));
+		// All dialogs have been shown so we can now show
+		// the drawer if it hasn't been seen before
+		if (!drawerSeen)
+			showDrawer();
 
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-
-        	Button showRelNotesButton = (Button)layout.findViewById(R.id.free_mode_relnotes_button);
-        	showRelNotesButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v) {
-        			String str = Utils.getHelpText(WordPlayActivity.this, "Release Notes", R.raw.release_notes);
-        			Intent intent = new Intent(getActivity(), HelpViewer.class);
-        			intent.putExtra("HelpText", str);
-        			if (!getActivity().isFinishing())  {
-    	    			dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())  {
-    	    					try {
-    	    						startActivityForResult(intent, HelpViewerActivity);
-    	    					}
-    	    					catch (Exception e) {}
-    	    				}
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-
-        	Button continueButton = (Button)layout.findViewById(R.id.free_mode_continue_button);
-        	continueButton.setOnClickListener(new View.OnClickListener() {
-    			@Override
-    			public void onClick(View v)
-    			{
-    				dismiss();
-    				createOrUpgradeDatabase();
-    			}
-    		});
-
-        	return dialog;
-
-        }
-
-    }
+	}
 
     //
     // Database Installation
@@ -614,7 +495,7 @@ public class WordPlayActivity extends HostActivity
 		new DatabaseWaitTask(this).execute();    	
     }
 
-    private void createOrUpgradeDatabase()
+    private boolean createOrUpgradeDatabase()
     {
 
     	WordlistDatabase db =
@@ -625,13 +506,17 @@ public class WordPlayActivity extends HostActivity
 		if (dbVersion == DatabaseInfo.INVALID_DB_VERSION)  {
 			Debug.e("bad db version " + dbVersion);
 			showInstallDbDialog(false);
+			return true;
 		}
 		else if (dbVersion != DatabaseInfo.CURRENT_DB_VERSION)  {
 			Debug.e("old db version " + dbVersion);
 			showInstallDbDialog(true);
+			return true;
 		}
 
 		db.close();
+
+		return false;
 
     }
 
@@ -686,6 +571,10 @@ public class WordPlayActivity extends HostActivity
 			// report it
 			if (exception != null)
 				createDatabaseExceptionDialog(context, exception);
+
+			// If we haven't already shown the drawer, show it now
+			if (!drawerSeen)
+				showDrawer();
 
 		}
 
@@ -902,12 +791,10 @@ public class WordPlayActivity extends HostActivity
             public void run()
             {
             	if (lastAdded != null) {
-            		
                 	if (lastAdded.getChildFragmentManager().getBackStackEntryCount() > 0) 
                 		drawerToggle.setDrawerIndicatorEnabled(false);
                 	else 
                 		drawerToggle.setDrawerIndicatorEnabled(true);
-                	
                 }
             }
         }, 500);

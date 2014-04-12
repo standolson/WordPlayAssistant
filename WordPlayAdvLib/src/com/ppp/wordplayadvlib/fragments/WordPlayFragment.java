@@ -288,23 +288,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     	
     }
 
-    private void showDialog(int id)
-    {
-
-    	DialogFragment newFragment = null;
-
-    	switch (id) {
-
-	    	case FreeDialog:
-	    		newFragment = new FreeDialog();
-	    		newFragment.setCancelable(false);
-	    		newFragment.show(getFragmentManager(), "FreeDialog");
-	    		break;
-
-    	}
-
-    }
-
     public void onClick(View v)
     {
         InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -943,74 +926,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     }
 
     //
-    // Dialogs
-    //
-
-    public static class FreeDialog extends DialogFragment {
-
-    	WordPlayFragment fragment;
-
-    	public FreeDialog() { super(); }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState)
-        {
-
-        	AlertDialog.Builder builder;
-        	final AlertDialog dialog;
-
-        	fragment =
-        		(WordPlayFragment)getFragmentManager().findFragmentById(R.id.wordplay_activity_fragment);
-
-        	LayoutInflater inflater =
-        		(LayoutInflater)getActivity().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        	final View layout =
-        		inflater.inflate(R.layout.free_dialog,
-        							(ViewGroup)getActivity().findViewById(R.id.free_mode_layout));
-
-        	builder = new AlertDialog.Builder(getActivity());
-        	builder.setView(layout);
-        	dialog = builder.create();
-
-        	Button showRelNotesButton = (Button)layout.findViewById(R.id.free_mode_relnotes_button);
-        	showRelNotesButton.setOnClickListener(new View.OnClickListener() {
-        		public void onClick(View v) {
-        			String str =
-        				fragment.getHelpText("Release Notes", R.raw.release_notes);
-        			Intent intent = new Intent(getActivity(), HelpViewer.class);
-        			intent.putExtra("HelpText", str);
-        			if (!getActivity().isFinishing())  {
-    	    			dismiss();
-    	    			try {
-    	    				if (!getActivity().isFinishing())  {
-    	    					try {
-    	    						fragment.startActivityForResult(intent, HelpViewerActivity);
-    	    					}
-    	    					catch (Exception e) {}
-    	    				}
-    	    			}
-    	    			catch (Exception e) {}
-        			}
-        		}
-        	});
-
-        	Button continueButton = (Button)layout.findViewById(R.id.free_mode_continue_button);
-        	continueButton.setOnClickListener(new View.OnClickListener() {
-    			@Override
-    			public void onClick(View v)
-    			{
-    				dismiss();
-    				fragment.createDatabaseIfMissing();
-    			}
-    		});
-
-        	return dialog;
-
-        }
-
-    }
-
-    //
     // Database Installation
     //
 
@@ -1022,21 +937,21 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     private void createDatabaseIfMissing()
     {
 
-    	WordlistDatabase db =
-    		(WordlistDatabase) new WordlistDatabase(getActivity()).openReadOnly();
-
-    	// If the database is old or missing, the version will be -1
-    	int dbVersion = db.getDatabaseVersion();
-		if (dbVersion == DatabaseInfo.INVALID_DB_VERSION)  {
-			Debug.e("bad db version " + dbVersion);
-			showDialog(InstallDbDialog);
-		}
-		else if (dbVersion != DatabaseInfo.CURRENT_DB_VERSION)  {
-			Debug.e("old db version " + dbVersion);
-			showDialog(UpgradeDbDialog);
-		}
-
-		db.close();
+//    	WordlistDatabase db =
+//    		(WordlistDatabase) new WordlistDatabase(getActivity()).openReadOnly();
+//
+//    	// If the database is old or missing, the version will be -1
+//    	int dbVersion = db.getDatabaseVersion();
+//		if (dbVersion == DatabaseInfo.INVALID_DB_VERSION)  {
+//			Debug.e("bad db version " + dbVersion);
+//			showDialog(InstallDbDialog);
+//		}
+//		else if (dbVersion != DatabaseInfo.CURRENT_DB_VERSION)  {
+//			Debug.e("old db version " + dbVersion);
+//			showDialog(UpgradeDbDialog);
+//		}
+//
+//		db.close();
 
     }
 
@@ -1568,7 +1483,7 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 			editor.commit();
 
 			// Show the dialog
-			showDialog(FreeDialog);
+//			showDialog(FreeDialog);
 
 		}
 		else

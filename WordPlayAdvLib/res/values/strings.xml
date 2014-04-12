@@ -96,6 +96,7 @@
 	<string name="PleaseWait">Please Wait</string>
 	<string name="Searching">Searching...</string>
 	<string name="InstallDb">Install Word Database</string>
+	<string name="FreeDialog">Welcome!</string>
 
 	<string name="nag_text">Thank you for using WordPlay Assistant!\n
 \n
@@ -145,19 +146,11 @@ Click OK to start the database upgrade.
 	<string name="dictionary_on_external_storage">external</string>
 	<string name="dictionary_on_internal_storage">internal</string>
 
-	<string name="free_mode_text">Thank you for trying\n
-WordPlay Assistant Free!!!\n
+	<string name="free_mode_text">Thank you for trying WordPlay Assistant Free!!!\n
 \n
-If you like our app, please purchase the\n
-full version.\n
+If you like our app, please consider purchasing the non-advertising supported version.\n
 \n
-The full version removes advertising, adds\n
-a tab for looking up words in both Scrabble\n
-and regular dictionaries, and adds a tab for\n
-solving crossword puzzles (also useful in\n
-Scrabble).\n
-\n
-Please enjoy WordPlay Assistant Free!\n
+Please enjoy WordPlay Assistant Free!
 </string>
 	<string name="free_mode_relnotes_button_text">Release Notes</string>
 	<string name="free_mode_continue_text">Continue</string>

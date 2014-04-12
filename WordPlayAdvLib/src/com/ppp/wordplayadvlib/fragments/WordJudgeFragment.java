@@ -191,14 +191,6 @@ public class WordJudgeFragment extends BaseFragment
 		String searchString = wjText.getText().toString();
 		DictionaryType dictionary = DictionaryType.fromInt((int)wjSpinner.getSelectedItemId() + 1);
 
-		searchCount += 1;
-		Debug.v("SEARCH_COUNT " + searchCount);
-		if (!hasNagged && ((searchCount % nagFrequency) == 0))  {
-			searchBundle = null;
-			showDialog(NagDialog);
-			hasNagged = true;
-		}
-
 		wjSearchObj = new JudgeSearch();
 		wjSearchObj.execute(this, searchString, dictionary);
 		wjText.setText("");

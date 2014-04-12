@@ -1,53 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/free_mode_layout"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:orientation="vertical"
-	android:minWidth="280dp">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white" >
+
+    <TextView
+        style="@style/DialogHeader"
+        android:id="@+id/title"
+        android:text="@string/FreeDialog"
+        android:layout_weight="0" />
 
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
 
-	    <LinearLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:gravity="center"
-	        android:orientation="vertical">
-
-			<TextView
-				android:id="@+id/free_mode_text_view"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:gravity="center"
-				android:text="@string/free_mode_text"
-				android:paddingLeft="5dip"
-				android:paddingRight="5dip"/>
-
-			<LinearLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_horizontal"
-				android:orientation="horizontal">
-
-				<Button
-					android:text="@string/free_mode_relnotes_button_text"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:id="@+id/free_mode_relnotes_button"/>
-
-				<Button
-					android:id="@+id/free_mode_continue_button"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="@string/free_mode_continue_text"/>
-
-			</LinearLayout>
-
-		</LinearLayout>
+		<TextView
+		    style="@style/DialogText"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
+			android:padding="10dip"
+			android:text="@string/free_mode_text" />
 
 	</ScrollView>
+
+	<include
+        android:id="@+id/button_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        layout="@layout/single_button_bar" />
 
 </LinearLayout>
