@@ -17,7 +17,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.adapters.ScoredWordListAdapter;
+import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
 import com.ppp.wordplayadvlib.adapters.WordDefinitionsAdapter;
 import com.ppp.wordplayadvlib.adapters.WordListAdapter;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
@@ -357,6 +359,7 @@ public class SearchFragment extends BaseFragment
 	{
 		
 		WordListAdapter adapter = null;
+		SponsoredAdAdapter adAdapter = null;
 		ArrayList<String> wordList = searchObject.getWordList();
 
 		Debug.d("found " + wordList.size() + " words in " + getElapsedTime() + " seconds");
@@ -372,6 +375,7 @@ public class SearchFragment extends BaseFragment
 		if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)
 			searchListView.setFastScrollEnabled(true);
 
+		// Create the content adapter
 		adapter = new WordListAdapter(
 						getActivity(),
 						R.layout.word_list,
@@ -379,7 +383,13 @@ public class SearchFragment extends BaseFragment
 						wordSort,
 						boardString,
 						searchObject);
-		searchListView.setAdapter(adapter);
+
+		// If this is the free version, create that adapter
+		if (WordPlayApp.getInstance().isFreeMode())
+			adAdapter = new SponsoredAdAdapter(getActivity(), adapter);
+
+		// Attach the adapter to the ListView
+		searchListView.setAdapter(adAdapter != null? adAdapter : adapter);
 		registerForContextMenu(searchListView);
 		
 	}

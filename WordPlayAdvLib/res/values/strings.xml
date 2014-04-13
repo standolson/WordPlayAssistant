@@ -169,4 +169,7 @@ Please enjoy WordPlay Assistant Free!
 	<string name="company_name">Portland Portable Programs</string>
 	<string name="copyright">Copyright (C) 2010-2014</string>
 
+	<string name="SponsoredAd">Loading sponsored ad...</string>
+	<string name="SponsoredAdFailed">Failed to load sponsored ad</string>
+
 </resources>
