@@ -1,9 +1,9 @@
 package com.ppp.wordplayadvlib.activities;
 
-import com.ppp.wordplayadvlib.R;
-
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import com.ppp.wordplayadvlib.R;
 
 public class UserPreferenceActivity extends PreferenceActivity
 {

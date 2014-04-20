@@ -94,7 +94,7 @@ public class WordListAdapter extends ArrayAdapter<String> implements SectionInde
         if (ss != null)  {
         	TextView wordView = (TextView) v.findViewById(R.id.wl_word);
         	if (wordView != null)  {
-        		Debug.e(ss.toString());
+//        		Debug.e(ss.toString());
         		wordView.setText(ss);
         	}
         }

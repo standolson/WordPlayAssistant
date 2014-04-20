@@ -49,6 +49,7 @@ public class SearchFragment extends BaseFragment
 	private View rootView;
 	private ListView searchListView;
 	private View zeroView;
+	private SponsoredAdAdapter adAdapter = null;
 
 	private SearchType searchType;
 	private DictionaryType dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
@@ -105,6 +106,18 @@ public class SearchFragment extends BaseFragment
 
 	    // Create the new connection to the dictionary server used for this search
     	dictServer = new RFC2229();
+
+	}
+
+	@Override
+	public void onDestroy()
+	{
+
+		super.onDestroy();
+
+		// Stop all AdMob activities
+		if (adAdapter != null)
+			adAdapter.destroy();
 
 	}
 
@@ -203,6 +216,12 @@ public class SearchFragment extends BaseFragment
 
 		}
 		else {
+
+			// If this is the free version, adjust the position
+			if (WordPlayApp.getInstance().isFreeMode())
+				position = adAdapter.getRealPosition(position);
+
+			Log.e(getClass().getSimpleName(), "onItemClick: position " + position);
 
 			if (searchObject.getWordScores().isScored())
 				word = searchObject.getScoredWordList().get(position).getWord();
@@ -359,7 +378,6 @@ public class SearchFragment extends BaseFragment
 	{
 		
 		WordListAdapter adapter = null;
-		SponsoredAdAdapter adAdapter = null;
 		ArrayList<String> wordList = searchObject.getWordList();
 
 		Debug.d("found " + wordList.size() + " words in " + getElapsedTime() + " seconds");
@@ -412,6 +430,7 @@ public class SearchFragment extends BaseFragment
 		if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)
 			searchListView.setFastScrollEnabled(true);
 
+		// Create the content adapter
 		adapter = new ScoredWordListAdapter(
 						getActivity(),
 						R.layout.word_list,
@@ -419,7 +438,13 @@ public class SearchFragment extends BaseFragment
 						searchObject.wordSort,
 						searchObject.boardString,
 						searchObject);
-		searchListView.setAdapter(adapter);
+
+		// If this is the free version, create that adapter
+		if (WordPlayApp.getInstance().isFreeMode())
+			adAdapter = new SponsoredAdAdapter(getActivity(), adapter);
+
+		// Attach the adapter to the ListView
+		searchListView.setAdapter(adAdapter != null ? adAdapter : adapter);
 		registerForContextMenu(searchListView);
 		
 	}

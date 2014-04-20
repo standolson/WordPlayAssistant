@@ -1,8 +1,7 @@
 package com.ppp.wordplayadvlib.utils;
 
+import static junit.framework.Assert.assertTrue;
 import android.util.Log;
-
-import static junit.framework.Assert.*;
 
 public class Debug {
 

@@ -1,10 +1,10 @@
 package com.ppp.wordplay;
 
-import com.crittercism.app.Crittercism;
-import com.ppp.wordplayadvlib.activities.WordPlayActivity;
-import com.ppp.wordplayadvlib.WordPlayApp;
-
 import android.os.Bundle;
+
+import com.crittercism.app.Crittercism;
+import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.activities.WordPlayActivity;
 
 public class WordPlayFree extends WordPlayActivity {
 

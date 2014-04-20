@@ -6,14 +6,14 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.utils.Debug;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 public class JudgeHistory {
 

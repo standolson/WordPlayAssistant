@@ -2,15 +2,15 @@ package com.ppp.wordplayadvlib.networking;
 
 import java.io.IOException;
 
-import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.exceptions.WordPlayException;
-import com.ppp.wordplayadvlib.utils.Debug;
-import com.ppp.wordplayadvlib.R;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
+
+import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.exceptions.WordPlayException;
+import com.ppp.wordplayadvlib.utils.Debug;
 
 public class NetworkUtils {
 

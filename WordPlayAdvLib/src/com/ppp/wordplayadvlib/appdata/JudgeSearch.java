@@ -1,5 +1,13 @@
 package com.ppp.wordplayadvlib.appdata;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.widget.Toast;
+
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.database.ScrabbleDatabaseClient;
@@ -9,14 +17,6 @@ import com.ppp.wordplayadvlib.exceptions.WordPlayException;
 import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
 import com.ppp.wordplayadvlib.networking.NetworkUtils;
 import com.ppp.wordplayadvlib.networking.ScrabbleClient;
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.Fragment;
-import android.widget.Toast;
 
 public class JudgeSearch {
 

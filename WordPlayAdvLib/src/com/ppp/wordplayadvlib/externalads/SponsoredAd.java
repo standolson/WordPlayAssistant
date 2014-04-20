@@ -1,9 +1,9 @@
 package com.ppp.wordplayadvlib.externalads;
 
-import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
-
 import android.content.Context;
 import android.view.View;
+
+import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
 
 public class SponsoredAd {
 
@@ -56,7 +56,11 @@ public class SponsoredAd {
 
 	public void setSponsoredAdAdapter(SponsoredAdAdapter adapter) { this.adapter = adapter; }
 
-	public void shutdown()
+	public void pause() {}
+
+	public void resume() {}
+
+	public void destroy()
 	{
 		adapter = null;
 		displayView = null;

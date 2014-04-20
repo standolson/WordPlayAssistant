@@ -1,12 +1,5 @@
 package com.ppp.wordplayadvlib.fragments;
 
-import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
-import com.ppp.wordplayadvlib.appdata.SearchType;
-import com.ppp.wordplayadvlib.appdata.WordScoreState;
-import com.ppp.wordplayadvlib.appdata.WordSortState;
-import com.ppp.wordplayadvlib.utils.Debug;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,8 +8,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnKeyListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -24,6 +17,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+
+import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.appdata.DictionaryType;
+import com.ppp.wordplayadvlib.appdata.SearchType;
+import com.ppp.wordplayadvlib.appdata.WordScoreState;
+import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.utils.Debug;
 
 public class CrosswordsFragment extends BaseFragment
 	implements

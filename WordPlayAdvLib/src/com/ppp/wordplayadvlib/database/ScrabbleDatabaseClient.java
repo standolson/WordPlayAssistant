@@ -13,7 +13,6 @@ import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.ScoredWord;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
-import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.networking.ScrabbleClient;
 
 public class ScrabbleDatabaseClient extends ScrabbleClient {

@@ -1,9 +1,9 @@
 package com.ppp.wordplayadvlib.activities;
 
-import com.ppp.wordplayadvlib.R;
-
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+
+import com.ppp.wordplayadvlib.R;
 
 public class SearchHistoryActivity extends FragmentActivity {
 

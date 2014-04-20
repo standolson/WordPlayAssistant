@@ -1,15 +1,15 @@
 package com.ppp.wordplayadvlib.dialogs;
 
-import com.ppp.wordplayadvlib.Constants;
-import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.exceptions.WordPlayException;
-import com.ppp.wordplayadvlib.utils.Utils;
-
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+
+import com.ppp.wordplayadvlib.Constants;
+import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.exceptions.WordPlayException;
+import com.ppp.wordplayadvlib.utils.Utils;
 
 public class AppErrDialog extends AlertDialog {
 

@@ -1,8 +1,6 @@
 package com.ppp.wordplayadvlib.adapters;
 
-import com.ppp.wordplayadvlib.externalads.AdMobAd;
-import com.ppp.wordplayadvlib.externalads.SponsoredAd;
-import com.ppp.wordplayadvlib.externalads.SponsoredAd.PlacementType;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.util.SparseArray;
@@ -12,12 +10,19 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 
+import com.ppp.wordplayadvlib.externalads.AdMobAd;
+import com.ppp.wordplayadvlib.externalads.SponsoredAd;
+import com.ppp.wordplayadvlib.externalads.SponsoredAd.PlacementType;
+
 public class SponsoredAdAdapter extends BaseAdapter {
+
+	private static final int MAX_ADMOB_ADS = 2;
 
 	private Context context;
 	private BaseAdapter delegate;
 
-	protected SparseArray<SponsoredAd> sponsoredAds;
+	private SparseArray<SponsoredAd> sponsoredAds;
+	private ArrayList<SponsoredAd> availableAds;
 
 	public SponsoredAdAdapter(Context context, BaseAdapter delegate)
 	{
@@ -26,6 +31,7 @@ public class SponsoredAdAdapter extends BaseAdapter {
 		this.delegate = delegate;
 
 		sponsoredAds = new SparseArray<SponsoredAd>();
+		availableAds = new ArrayList<SponsoredAd>(2);
 
 	}
 
@@ -79,9 +85,17 @@ public class SponsoredAdAdapter extends BaseAdapter {
 		SponsoredAd ad = sponsoredAds.get(position);
 		if ((ad == null) || (ad.getView() == null))  {
 
-			// Create the new ad
-			AdMobAd adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position);
-			adMobAd.setSponsoredAdAdapter(this);
+			// Create a new ad if we haven't loaded the maximum number
+			// of AdMob ads.  If we haven't, then we use one of the ads
+			// we already have.
+			AdMobAd adMobAd = null;
+			if (availableAds.size() < MAX_ADMOB_ADS)  {
+				adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position);
+				adMobAd.setSponsoredAdAdapter(this);
+				availableAds.add(adMobAd);
+			}
+			else
+				adMobAd = (AdMobAd) availableAds.get(sponsoredAds.size() % 2);
 			View view = adMobAd.getView();
 
 			// Save it for later
@@ -113,9 +127,47 @@ public class SponsoredAdAdapter extends BaseAdapter {
 
 	}
 
+    public void pause()
+    {
+
+    	if ((availableAds == null) || (availableAds.size() == 0))
+    		return;
+
+    	for (SponsoredAd ad : availableAds)
+    		if (ad != null)
+    			ad.pause();
+
+    }
+
+    public void resume()
+    {
+
+    	if ((availableAds == null) || (availableAds.size() == 0))
+    		return;
+
+    	for (SponsoredAd ad : availableAds)
+    		if (ad != null)
+    			ad.resume();
+
+    }
+
+    public void destroy()
+    {
+
+    	if ((availableAds == null) || (availableAds.size() == 0))
+    		return;
+
+    	for (SponsoredAd ad : availableAds)
+    		if (ad != null)
+    			ad.destroy();
+
+    	delegate = null;
+
+    }
+
 	private boolean isSponsoredAd(int position) { return position % 10 == 0; }
 
-	private int getRealPosition(int position)
+	public int getRealPosition(int position)
 	{
 		int sponsored = sponsoredAdCountAt(position);
 		return position - sponsored;
