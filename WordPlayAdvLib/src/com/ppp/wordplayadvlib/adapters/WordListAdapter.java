@@ -18,13 +18,10 @@ import android.widget.TextView;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.appdata.SearchObject;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
-import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
 
 public class WordListAdapter extends ArrayAdapter<String> implements SectionIndexer {
 
-	private WordSortState wordSort;
-	private String boardString;
 	private SearchObject searchObject;
 
 	private LayoutInflater inflater;
@@ -34,19 +31,16 @@ public class WordListAdapter extends ArrayAdapter<String> implements SectionInde
 	public WordListAdapter(Context ctx,
 							int rowLayoutId,
 							ArrayList<String> items,
-							WordSortState wordSort,
-							String boardString,
 							SearchObject searchObject)
 	{
 
 		super(ctx, rowLayoutId, items);
 
-		this.boardString = boardString;
 		this.searchObject = searchObject;
 
 		this.inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)  {
+		if (searchObject.wordSort == WordSortState.WORD_SORT_BY_ALPHA)  {
 
 			// Create a map of first letters to array positions
 			indexer = new HashMap<String, Integer>();
@@ -90,7 +84,7 @@ public class WordListAdapter extends ArrayAdapter<String> implements SectionInde
             v = inflater.inflate(R.layout.word_list, null);
 
         SpannableString ss =
-        	Utils.convertToBoardString(word, word, boardString, searchObject);
+        	Utils.convertToBoardString(word, word, searchObject.boardString, searchObject);
         if (ss != null)  {
         	TextView wordView = (TextView) v.findViewById(R.id.wl_word);
         	if (wordView != null)  {
@@ -106,7 +100,7 @@ public class WordListAdapter extends ArrayAdapter<String> implements SectionInde
 	@Override
 	public int getPositionForSection(int section)
 	{
-		if (wordSort != WordSortState.WORD_SORT_BY_ALPHA)
+		if (searchObject.wordSort != WordSortState.WORD_SORT_BY_ALPHA)
 			return 0;
 		if (section < 0)
 			section = 0;
@@ -119,7 +113,7 @@ public class WordListAdapter extends ArrayAdapter<String> implements SectionInde
 	@Override
 	public int getSectionForPosition(int position)
 	{
-		if (wordSort != WordSortState.WORD_SORT_BY_ALPHA)
+		if (searchObject.wordSort != WordSortState.WORD_SORT_BY_ALPHA)
 			return 0;
 		int prevIndex = 0;
 		for (int i = 0; i < sections.length; i += 1)  {

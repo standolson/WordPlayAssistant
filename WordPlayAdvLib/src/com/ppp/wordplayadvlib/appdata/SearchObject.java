@@ -20,11 +20,11 @@ public class SearchObject implements Parcelable {
 	public Handler searchHandler;
 
 	// output
-	private WordDefinition definition;
-	private ArrayList<String> wordList;
-	private ArrayList<String> defnList;
-	private ArrayList<ScoredWord> scoredWordList;
-	private Exception exception;
+	public WordDefinition definition;
+	public ArrayList<String> wordList;
+	public ArrayList<String> defnList;
+	public ArrayList<ScoredWord> scoredWordList;
+	public Exception exception;
 
 	private Date startTime;
 	private Date endTime;
@@ -36,6 +36,8 @@ public class SearchObject implements Parcelable {
 		searchString = b.getString("SearchString").toLowerCase();
 	    if (searchType == SearchType.OPTION_ANAGRAMS)
 	    	boardString = b.getString("BoardString").toLowerCase();
+	    else
+	    	boardString = "";
 		dictionary = DictionaryType.fromInt((int)b.getInt("Dictionary"));
 		if (dictionary == DictionaryType.DICTIONARY_UNKNOWN)
 			dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
@@ -121,18 +123,28 @@ public class SearchObject implements Parcelable {
 		wordSort = WordSortState.fromInt(in.readInt());
 
 		definition = in.readParcelable(WordDefinition.class.getClassLoader());
+
 		size = in.readInt();
-		wordList = new ArrayList<String>();
-		for (int i = 0; i < size; i += 1)
-			wordList.add(in.readString());
+		if (size > 0)  {
+			wordList = new ArrayList<String>();
+			for (int i = 0; i < size; i += 1)
+				wordList.add(in.readString());
+		}
+
 		size = in.readInt();
-		defnList = new ArrayList<String>();
-		for (int i = 0; i < size; i += 1)
-			defnList.add(in.readString());
+		if (size > 0)  {
+			defnList = new ArrayList<String>();
+			for (int i = 0; i < size; i += 1)
+				defnList.add(in.readString());
+		}
+
 		size = in.readInt();
-		scoredWordList = new ArrayList<ScoredWord>();
-		for (int i = 0; i < size; i += 1)
-			scoredWordList.add((ScoredWord) in.readParcelable(ScoredWord.class.getClassLoader()));
+		if (size > 0)  {
+			scoredWordList = new ArrayList<ScoredWord>();
+			for (int i = 0; i < size; i += 1)
+				scoredWordList.add((ScoredWord) in.readParcelable(ScoredWord.class.getClassLoader()));
+		}
+
 		startTime = new Date(in.readLong());
 		endTime = new Date(in.readLong());
 
@@ -150,18 +162,22 @@ public class SearchObject implements Parcelable {
 		dest.writeInt(wordSort.ordinal());
 
 		dest.writeParcelable(definition, flags);
+
 		dest.writeInt(wordList == null ? 0 : wordList.size());
 		if (wordList != null)
 			for (int i = 0; i < wordList.size(); i += 1)
 				dest.writeString(wordList.get(i));
+
 		dest.writeInt(defnList == null ? 0 : defnList.size());
 		if (defnList != null)
 			for (int i = 0; i < defnList.size(); i += 1)
 				dest.writeString(defnList.get(i));
+
 		dest.writeInt(scoredWordList == null ? 0 : scoredWordList.size());
 		if (scoredWordList != null)
 			for (int i = 0; i < scoredWordList.size(); i += 1)
 				dest.writeParcelable(scoredWordList.get(i), flags);
+
 		dest.writeLong(startTime.getTime());
 		dest.writeLong(endTime.getTime());
 

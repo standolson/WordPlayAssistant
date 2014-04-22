@@ -12,7 +12,6 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.widgets.TextDrawable;
 
@@ -61,7 +60,7 @@ public class AdMobAd extends SponsoredAd {
 	{
 		if ((displayView != null) && (displayView != emptyView))  {
 			Log.e(getClass().getSimpleName(), "pause: " + super.toString());
-			PublisherAdView dfpAdView = (PublisherAdView) displayView;
+			AdView dfpAdView = (AdView) displayView;
 			dfpAdView.pause();
 		}
 		super.pause();
@@ -72,7 +71,7 @@ public class AdMobAd extends SponsoredAd {
 	{
 		if ((displayView != null) && (displayView != emptyView))  {
 			Log.e(getClass().getSimpleName(), "resume: " + super.toString());
-			PublisherAdView dfpAdView = (PublisherAdView) displayView;
+			AdView dfpAdView = (AdView) displayView;
 			dfpAdView.resume();
 		}
 		super.resume();
@@ -149,7 +148,7 @@ public class AdMobAd extends SponsoredAd {
             	{
             		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdFailedToLoad; errorCode " + getErrorString(errorCode));
 					if (useAdMobPlaceholders)
-						view.setBackgroundDrawable(new TextDrawable(context, context.getString(R.string.SponsoredAdFailed), Color.BLACK, 22, 5));
+						view.setBackgroundDrawable(new TextDrawable(context, context.getString(R.string.SponsoredAdFailed), Color.WHITE, 22, 5));
 					else {
 						destroy(view);
 						displayView = getEmptyView();

@@ -8,6 +8,7 @@ import java.util.ListIterator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.WordPlayApp;
@@ -114,14 +115,21 @@ public class History {
 
 	}
 
-	public void addHistory(String str,
-							String boardStr,
-							SearchType type,
-							DictionaryType dict,
-							WordScoreState score,
-							WordSortState sort)
+	public void addHistory(String searchString,
+							String boardString,
+							SearchType seaerchType,
+							DictionaryType dictionary,
+							WordScoreState wordScore,
+							WordSortState wordSort)
 	{
-		HistoryObject newHistory = new HistoryObject(str, boardStr, type, dict, score, sort);
+		HistoryObject newHistory =
+			new HistoryObject(searchString, boardString, seaerchType, dictionary, wordScore, wordSort);
+		addHistory(newHistory);
+	}
+
+	public void addHistory(Bundle bundle)
+	{
+		HistoryObject newHistory = new HistoryObject(bundle);
 		addHistory(newHistory);
 	}
 

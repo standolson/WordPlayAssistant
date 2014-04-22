@@ -56,12 +56,6 @@ public class SearchFragment extends BaseFragment
 	private View zeroView;
 	private SponsoredAdAdapter adAdapter = null;
 
-	private SearchType searchType;
-	private DictionaryType dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
-	private String searchString;
-	private String boardString;
-	private WordScoreState wordScore;
-	private WordSortState wordSort;
 	private boolean cancel = false;
 	
 	private RFC2229 dictServer;	
@@ -83,34 +77,9 @@ public class SearchFragment extends BaseFragment
 
 		setHasOptionsMenu(true);
 
-	    // Get the arguments
+	    // Restore the SearchObject
 		if (savedInstanceState != null)
 			searchObject = savedInstanceState.getParcelable("searchObject");
-
-		// If no SearchObject available, make one
-		if (searchObject == null)  {
-
-		    Bundle args = getArguments();
-		    searchType = SearchType.fromInt(args.getInt("SearchType"));
-		    searchString = args.getString("SearchString").toLowerCase();
-		    if (searchType == SearchType.OPTION_ANAGRAMS)
-			    boardString = args.getString("BoardString").toLowerCase();
-		    else
-		    	boardString = "";
-			dictionary = DictionaryType.fromInt((int)args.getInt("Dictionary"));
-			if (dictionary == DictionaryType.DICTIONARY_UNKNOWN)
-				dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
-			wordScore = WordScoreState.fromInt(args.getInt("WordScores"));
-			wordSort = WordSortState.fromInt(args.getInt("WordSort"));
-
-		    Debug.i("SearchString: '" + searchString + "'");
-			Debug.i("BoardString: '" + boardString + "'");
-		    Debug.i("SearchType: " + searchType);
-			Debug.i("Dictionary: " + dictionary);
-			Debug.i("WordScores: " + wordScore);
-			Debug.i("SortByScore: " + wordSort);
-
-		}
 
 	    // Create the new connection to the dictionary server used for this search
     	dictServer = new RFC2229();
@@ -150,7 +119,12 @@ public class SearchFragment extends BaseFragment
 
 		super.onPause();
 
+		// Unregister the broadcast receiver
 		broadcastManager.unregisterReceiver(searchReceiver);
+
+		// Pause all AdMob activity
+		if (adAdapter != null)
+			adAdapter.pause();
 
 	}
 
@@ -160,26 +134,28 @@ public class SearchFragment extends BaseFragment
 
 		super.onResume();
 
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(SEARCH_COMPLETED_INTENT);
-		broadcastManager.registerReceiver(searchReceiver, filter);
+		// Resume all AdMob activity
+		if (adAdapter != null)
+			adAdapter.resume();
 
 		// If we've already done a search, don't do another
-//		if (searchObject != null)  {
-//			displayResults(searchObject, true);
-//			return;
-//		}
+		if (searchObject != null)  {
+			displayResults(true);
+			return;
+		}
+
+		// Register the broadcast receiver to receive completed and
+		// cancelled notifications
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(SEARCH_COMPLETED_INTENT);
+		filter.addAction(SEARCH_CANCELED_INTENT);
+		broadcastManager.registerReceiver(searchReceiver, filter);
 
 		// Create the SearchObject
 		searchObject = new SearchObject(getArguments());
 
 		// Add this search to the history
-		History.getInstance().addHistory(searchString,
-											boardString,
-											searchType,
-											dictionary,
-											wordScore,
-											wordSort);
+		History.getInstance().addHistory(getArguments());
 
     	// Execute the search
     	switch (searchObject.getSearchType())  {
@@ -334,6 +310,34 @@ public class SearchFragment extends BaseFragment
 		
 	}
 
+	private void onSearchComplete()
+	{
+
+		FragmentManager fm = getFragmentManager();
+		SearchProgressDialogFragment dialog = null;
+
+		// Do nothing if we've been cancelled
+		if (task.isCancelled())  {
+			popStack();
+			return;
+		}
+
+		// Find the dialog in the FragmentManager
+		if (fm != null)
+			dialog =
+				(SearchProgressDialogFragment) fm.findFragmentByTag(SearchProgressDialogFragment.class.getName());
+		Log.e(getClass().getSimpleName(), "dialog " + dialog);
+
+		// If the user cancelled, the dialog was already dismissed
+		if (dialog != null)  {
+			dialog.dismiss();
+			displayResults(searchObject, true);
+		}
+		else
+			popStack();
+		
+	}
+
 	private void onSearchCancelled(SearchObject so)
 	{
 		popStack();
@@ -348,6 +352,32 @@ public class SearchFragment extends BaseFragment
 		}
 
 		searchObject = so;
+
+		if (searchObject.getDefinition() != null)
+			showDefinitionList(showToast);
+		else if (searchObject.getWordList() != null)
+			showWordList(showToast);
+		else if (searchObject.getDefinitionList() != null)
+			showDefinitionList(showToast);
+		else if (searchObject.getScoredWordList() != null)
+			showScoredWordList(showToast);
+		else if (searchObject.getException() != null)
+			if (!getActivity().isFinishing())  {
+				Exception e = searchObject.getException();
+				if (e instanceof WifiAuthException)
+					searchObject.setException(new WordPlayException(getString(R.string.wifi_auth_error)));
+				showAppErrDialog();
+			}
+
+	}
+
+	private void displayResults(boolean showToast)
+	{
+
+		if (task.isCancelled())  {
+			popStack();
+			return;
+		}
 
 		if (searchObject.getDefinition() != null)
 			showDefinitionList(showToast);
@@ -434,7 +464,7 @@ public class SearchFragment extends BaseFragment
 		if (zeroResults(wordList.size()))
 			return;
 
-		if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)
+		if (searchObject.wordSort == WordSortState.WORD_SORT_BY_ALPHA)
 			searchListView.setFastScrollEnabled(true);
 
 		// Create the content adapter
@@ -442,8 +472,6 @@ public class SearchFragment extends BaseFragment
 						getActivity(),
 						R.layout.word_list,
 						wordList,
-						wordSort,
-						boardString,
 						searchObject);
 
 		// If this is the free version, create that adapter
@@ -451,7 +479,7 @@ public class SearchFragment extends BaseFragment
 			adAdapter = new SponsoredAdAdapter(getActivity(), adapter);
 
 		// Attach the adapter to the ListView
-		searchListView.setAdapter(adAdapter != null? adAdapter : adapter);
+		searchListView.setAdapter(adAdapter != null ? adAdapter : adapter);
 		registerForContextMenu(searchListView);
 		
 	}
@@ -471,7 +499,7 @@ public class SearchFragment extends BaseFragment
 		if (zeroResults(scoredWordList.size()))
 			return;
 		
-		if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)
+		if (searchObject.wordSort == WordSortState.WORD_SORT_BY_ALPHA)
 			searchListView.setFastScrollEnabled(true);
 
 		// Create the content adapter
@@ -479,8 +507,6 @@ public class SearchFragment extends BaseFragment
 						getActivity(),
 						R.layout.word_list,
 						scoredWordList,
-						searchObject.wordSort,
-						searchObject.boardString,
 						searchObject);
 
 		// If this is the free version, create that adapter

@@ -23,8 +23,6 @@ import com.ppp.wordplayadvlib.utils.Utils;
 
 public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements SectionIndexer {
 
-	private WordSortState wordSort;
-	private String boardString;
 	private SearchObject searchObject;
 
 	private LayoutInflater inflater;
@@ -34,20 +32,16 @@ public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements S
 	public ScoredWordListAdapter(Context ctx,
 									int rowLayoutId,
 									ArrayList<ScoredWord> items,
-									WordSortState wordSort,
-									String boardString,
 									SearchObject searchObject)
 	{
 
 		super(ctx, rowLayoutId, items);
 
-		this.wordSort = wordSort;
-		this.boardString = boardString;
 		this.searchObject = searchObject;
 
 		this.inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		if (wordSort == WordSortState.WORD_SORT_BY_ALPHA)  {
+		if (searchObject.wordSort == WordSortState.WORD_SORT_BY_ALPHA)  {
 
 			// Create a map of first letters to array positions
 			indexer = new HashMap<String, Integer>();
@@ -87,7 +81,7 @@ public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements S
         if (word != null)  {
         	TextView wordView = (TextView)v.findViewById(R.id.wl_word);
         	SpannableString ss =
-        		Utils.convertToBoardString(word.toString(), word.getWord(), boardString, searchObject);
+        		Utils.convertToBoardString(word.toString(), word.getWord(), searchObject.boardString, searchObject);
         	if (wordView != null)
         		wordView.setText(ss);
         }
@@ -99,7 +93,7 @@ public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements S
 	@Override
 	public int getPositionForSection(int section)
 	{
-		if (wordSort != WordSortState.WORD_SORT_BY_ALPHA)
+		if (searchObject.wordSort != WordSortState.WORD_SORT_BY_ALPHA)
 			return 0;
 		if (section < 0)
 			section = 0;
@@ -112,7 +106,7 @@ public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements S
 	@Override
 	public int getSectionForPosition(int position)
 	{
-		if (wordSort != WordSortState.WORD_SORT_BY_ALPHA)
+		if (searchObject.wordSort != WordSortState.WORD_SORT_BY_ALPHA)
 			return 0;
 		int prevIndex = 0;
 		for (int i = 0; i < sections.length; i += 1)  {

@@ -172,11 +172,6 @@ public class WordJudgeFragment extends BaseFragment
     	wjSpinner.setSelection(wjDict - 1);
     	wjSpinner.setOnItemSelectedListener(this);
 
-        if (WordPlayApp.getInstance().isFreeMode())  {
-        	LinearLayout headerLayout = (LinearLayout)View.inflate(getActivity(), R.layout.admob_listview_footer, null);
-            wjListview.addHeaderView(headerLayout);
-        }
-
         updateJudgeHistoryAdapter();
 
 	}
@@ -275,9 +270,6 @@ public class WordJudgeFragment extends BaseFragment
 
     private void startJudgeHistorySearch(int position)
     {
-
-    	if (WordPlayApp.getInstance().isFreeMode())
-    		position -= 1;
 
     	JudgeHistoryObject elem = JudgeHistory.getInstance().getJudgeHistory().get(position);
 

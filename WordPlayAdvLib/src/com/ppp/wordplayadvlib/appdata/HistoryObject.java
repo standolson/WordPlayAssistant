@@ -1,5 +1,7 @@
 package com.ppp.wordplayadvlib.appdata;
 
+import android.os.Bundle;
+
 public class HistoryObject {
 	
 	private SearchType searchType;
@@ -9,19 +11,32 @@ public class HistoryObject {
 	private WordScoreState wordScore;
 	private WordSortState wordSort;
 	
-	public HistoryObject(String str,
-							String boardStr,
-							SearchType type,
-							DictionaryType dict,
-							WordScoreState score,
-							WordSortState sort)
+	public HistoryObject(String searchString,
+							String boardString,
+							SearchType searchType,
+							DictionaryType dictionary,
+							WordScoreState wordScore,
+							WordSortState wordSort)
 	{
-		searchType = type;
-		searchString = str;
-		boardString = boardStr;
-		searchDict = dict;
-		wordScore = score;
-		wordSort = sort;
+		this.searchType = searchType;
+		this.searchString = searchString;
+		this.boardString = boardString;
+		this.searchDict = dictionary;
+		this.wordScore = wordScore;
+		this.wordSort = wordSort;
+	}
+
+	public HistoryObject(Bundle bundle)
+	{
+		this.searchType = SearchType.fromInt(bundle.getInt("SearchType"));
+		this.searchString = bundle.getString("SearchString").toLowerCase();
+		if (searchType == SearchType.OPTION_ANAGRAMS)
+			this.boardString = bundle.getString("BoardString").toLowerCase();
+		this.searchDict = DictionaryType.fromInt((int) bundle.getInt("Dictionary"));
+		if (searchDict == DictionaryType.DICTIONARY_UNKNOWN)
+			searchDict = DictionaryType.DICTIONARY_DICT_DOT_ORG;
+		this.wordScore = WordScoreState.fromInt(bundle.getInt("WordScores"));
+		this.wordSort = WordSortState.fromInt(bundle.getInt("WordSort"));
 	}
 
 	public HistoryObject(String csvRecord)
@@ -56,7 +71,12 @@ public class HistoryObject {
 	public String getSearchTypeString()
 	{
 
+		if (searchType == null)
+			return "Unknown";
+
 		switch (searchType) {
+			case OPTION_UNKNOWN:
+				return "Unknown";
 			case OPTION_DICTIONARY_EXACT_MATCH:
 				return "Exact Match";
 			case OPTION_DICTIONARY_STARTS_WITH:
@@ -71,14 +91,19 @@ public class HistoryObject {
 				return "Thesaurus";
 			case OPTION_ANAGRAMS:
 				return "Anagram";
+			case OPTION_WORD_JUDGE:
+				return "Unknown";
+			default:
+				return "Unknown";
 		}
-		
-		return "Unknown";
 
 	}
 
 	public String getDictionaryString()
 	{
+
+		if (searchDict == null)
+			return "Unknown Dictionary";
 
 		switch (searchDict)  {
 			case DICTIONARY_UNKNOWN:
