@@ -2,9 +2,14 @@ package com.ppp.wordplayadvlib.fragments;
 
 import java.util.ArrayList;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -62,6 +67,8 @@ public class SearchFragment extends BaseFragment
 	private RFC2229 dictServer;	
 	private SearchObject searchObject;
 
+	private LocalBroadcastManager broadcastManager;
+
 	private static AsyncTask<Void, Void, Void> task;
 	private static SearchFragment taskListener;
 
@@ -72,6 +79,7 @@ public class SearchFragment extends BaseFragment
 		super.onCreate(savedInstanceState);
 
 		taskListener = this;
+		broadcastManager = LocalBroadcastManager.getInstance(getActivity());
 
 		setHasOptionsMenu(true);
 
@@ -137,16 +145,30 @@ public class SearchFragment extends BaseFragment
 	}
 
 	@Override
+	public void onPause()
+	{
+
+		super.onPause();
+
+		broadcastManager.unregisterReceiver(searchReceiver);
+
+	}
+
+	@Override
 	public void onResume()
 	{
 
 		super.onResume();
 
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(SEARCH_COMPLETED_INTENT);
+		broadcastManager.registerReceiver(searchReceiver, filter);
+
 		// If we've already done a search, don't do another
-		if (searchObject != null)  {
-			displayResults(searchObject, true);
-			return;
-		}
+//		if (searchObject != null)  {
+//			displayResults(searchObject, true);
+//			return;
+//		}
 
 		// Create the SearchObject
 		searchObject = new SearchObject(getArguments());
@@ -258,6 +280,25 @@ public class SearchFragment extends BaseFragment
 	// Search
 	//
 
+    private static final String SEARCH_COMPLETED_INTENT = "SearchCompleted";
+    private static final String SEARCH_CANCELED_INTENT = "SearchCanceled";
+
+	protected BroadcastReceiver searchReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			if (action.equals(SEARCH_COMPLETED_INTENT))  {
+				SearchObject searchObject = (SearchObject) intent.getParcelableExtra("searchObject");
+				onSearchComplete(searchObject);
+			}
+			else if (action.equals(SEARCH_CANCELED_INTENT))
+				popStack();
+		}
+		
+	};
+
 	@Override
 	public void onProgressCancel()
 	{
@@ -281,12 +322,15 @@ public class SearchFragment extends BaseFragment
 		if (fm != null)
 			dialog =
 				(SearchProgressDialogFragment) fm.findFragmentByTag(SearchProgressDialogFragment.class.getName());
+		Log.e(getClass().getSimpleName(), "dialog " + dialog);
 
-		// Dismiss the dialog and display the results
+		// If the user cancelled, the dialog was already dismissed
 		if (dialog != null)  {
 			dialog.dismiss();
 			displayResults(searchObject, true);
 		}
+		else
+			popStack();
 		
 	}
 
@@ -1238,19 +1282,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
