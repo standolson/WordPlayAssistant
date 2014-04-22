@@ -250,58 +250,8 @@ public class BaseFragment extends Fragment {
 //	}
 
 	//
-	// Search Activity Support
+	// Search Support
 	//
-
-	public void startSearchActivity(SearchType searchType,
-									String searchString,
-									String boardString,
-									DictionaryType dictionary,
-									WordScoreState wordScores,
-									WordSortState wordSort)
-	{
-
-		if (searchString != null)
-			searchString = searchString.toLowerCase();
-		if (boardString != null)
-			boardString = boardString.toLowerCase();
-
-		Bundle args = new Bundle();
-		args.putString("SearchString", searchString);
-		args.putString("BoardString", boardString);
-		args.putInt("SearchType", searchType.ordinal());
-		args.putInt("Dictionary", dictionary.ordinal());
-		args.putInt("WordScores", wordScores.ordinal());
-		args.putInt("WordSort", wordSort.ordinal());
-
-		// Only start a search if the search string exists and has a length
-		if ((searchString != null) && (searchString.length() != 0))  {
- 
-			// Make sure it isn't zero length after removing spaces
-			searchString = searchString.replace(" ", "");
-			if (searchString.length() == 0)  {
-				Toast.makeText(getActivity(), "Please enter a word or search string", Toast.LENGTH_SHORT).show();
-				return;
-			}
-
-			// Add this search to the history
-			History.getInstance().addHistory(searchString,
-    											boardString,
-    											searchType,
-    											dictionary,
-    											wordScores,
-    											wordSort);
-
-			// Start the search
-			startNewSearch(args);
-
-    	}
-    	else {
-			Toast.makeText(getActivity(), "Please enter a word or search string", Toast.LENGTH_SHORT).show();
-			return;
-    	}
-		
-	}
 
 	public void startNewSearch(Bundle args)
 	{

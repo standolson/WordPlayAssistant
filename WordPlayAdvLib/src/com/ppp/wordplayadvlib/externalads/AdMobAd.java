@@ -18,7 +18,7 @@ import com.ppp.wordplayadvlib.widgets.TextDrawable;
 public class AdMobAd extends SponsoredAd {
 
 	private static View emptyView = null;
-	public static boolean useAdMobPlaceholders = true;
+	public static boolean useAdMobPlaceholders = false;
 
 	public AdMobAd(Context context, PlacementType placementType)
 	{

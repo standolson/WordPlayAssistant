@@ -33,7 +33,6 @@ import com.ppp.wordplayadvlib.appdata.ScoredWord;
 import com.ppp.wordplayadvlib.appdata.SearchObject;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordDefinition;
-import com.ppp.wordplayadvlib.appdata.WordScoreState;
 import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.database.ScrabbleDatabaseClient;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
@@ -140,7 +139,7 @@ public class SearchFragment extends BaseFragment
 
 		// If we've already done a search, don't do another
 		if (searchObject != null)  {
-			displayResults(true);
+			displayResults(false);
 			return;
 		}
 
@@ -740,7 +739,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictStartsWith()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -778,19 +777,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};

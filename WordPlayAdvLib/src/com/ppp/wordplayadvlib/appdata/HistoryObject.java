@@ -32,9 +32,11 @@ public class HistoryObject {
 		this.searchString = bundle.getString("SearchString").toLowerCase();
 		if (searchType == SearchType.OPTION_ANAGRAMS)
 			this.boardString = bundle.getString("BoardString").toLowerCase();
+		else
+			this.boardString = "";
 		this.searchDict = DictionaryType.fromInt((int) bundle.getInt("Dictionary"));
 		if (searchDict == DictionaryType.DICTIONARY_UNKNOWN)
-			searchDict = DictionaryType.DICTIONARY_DICT_DOT_ORG;
+			this.searchDict = DictionaryType.DICTIONARY_DICT_DOT_ORG;
 		this.wordScore = WordScoreState.fromInt(bundle.getInt("WordScores"));
 		this.wordSort = WordSortState.fromInt(bundle.getInt("WordSort"));
 	}
