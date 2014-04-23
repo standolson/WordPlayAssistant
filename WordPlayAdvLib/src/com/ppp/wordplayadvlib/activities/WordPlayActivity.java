@@ -321,13 +321,17 @@ public class WordPlayActivity extends HostActivity
     	// If there is no help, don't show it
     	if (lastAdded != null)  {
         	HostFragment host = (HostFragment) lastAdded;
-        	if (host.getFragmentHelp() == 0)
-        		menu.findItem(R.id.showhelp_menu).setVisible(false);
+        	if (host.getFragmentHelp() == 0)  {
+        		item = menu.findItem(R.id.showhelp_menu);
+        		if (item != null)
+        			menu.findItem(R.id.showhelp_menu).setVisible(false);
+        	}
     	}
 
     	// Let child fragments turn on the "Clear History" item
     	item = menu.findItem(R.id.clearhistory_menu);
-    	item.setVisible(false);
+    	if (item != null)
+    		item.setVisible(false);
 
     	// If the notification bar is turned off, don't show "Exit"
     	item = menu.findItem(R.id.exit_menu);
