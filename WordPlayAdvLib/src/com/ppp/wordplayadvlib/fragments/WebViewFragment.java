@@ -1,8 +1,11 @@
 package com.ppp.wordplayadvlib.fragments;
 
-import android.R;
+import com.ppp.wordplayadvlib.R;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -11,6 +14,7 @@ public class WebViewFragment extends BaseFragment {
 
 	private WebView rootView;
 
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 
@@ -28,5 +32,24 @@ public class WebViewFragment extends BaseFragment {
 		return rootView;
 
 	}
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu)
+    {
+
+    	int[] ids = {
+    		R.id.dictionary_menu,
+    		R.id.settings_menu,
+    		R.id.dictionary_reinstall_menu,
+    		R.id.showhelp_menu
+    	};
+
+    	for (int id : ids)  {
+    		MenuItem item = menu.findItem(id);
+	    	if (item != null)
+	    		menu.removeItem(item.getItemId());
+    	}
+
+    }
 
 }

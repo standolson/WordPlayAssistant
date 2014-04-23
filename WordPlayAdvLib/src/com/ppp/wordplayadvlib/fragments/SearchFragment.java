@@ -60,17 +60,14 @@ public class SearchFragment extends BaseFragment
 	private RFC2229 dictServer;	
 	private SearchObject searchObject;
 
+	private static AsyncTask<Void, Void, Void> task;
 	private LocalBroadcastManager broadcastManager;
-
-//	private static SearchFragment taskListener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 
 		super.onCreate(savedInstanceState);
-
-		setHasOptionsMenu(true);
 
 	    // Restore the SearchObject
 		if (savedInstanceState != null)
@@ -139,18 +136,18 @@ public class SearchFragment extends BaseFragment
 		if (adAdapter != null)
 			adAdapter.resume();
 
-		// If we've already done a search, don't do another
-		if (searchObject != null)  {
-			displayResults(false);
-			return;
-		}
-
 		// Register the broadcast receiver to receive completed and
 		// cancelled notifications
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(SEARCH_COMPLETED_INTENT);
 		filter.addAction(SEARCH_CANCELED_INTENT);
 		broadcastManager.registerReceiver(searchReceiver, filter);
+
+		// If we've already done a search, don't do another
+		if (searchObject != null)  {
+			displayResults(false);
+			return;
+		}
 
 		// Create the SearchObject
 		searchObject = new SearchObject(getArguments());
@@ -248,9 +245,20 @@ public class SearchFragment extends BaseFragment
     @Override
     public void onPrepareOptionsMenu(Menu menu)
     {
-    	MenuItem item = menu.findItem(R.id.dictionary_menu);
-    	if (item != null)
-    		item.setVisible(false);
+
+    	int[] ids = {
+    		R.id.dictionary_menu,
+    		R.id.settings_menu,
+    		R.id.dictionary_reinstall_menu,
+    		R.id.showhelp_menu
+    	};
+
+    	for (int id : ids)  {
+    		MenuItem item = menu.findItem(id);
+	    	if (item != null)
+	    		menu.removeItem(item.getItemId());
+    	}
+
     }
 
 	//
@@ -279,8 +287,12 @@ public class SearchFragment extends BaseFragment
 	@Override
 	public void onProgressCancel()
 	{
-		Log.e(getClass().getSimpleName(), "onProgressCancel");
-		popStack();
+
+		// Cancel the running task.  The onCancelled handler there will
+		// send a message to the broadcast receiver that will get the
+		// user back to where they came from.
+		task.cancel(true);
+
 	}
 
 	private void onSearchComplete(SearchObject searchObject)
@@ -461,7 +473,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictExactMatch()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -532,7 +544,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictExactMatch()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -611,7 +623,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictStartsWith()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -682,7 +694,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictStartsWith()
 	{
 
-		AsyncTask<Void, Void, Void> myTask = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -744,7 +756,7 @@ public class SearchFragment extends BaseFragment
 
 		};
 
-		myTask.execute();
+		task.execute();
 		
 	}
 	
@@ -759,7 +771,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictContains()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -830,7 +842,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictContains()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -907,7 +919,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictEndsWith()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -978,7 +990,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictEndsWith()
 	{
 		
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -1055,7 +1067,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictCrosswords()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -1126,7 +1138,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleCrosswords()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -1193,7 +1205,7 @@ public class SearchFragment extends BaseFragment
 	private void onThesaurus()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -1267,7 +1279,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictAnagram()
 	{
 
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()

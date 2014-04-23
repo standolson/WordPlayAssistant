@@ -52,8 +52,6 @@ import android.widget.ViewFlipper;
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.activities.HelpViewer;
-import com.ppp.wordplayadvlib.activities.SearchHistoryActivity;
 import com.ppp.wordplayadvlib.activities.UserPreferenceActivity;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.History;
@@ -340,8 +338,8 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 			showDictionaries();
 
     	// Help
-    	else if (item.getItemId() == R.id.showhelp_menu)
-			showHelp();
+//    	else if (item.getItemId() == R.id.showhelp_menu)
+//			showHelp();
 
     	// Exit
     	else if (item.getItemId() == R.id.exit_menu)  {
@@ -856,46 +854,6 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     		anagramSpinner.performClick();
     	else if (currentTab == CrosswordTab)
     		crosswordsSpinner.performClick();
-    }
-    
-    private void showHistory()
-    {
-
-    	Intent intent = new Intent(getActivity(), SearchHistoryActivity.class);
-    	try {
-    		startActivity(intent);
-    	}
-    	catch (Exception e) {}
-    }
-
-    private void showHelp()
-    {
-    	
-    	String str = null;
-    	Intent intent = null;
-    	
-    	if (currentTab == DictionaryTab)  {
-    		DictionaryType dict =
-    			DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
-    		if (dict.isThesaurus())
-    			str = getHelpText("Thesaurus", R.raw.thesaurus_help);
-    		else
-    			str = getHelpText("Dictionary", R.raw.dictionary_help);
-    	}
-    	else if (currentTab == WordJudgeTab)
-    		str = getHelpText("Word Judge", R.raw.wordjudge_help);
-    	else if (currentTab == AnagramTab)
-    		str = getHelpText("Anagrams", R.raw.anagrams_help);
-    	else if (currentTab == CrosswordTab)
-    		str = getHelpText("Crosswords", R.raw.crosswords_help);
-    	
-		intent = new Intent(getActivity(), HelpViewer.class);
-		intent.putExtra("HelpText", str);
-		try {
-			startActivity(intent);
-		}
-		catch (Exception e) {}
-    	
     }
  
     private String getHelpText(String whichHelp, int id)
