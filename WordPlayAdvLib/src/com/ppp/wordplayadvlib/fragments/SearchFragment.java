@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
@@ -52,27 +53,22 @@ public class SearchFragment extends BaseFragment
 
 	private View rootView;
 	private ListView searchListView;
+	private TextView elapsedTextView;
 	private View zeroView;
 	private SponsoredAdAdapter adAdapter = null;
-
-	private boolean cancel = false;
 	
 	private RFC2229 dictServer;	
 	private SearchObject searchObject;
 
 	private LocalBroadcastManager broadcastManager;
 
-	private static AsyncTask<Void, Void, Void> task;
-	private static SearchFragment taskListener;
+//	private static SearchFragment taskListener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 
 		super.onCreate(savedInstanceState);
-
-		taskListener = this;
-		broadcastManager = LocalBroadcastManager.getInstance(getActivity());
 
 		setHasOptionsMenu(true);
 
@@ -82,6 +78,10 @@ public class SearchFragment extends BaseFragment
 
 	    // Create the new connection to the dictionary server used for this search
     	dictServer = new RFC2229();
+
+    	// Create the broadcast maanger that will receive the completion
+    	// and cancel callbacks of the AsyncTasks doing the searches
+		broadcastManager = LocalBroadcastManager.getInstance(getActivity());
 
 	}
 
@@ -107,6 +107,8 @@ public class SearchFragment extends BaseFragment
 	    searchListView.setOnItemClickListener(this);
 
 	    zeroView = rootView.findViewById(R.id.zero_results);
+
+	    elapsedTextView = (TextView) rootView.findViewById(R.id.elapsed_time);
 
 		return rootView;
 
@@ -278,7 +280,7 @@ public class SearchFragment extends BaseFragment
 	public void onProgressCancel()
 	{
 		Log.e(getClass().getSimpleName(), "onProgressCancel");
-		task.cancel(true);
+		popStack();
 	}
 
 	private void onSearchComplete(SearchObject searchObject)
@@ -287,105 +289,32 @@ public class SearchFragment extends BaseFragment
 		FragmentManager fm = getFragmentManager();
 		SearchProgressDialogFragment dialog = null;
 
-		// Do nothing if we've been cancelled
-		if (task.isCancelled())  {
-			popStack();
-			return;
-		}
+		this.searchObject = searchObject;
 
 		// Find the dialog in the FragmentManager
 		if (fm != null)
 			dialog =
 				(SearchProgressDialogFragment) fm.findFragmentByTag(SearchProgressDialogFragment.class.getName());
-		Log.e(getClass().getSimpleName(), "dialog " + dialog);
 
 		// If the user cancelled, the dialog was already dismissed
 		if (dialog != null)  {
 			dialog.dismiss();
-			displayResults(searchObject, true);
+			displayResults(true);
 		}
-		else
-			popStack();
 		
-	}
-
-	private void onSearchComplete()
-	{
-
-		FragmentManager fm = getFragmentManager();
-		SearchProgressDialogFragment dialog = null;
-
-		// Do nothing if we've been cancelled
-		if (task.isCancelled())  {
-			popStack();
-			return;
-		}
-
-		// Find the dialog in the FragmentManager
-		if (fm != null)
-			dialog =
-				(SearchProgressDialogFragment) fm.findFragmentByTag(SearchProgressDialogFragment.class.getName());
-		Log.e(getClass().getSimpleName(), "dialog " + dialog);
-
-		// If the user cancelled, the dialog was already dismissed
-		if (dialog != null)  {
-			dialog.dismiss();
-			displayResults(searchObject, true);
-		}
-		else
-			popStack();
-		
-	}
-
-	private void onSearchCancelled(SearchObject so)
-	{
-		popStack();
-	}
-
-	private void displayResults(SearchObject so, boolean showToast)
-	{
-
-		if (task.isCancelled())  {
-			popStack();
-			return;
-		}
-
-		searchObject = so;
-
-		if (searchObject.getDefinition() != null)
-			showDefinitionList(showToast);
-		else if (searchObject.getWordList() != null)
-			showWordList(showToast);
-		else if (searchObject.getDefinitionList() != null)
-			showDefinitionList(showToast);
-		else if (searchObject.getScoredWordList() != null)
-			showScoredWordList(showToast);
-		else if (searchObject.getException() != null)
-			if (!getActivity().isFinishing())  {
-				Exception e = searchObject.getException();
-				if (e instanceof WifiAuthException)
-					searchObject.setException(new WordPlayException(getString(R.string.wifi_auth_error)));
-				showAppErrDialog();
-			}
-
 	}
 
 	private void displayResults(boolean showToast)
 	{
 
-		if (task.isCancelled())  {
-			popStack();
-			return;
-		}
-
 		if (searchObject.getDefinition() != null)
-			showDefinitionList(showToast);
+			showDefinitionList();
 		else if (searchObject.getWordList() != null)
-			showWordList(showToast);
+			showWordList();
 		else if (searchObject.getDefinitionList() != null)
-			showDefinitionList(showToast);
+			showDefinitionList();
 		else if (searchObject.getScoredWordList() != null)
-			showScoredWordList(showToast);
+			showScoredWordList();
 		else if (searchObject.getException() != null)
 			if (!getActivity().isFinishing())  {
 				Exception e = searchObject.getException();
@@ -399,15 +328,15 @@ public class SearchFragment extends BaseFragment
     private void showAppErrDialog()
     {
 
-    	StringBuilder app_data = new StringBuilder();
+    	StringBuilder appData = new StringBuilder();
 
-    	app_data.append("search_string = " + searchObject.getSearchString() + "\n");
-    	app_data.append("search_type = " + searchObject.getSearchType() + "\n");
-    	app_data.append("dictionary = " + searchObject.getDictionary().toString() + "\n");
-    	app_data.append("word_scores = " + searchObject.getWordScores() + "\n");
-    	app_data.append("word_sort = " + searchObject.getWordSort() + "\n");
+    	appData.append("search_string = " + searchObject.getSearchString() + "\n");
+    	appData.append("search_type = " + searchObject.getSearchType() + "\n");
+    	appData.append("dictionary = " + searchObject.getDictionary().toString() + "\n");
+    	appData.append("word_scores = " + searchObject.getWordScores() + "\n");
+    	appData.append("word_sort = " + searchObject.getWordSort() + "\n");
 
-    	new AppErrDialog(getActivity(), searchObject.getException(), app_data.toString()).show();
+    	new AppErrDialog(getActivity(), searchObject.getException(), appData.toString()).show();
 
     }
 
@@ -419,20 +348,17 @@ public class SearchFragment extends BaseFragment
     {
 		zeroView.setVisibility(count > 0 ? View.GONE : View.VISIBLE);
 		searchListView.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+		elapsedTextView.setVisibility(View.VISIBLE);
 		return count == 0;
     }
 
-	private void showDefinitionList(boolean showToast)
+	private void showDefinitionList()
 	{
 		
 		WordDefinitionsAdapter adapter = null;
 		ArrayList<String> defnList = searchObject.getDefinitionList();
 
-		Debug.d("found " + defnList.size() + " definitions in " + getElapsedTime() + " seconds");
-		if (showToast && !cancel)
-			Toast.makeText(getActivity(),
-							defnList.size() + " definition" + ((defnList.size() == 1) ? "" : "s") + " found in " + getElapsedTime() + " seconds",
-							Toast.LENGTH_SHORT).show();
+		showElapsed(defnList.size(), "definition", "definitions");
 
 		if (zeroResults(defnList.size()))
 			return;
@@ -447,18 +373,13 @@ public class SearchFragment extends BaseFragment
 		
 	}
 	
-	private void showWordList(Boolean showToast)
+	private void showWordList()
 	{
 		
 		WordListAdapter adapter = null;
 		ArrayList<String> wordList = searchObject.getWordList();
 
-		Debug.d("found " + wordList.size() + " words in " + getElapsedTime() + " seconds");
-		if (showToast && !cancel)
-			Toast.makeText(getActivity(),
-							wordList.size() + " word" +
-								((wordList.size() == 1) ? "" : "s") + " found in " + getElapsedTime() + " seconds",
-							Toast.LENGTH_SHORT).show();
+		showElapsed(wordList.size(), "word", "words");
 
 		if (zeroResults(wordList.size()))
 			return;
@@ -483,17 +404,13 @@ public class SearchFragment extends BaseFragment
 		
 	}
 
-	private void showScoredWordList(Boolean showToast)
+	private void showScoredWordList()
 	{
 		
 		ScoredWordListAdapter adapter = null;
 		ArrayList<ScoredWord> scoredWordList = searchObject.getScoredWordList();
 
-		Debug.d("found " + scoredWordList.size() + " scored words in " + getElapsedTime() + " seconds");
-		if (showToast && !cancel)
-			Toast.makeText(getActivity(),
-							scoredWordList.size() + " word" + ((scoredWordList.size() == 1) ? "" : "s") + " found in " + getElapsedTime() + " seconds",
-							Toast.LENGTH_SHORT).show();
+		showElapsed(scoredWordList.size(), "scored word", "scored words");
 
 		if (zeroResults(scoredWordList.size()))
 			return;
@@ -518,10 +435,15 @@ public class SearchFragment extends BaseFragment
 		
 	}
 
-	private String getElapsedTime()
+	private void showElapsed(int count, String objectName, String objectNamePlural)
 	{
-		float elapsed = (float)searchObject.getElapsedTime() / 1000;
-		return String.format("%.3f", elapsed);
+
+		float elapsed = (float) searchObject.getElapsedTime() / 1000;
+		String str = getString(R.string.elapsed_time, count, count == 1 ? objectName : objectNamePlural, elapsed);
+
+		Debug.e(str);
+		((TextView) rootView.findViewById(R.id.elapsed_time)).setText(str);
+
 	}
 
 	//
@@ -539,7 +461,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictExactMatch()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -579,19 +501,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -603,7 +532,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictExactMatch()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -643,19 +572,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -675,7 +611,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictStartsWith()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -715,19 +651,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -739,7 +682,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictStartsWith()
 	{
 
-		new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> myTask = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -801,7 +744,7 @@ public class SearchFragment extends BaseFragment
 
 		};
 
-		task.execute();
+		myTask.execute();
 		
 	}
 	
@@ -816,7 +759,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictContains()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -856,19 +799,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -880,7 +830,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictContains()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -918,19 +868,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -950,7 +907,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictEndsWith()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -990,19 +947,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -1014,7 +978,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictEndsWith()
 	{
 		
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -1052,19 +1016,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -1084,7 +1055,7 @@ public class SearchFragment extends BaseFragment
 	private void onDictCrosswords()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -1124,19 +1095,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -1148,7 +1126,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleCrosswords()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -1184,19 +1162,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -1208,7 +1193,7 @@ public class SearchFragment extends BaseFragment
 	private void onThesaurus()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()
@@ -1243,19 +1228,26 @@ public class SearchFragment extends BaseFragment
 			@Override
 			protected void onPostExecute(Void result)
 			{
-				taskListener.onSearchComplete(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("searchObject", searchObject);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled(Void result)
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 			@Override
 			protected void onCancelled()
 			{
-				taskListener.onSearchCancelled(searchObject);
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
 			}
 
 		};
@@ -1275,7 +1267,7 @@ public class SearchFragment extends BaseFragment
 	private void onScrabbleDictAnagram()
 	{
 
-		task = new AsyncTask<Void, Void, Void>() {
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute()

@@ -84,4 +84,10 @@
 	    <item name="android:textColor">@color/black</item>
 	</style>
 
+	<style name="HeaderText">
+	    <item name="android:textSize">14dip</item>
+	    <item name="android:textColor">@color/black</item>
+	    <item name="android:background">@color/yellow</item>
+	</style>
+
 </resources>
