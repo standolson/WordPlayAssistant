@@ -28,15 +28,23 @@
     	android:name="com.ppp.wordplayadvlib.WordPlayApp"
         android:theme="@style/AppTheme" >
 
-	<!-- Required for Google Play Services -->
+		<!-- Required for Google Play Services -->
 
 		<meta-data
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version"/>
+
+		<!-- Required for AdMob -->
 		
 		<activity
 			android:name="com.google.android.gms.ads.AdActivity"
 			android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+
+		<!-- Required for Google Analytics -->
+
+		<meta-data
+		     android:name="com.google.android.gms.analytics.globalConfigResource"
+		     android:resource="@xml/google_analytics_config" />
 
 		<activity
 	      	android:name="com.ppp.wordplay.WordPlayFree"

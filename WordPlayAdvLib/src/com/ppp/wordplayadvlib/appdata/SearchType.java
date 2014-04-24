@@ -15,6 +15,8 @@ public enum SearchType {
 	public String toString()
 	{
 		switch (this) {
+			case OPTION_UNKNOWN:
+				return "Unknown";
 			case OPTION_DICTIONARY_EXACT_MATCH:
 				return "Exact Match";
 			case OPTION_DICTIONARY_STARTS_WITH:
@@ -29,6 +31,8 @@ public enum SearchType {
 				return "Thesaurus";
 			case OPTION_ANAGRAMS:
 				return "Anagram";
+			case OPTION_WORD_JUDGE:
+				return "Word Judge";
 		}
 		return "Unknown";
 	}

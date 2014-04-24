@@ -28,6 +28,7 @@ import com.ppp.wordplayadvlib.adapters.ScoredWordListAdapter;
 import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
 import com.ppp.wordplayadvlib.adapters.WordDefinitionsAdapter;
 import com.ppp.wordplayadvlib.adapters.WordListAdapter;
+import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.History;
 import com.ppp.wordplayadvlib.appdata.ScoredWord;
@@ -464,10 +465,14 @@ public class SearchFragment extends BaseFragment
 
 	private void onExactMatch()
 	{
+
+		Analytics.sendEvent(Analytics.SEARCH, Analytics.EXACT_MATCH, searchObject, 0);
+
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictExactMatch();
 		else
 			onDictExactMatch();
+
 	}
 	
 	private void onScrabbleDictExactMatch()
@@ -614,10 +619,14 @@ public class SearchFragment extends BaseFragment
 
 	private void onStartsWith()
 	{
+
+		Analytics.sendEvent(Analytics.SEARCH, Analytics.STARTS_WITH, searchObject, 0);
+
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictStartsWith();
 		else
 			onDictStartsWith();
+
 	}
 	
 	private void onScrabbleDictStartsWith()
@@ -762,10 +771,14 @@ public class SearchFragment extends BaseFragment
 	
 	private void onContains()
 	{
+
+		Analytics.sendEvent(Analytics.SEARCH, Analytics.CONTAINS, searchObject, 0);
+
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictContains();
 		else
 			onDictContains();
+
 	}
 	
 	private void onScrabbleDictContains()
@@ -910,10 +923,14 @@ public class SearchFragment extends BaseFragment
 	
 	private void onEndsWith()
 	{
+
+		Analytics.sendEvent(Analytics.SEARCH, Analytics.ENDS_WITH, searchObject, 0);
+
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictEndsWith();
 		else
 			onDictEndsWith();
+
 	}
 	
 	private void onScrabbleDictEndsWith()
@@ -1058,10 +1075,14 @@ public class SearchFragment extends BaseFragment
 
 	private void onCrosswords()
 	{
+
+		Analytics.sendEvent(Analytics.SEARCH, Analytics.CROSSWORDS, searchObject, 0);
+
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleCrosswords();
 		else
 			onDictCrosswords();
+
 	}
 
 	private void onDictCrosswords()
@@ -1205,6 +1226,8 @@ public class SearchFragment extends BaseFragment
 	private void onThesaurus()
 	{
 
+		Analytics.sendEvent(Analytics.SEARCH, Analytics.THESAURUS, searchObject, 0);
+
 		task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
@@ -1270,10 +1293,14 @@ public class SearchFragment extends BaseFragment
 	
 	private void onAnagram()
 	{
+
+		Analytics.sendEvent(Analytics.SEARCH, Analytics.ANAGRAM, searchObject, 0);
+
 		if (searchObject.getDictionary().isScrabbleDict())
 			onScrabbleDictAnagram();
 		else
 			Toast.makeText(getActivity(), "onAnagram: Bad Dictionary Selected", Toast.LENGTH_SHORT).show();
+
 	}
 	
 	private void onScrabbleDictAnagram()

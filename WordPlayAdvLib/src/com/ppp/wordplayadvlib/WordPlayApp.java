@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 
+import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordPlayApp extends Application
@@ -38,6 +39,9 @@ public class WordPlayApp extends Application
 
         // Initialize the version
         initVersionInfo(this);
+
+        // Initialize Google Analytics
+        initGoogleAnalytics();
 
 	}
 
@@ -80,6 +84,15 @@ public class WordPlayApp extends Application
         	Debug.v("MANIFEST VERSION NAME = " + appVersionName);
         }
         catch (NameNotFoundException e) {}
+
+	}
+
+	private void initGoogleAnalytics()
+	{
+
+		// Initialize the global Tracker object
+		String trackingId = isPaidMode() ? "UA-50341453-1" : "UA-50341453-2";
+		new Analytics(getApplicationContext(), trackingId);
 
 	}
 

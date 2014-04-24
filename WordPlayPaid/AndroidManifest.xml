@@ -26,6 +26,18 @@
     	android:icon="@drawable/ic_launcher_wordplay_assistant"
     	android:name="com.ppp.wordplayadvlib.WordPlayApp"
         android:theme="@style/AppTheme">
+
+ 		<!-- Required for Google Play Services -->
+
+		<meta-data
+			android:name="com.google.android.gms.version"
+			android:value="@integer/google_play_services_version"/>
+
+		<!-- Required for Google Analytics -->
+
+		<meta-data
+		     android:name="com.google.android.gms.analytics.globalConfigResource"
+		     android:resource="@xml/google_analytics_config" />
         
 		<activity
 	      	android:name="com.ppp.wordplay.WordPlayPaid"
@@ -41,12 +53,6 @@
 		<activity android:name="com.ppp.wordplayadvlib.activities.SearchActivity"/>
 		<activity android:name="com.ppp.wordplayadvlib.activities.SearchHistoryActivity"/>
 		<activity android:name="com.ppp.wordplayadvlib.activities.UserPreferenceActivity"/>
-		
-		<!-- Google AdMob Stuff -->
-
-		<meta-data
-			android:name="ADMOB_PUBLISHER_ID"
-			android:value="a14d57787867bd1"/>
 
 		<activity
 			android:name="com.google.ads.AdActivity"
