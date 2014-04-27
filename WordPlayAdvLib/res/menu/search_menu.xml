@@ -7,6 +7,7 @@
 		android:id="@+id/dictionary_menu"
 		android:title="@string/dictionary_menu_str"
 		ppp:showAsAction="always"
+		android:onClick="showDictionaryPopupMenu"
 		android:icon="@drawable/ic_menu_dictionaries_ab" />
 
 	<item

@@ -21,6 +21,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,6 +57,7 @@ import com.ppp.wordplayadvlib.fragments.hosts.ThesaurusHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.WordJudgeHostFragment;
 import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
+import com.ppp.wordplayadvlib.widgets.ActionBarSpinner;
 
 @SuppressLint("ValidFragment")
 public class WordPlayActivity extends HostActivity
@@ -393,6 +395,13 @@ public class WordPlayActivity extends HostActivity
 		
 		return super.onOptionsItemSelected(item);
 		
+	}
+
+	public void showDictionaryPopupMenu(MenuItem item)
+	{
+		String[] values = getResources().getStringArray(R.array.dictionary_names);
+		ActionBarSpinner spinner = new ActionBarSpinner(this, findViewById(R.id.dictionary_menu), values);
+		spinner.show();		
 	}
 
     //

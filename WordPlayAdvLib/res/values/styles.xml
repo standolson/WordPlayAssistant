@@ -90,4 +90,14 @@
 	    <item name="android:background">@color/yellow</item>
 	</style>
 
+  	<style name="RadioButton">
+  	    <item name="android:layout_width">wrap_content</item>
+  	    <item name="android:layout_height">50dip</item>
+	    <item name="android:layout_centerVertical">true</item>
+	    <item name="android:background">@drawable/radiobutton_background</item>
+  	    <item name="android:button">@drawable/radiobutton_button</item>
+  	    <item name="android:textSize">12dip</item>
+		<item name="android:textColor">@color/black</item>
+	</style>
+
 </resources>

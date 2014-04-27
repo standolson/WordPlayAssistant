@@ -194,4 +194,11 @@ public class Utils {
     	
     }
 
+	public static final int getScreenIndependantPixels(final Context context, final int valueDips)
+	{
+		final float SCALE = context.getResources().getDisplayMetrics().density;
+		int valuePixels = (int)(valueDips * SCALE + 0.5f);
+		return valuePixels;
+	}
+
 }
