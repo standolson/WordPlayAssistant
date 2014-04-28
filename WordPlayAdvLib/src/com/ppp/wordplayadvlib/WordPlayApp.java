@@ -1,16 +1,21 @@
 package com.ppp.wordplayadvlib;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordPlayApp extends Application
 {
+
+	public static String GOOGLE_PLAY_SERVICES_PACKAGE = "com.google.android.gms";
 
 	private static WordPlayApp singleton = null;
 
@@ -20,6 +25,9 @@ public class WordPlayApp extends Application
 
 	private boolean freeMode = true;
 	private boolean useGoogleAppEngine = false;
+
+	private static int googlePlayStatus = -1;
+	private static boolean showPlayServicesWarning = false;
 
 	public void onCreate()
 	{
@@ -90,6 +98,8 @@ public class WordPlayApp extends Application
 	private void initGoogleAnalytics()
 	{
 
+		initGooglePlayServices(this);
+
 		// Initialize the global Tracker object
 		String trackingId = isPaidMode() ? "UA-50341453-1" : "UA-50341453-2";
 		new Analytics(getApplicationContext(), trackingId);
@@ -106,5 +116,65 @@ public class WordPlayApp extends Application
 
 	public boolean getUseGoogleAppEngine() { return useGoogleAppEngine; }
 	public void setUseGoogleAppEngine(boolean b) { useGoogleAppEngine = b; }
+
+	//
+	// Google Play Services
+	//
+
+	public static void initGooglePlayServices(Context context)
+	{
+
+		// Get the state of Play Services
+		googlePlayStatus = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+		googlePlayStatus = ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED;
+
+		// Reset the warning state
+		showPlayServicesWarning = false;
+
+	}
+
+	public static int getGooglePlayServicesStatus() { return googlePlayStatus; }
+	public static boolean isGooglePlayServicesOk() { return googlePlayStatus == ConnectionResult.SUCCESS; }
+
+	public static boolean shouldShowPlayServicesWarning() { return showPlayServicesWarning; }
+	public static void showPlayServicesWarning(boolean b) { showPlayServicesWarning = b; }
+
+	public static String getGooglePlayServicesStatusString()
+	{
+		return GooglePlayServicesUtil.getErrorString(googlePlayStatus);
+	}
+
+	public static boolean isGooglePlayStatusRecoverable()
+	{
+		// In testing, discovered that SERVICE_INVALID is user recoverable
+		// and we don't want that
+		return
+			GooglePlayServicesUtil.isUserRecoverableError(googlePlayStatus) &&
+			(googlePlayStatus != ConnectionResult.SERVICE_INVALID);
+	}
+
+	public static String getGooglePlayServicesVersionName(Context context)
+	{
+		try {
+			PackageManager pm = context.getPackageManager();
+			PackageInfo info = pm.getPackageInfo(GOOGLE_PLAY_SERVICES_PACKAGE, 0);
+			return info.versionName;
+		}
+		catch (Exception e) {
+			return "UNKNOWN";
+		}
+	}
+
+	public static int getGooglePlayServicesVersionCode(Context context)
+	{
+		try {
+			PackageManager pm = context.getPackageManager();
+			PackageInfo info = pm.getPackageInfo(GOOGLE_PLAY_SERVICES_PACKAGE, 0);
+			return info.versionCode;
+		}
+		catch (Exception e) {
+			return 0;
+		}
+	}
 
 }

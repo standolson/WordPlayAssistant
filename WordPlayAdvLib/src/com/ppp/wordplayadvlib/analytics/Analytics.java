@@ -8,6 +8,7 @@ import android.os.Build;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.appdata.SearchObject;
 import com.ppp.wordplayadvlib.utils.Debug;
 
@@ -32,8 +33,12 @@ public class Analytics {
 
 	public Analytics(Context c, String trackerId)
 	{
-		context = c;
-		tracker = GoogleAnalytics.getInstance(c).newTracker(trackerId);
+		if (WordPlayApp.isGooglePlayServicesOk())  {
+			context = c;
+			tracker = GoogleAnalytics.getInstance(c).newTracker(trackerId);
+		}
+		else
+			Debug.e("Analytics: Google Play Services failure (" + WordPlayApp.getGooglePlayServicesStatusString() + ")");
 	}
 
 	public static void sendEvent(String category, String action, String label, long value)

@@ -13,6 +13,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.widgets.TextDrawable;
 
 public class AdMobAd extends SponsoredAd {
@@ -112,6 +114,12 @@ public class AdMobAd extends SponsoredAd {
 
 	private View getSearchResultView()
 	{
+
+		// If Google Play Services isn't working, return a blank view
+		if (!WordPlayApp.isGooglePlayServicesOk())  {
+			Debug.e("AdMobAd: Google Play Services failure (" + WordPlayApp.getGooglePlayServicesStatusString() + ")");
+			return getEmptyView();
+		}
 
 		AdSize adSize = AdSize.BANNER;
 		final AdView view = getAdMobAdView(adSize);
