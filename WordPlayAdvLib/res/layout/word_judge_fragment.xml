@@ -5,14 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <Spinner
-		android:id="@+id/wordjudge_dict_spinner"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:entries="@array/word_list_names"
-		android:prompt="@string/word_list_name_prompt"
-		android:visibility="invisible"/>
-
 	<LinearLayout
 	    android:id="@+id/wordjudge"
 		android:layout_width="fill_parent"

@@ -12,25 +12,22 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.JudgeHistory;
 import com.ppp.wordplayadvlib.appdata.JudgeHistoryObject;
@@ -40,13 +37,11 @@ import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordJudgeFragment extends BaseFragment
 	implements
-		View.OnClickListener,
-		OnItemSelectedListener
+		View.OnClickListener
 {
 
 	private RelativeLayout rootView;
 	private Button wjButton = null;
-	private Spinner wjSpinner = null;
 	private EditText wjText = null;
 	private static ListView wjListview = null;
 	private static WordJudgeAdapter wjAdapter = null;
@@ -74,8 +69,10 @@ public class WordJudgeFragment extends BaseFragment
 	@Override
     public void onClick(View v)
     {
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+        InputMethodManager imm =
+        	(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(wjText.getWindowToken(), 0);
+		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     	startWordJudgeSearch();
     }
 
@@ -98,21 +95,35 @@ public class WordJudgeFragment extends BaseFragment
 			return true;
 		}
 
-		// Handle dictionary selection
-		else if (item.getItemId() == R.id.dictionary_menu)
-			wjSpinner.performClick();
-
 		return false;
 			
 	}
 
+	//
+	// Menu Support
+	//
+
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+	public String[] getDictionaryNames()
+	{
+		return getResources().getStringArray(R.array.word_list_names);
+	}
+
+	@Override
+	public int getSelectedDictionary()
+	{
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+    	int wjDict = prefs.getInt("wordjudgeDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	return wjDict - 1;
+	}
+
+	@Override
+	public void onSelection(int selection)
 	{
 
 		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		DictionaryType dict = DictionaryType.fromInt(position + 1);
+		DictionaryType dict = DictionaryType.fromInt(selection + 1);
 
 		editor.putInt("wordjudgeDict", dict.ordinal());
 		Debug.v("SAVE wordjudgeDict = " + dict.ordinal());
@@ -120,17 +131,12 @@ public class WordJudgeFragment extends BaseFragment
 
 	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {}
-
     //
     // UI Setup
     //
 
 	private void setupWordJudgeTab()
 	{
-
-		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         wjButton = (Button)rootView.findViewById(R.id.WordJudgeButton);
         wjButton.setOnClickListener(new OnClickListener() {
@@ -167,11 +173,6 @@ public class WordJudgeFragment extends BaseFragment
 			public void onClick(View v) { wjText.setText(""); }
 		});
 
-    	wjSpinner = (Spinner)rootView.findViewById(R.id.wordjudge_dict_spinner);
-    	int wjDict = prefs.getInt("wordjudgeDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
-    	wjSpinner.setSelection(wjDict - 1);
-    	wjSpinner.setOnItemSelectedListener(this);
-
         updateJudgeHistoryAdapter();
 
 	}
@@ -184,7 +185,7 @@ public class WordJudgeFragment extends BaseFragment
     {
 
 		String searchString = wjText.getText().toString();
-		DictionaryType dictionary = DictionaryType.fromInt((int)wjSpinner.getSelectedItemId() + 1);
+		DictionaryType dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 
 		wjSearchObj = new JudgeSearch();
 		wjSearchObj.execute(this, searchString, dictionary);
@@ -197,7 +198,7 @@ public class WordJudgeFragment extends BaseFragment
     {
 
 		String searchString = wjText.getText().toString();
-		DictionaryType dictionary = DictionaryType.fromInt((int)wjSpinner.getSelectedItemId() + 1);
+		DictionaryType dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 
 		wjButton.setEnabled(validateString(searchString, dictionary, false, false));
     	

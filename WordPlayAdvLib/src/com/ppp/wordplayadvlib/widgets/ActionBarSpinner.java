@@ -19,6 +19,7 @@ public class ActionBarSpinner implements OnItemClickListener {
 
 	private Context context;
 	private View anchorView;
+	private ActionBarSpinnerCallback callback;
 	private String[] items;
 	private int selection;
 
@@ -27,11 +28,16 @@ public class ActionBarSpinner implements OnItemClickListener {
 	private ListView listView;
 	private OptionsAdapter optionAdapter;
 
-	public ActionBarSpinner(Context context, View anchorView, String[] items)
+	public interface ActionBarSpinnerCallback {
+		public void onSelection(int selection);
+	}
+
+	public ActionBarSpinner(Context context, View anchorView, ActionBarSpinnerCallback callback, String[] items)
 	{
 
 		this.context = context;
 		this.anchorView = anchorView;
+		this.callback = callback;
 		this.items = items;
 
 		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -77,7 +83,9 @@ public class ActionBarSpinner implements OnItemClickListener {
 			@Override
 			public void run()
 			{
-				popup.dismiss();						
+				popup.dismiss();
+				if (callback != null)
+					callback.onSelection(selection);
 			}
 		}, 200);
 

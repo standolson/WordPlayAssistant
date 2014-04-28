@@ -599,35 +599,35 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
         	}
         });
     	
-    	dictSpinner = (Spinner)activity.findViewById(R.id.dictionary_dict_spinner);
-    	dictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    		
-    		public void onItemSelected(AdapterView<?> parent, View view, int i, long l)
-    		{
-
-    			DictionaryType dict = DictionaryType.fromInt(i + 1);
-	    		final Spinner spinner = (Spinner)activity.findViewById(R.id.DictionarySpinner);
-
-    			if (dict.isScrabbleDict())  {
-      				dictScoreToggle.setVisibility(View.VISIBLE);
-      				dictSortToggle.setVisibility(View.VISIBLE);
-      				spinner.setVisibility(View.VISIBLE);
-    			}
-    			else {
-    	    		if (dict.isThesaurus())
-    	    			spinner.setVisibility(View.GONE);
-    	    		else
-    	    			spinner.setVisibility(View.VISIBLE);
-    				dictScoreToggle.setVisibility(View.GONE);
-    				dictSortToggle.setVisibility(View.GONE);
-    			}
-    			setDictionaryTabMode();
-
-    		}
-    		
-    		public void onNothingSelected(AdapterView<?> parent)  { }
-    		
-    	});
+//    	dictSpinner = (Spinner)activity.findViewById(R.id.dictionary_dict_spinner);
+//    	dictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//    		
+//    		public void onItemSelected(AdapterView<?> parent, View view, int i, long l)
+//    		{
+//
+//    			DictionaryType dict = DictionaryType.fromInt(i + 1);
+//	    		final Spinner spinner = (Spinner)activity.findViewById(R.id.DictionarySpinner);
+//
+//    			if (dict.isScrabbleDict())  {
+//      				dictScoreToggle.setVisibility(View.VISIBLE);
+//      				dictSortToggle.setVisibility(View.VISIBLE);
+//      				spinner.setVisibility(View.VISIBLE);
+//    			}
+//    			else {
+//    	    		if (dict.isThesaurus())
+//    	    			spinner.setVisibility(View.GONE);
+//    	    		else
+//    	    			spinner.setVisibility(View.VISIBLE);
+//    				dictScoreToggle.setVisibility(View.GONE);
+//    				dictSortToggle.setVisibility(View.GONE);
+//    			}
+//    			setDictionaryTabMode();
+//
+//    		}
+//    		
+//    		public void onNothingSelected(AdapterView<?> parent)  { }
+//    		
+//    	});
 
 	}
 
@@ -658,11 +658,11 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 			public void onClick(View v) { crosswordsText.setText(""); }
 		});
 
-    	crosswordsSpinner = (Spinner)activity.findViewById(R.id.crosswords_dict_spinner);
-    	crosswordsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    		public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {}
-    		public void onNothingSelected(AdapterView<?> parent) {}
-		});
+//    	crosswordsSpinner = (Spinner)activity.findViewById(R.id.crosswords_dict_spinner);
+//    	crosswordsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//    		public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {}
+//    		public void onNothingSelected(AdapterView<?> parent) {}
+//		});
 
 	}
 

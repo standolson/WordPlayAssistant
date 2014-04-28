@@ -19,9 +19,10 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +43,7 @@ import com.ppp.wordplayadvlib.appdata.JudgeHistory;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
+import com.ppp.wordplayadvlib.fragments.BaseFragment;
 import com.ppp.wordplayadvlib.fragments.WebViewFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialog;
 import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialog.DbInstallDialogListener;
@@ -194,10 +196,6 @@ public class WordPlayActivity extends HostActivity
         // If the drawer has not been seen, show it
         if (!drawerSeen)
         	showDrawer();
-//            menuDrawer.postDelayed(new Runnable() {
-//                @Override
-//                public void run() { menuDrawer.openDrawer(menuListView); }
-//            }, 500);
 
     }
 
@@ -210,6 +208,13 @@ public class WordPlayActivity extends HostActivity
     	History.getInstance().saveHistory(this);
     	JudgeHistory.getInstance().saveJudgeHistory(this);
 
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment)
+    {
+    	super.onAttachFragment(fragment);
+    	Debug.e("onAttachFragment: " + fragment + ", " + fragment.getId() + ", " + fragment.getTag());
     }
 
 	@Override
@@ -397,16 +402,39 @@ public class WordPlayActivity extends HostActivity
 		
 	}
 
-	public void showDictionaryPopupMenu(MenuItem item)
-	{
-		String[] values = getResources().getStringArray(R.array.dictionary_names);
-		ActionBarSpinner spinner = new ActionBarSpinner(this, findViewById(R.id.dictionary_menu), values);
-		spinner.show();		
-	}
-
     //
     // Menu Helpers
     //
+
+	public void showDictionaryPopupMenu(MenuItem item)
+	{
+
+		BaseFragment fragment = null;
+    	FragmentManager cfm = lastAdded.getChildFragmentManager();
+
+    	// If we have a back stack, use it to find the current fragment
+    	// otherwise, ask the HostFragment what it knows to be the current
+    	// fragment.
+    	if (cfm.getBackStackEntryCount() > 0)  {
+	    	BackStackEntry bse = cfm.getBackStackEntryAt(cfm.getBackStackEntryCount() - 1);
+	    	fragment = (BaseFragment) cfm.findFragmentByTag(bse.getName());
+    	}
+    	else
+    		fragment= (BaseFragment) currentDisplayFragment(lastAdded);
+
+    	if (fragment != null)  {
+
+			String[] dictionaryNames = fragment.getDictionaryNames();
+			int currentSelection = fragment.getSelectedDictionary();
+
+			ActionBarSpinner spinner =
+				new ActionBarSpinner(this, findViewById(R.id.dictionary_menu), fragment, dictionaryNames);
+			spinner.setSelection(currentSelection);
+			spinner.show();
+
+    	}
+
+	}
 
     private void showHelp()
     {
@@ -454,7 +482,7 @@ public class WordPlayActivity extends HostActivity
 
     	FreeDialog freeDialog;
 
-    	// If we are already showing the diaog, don't do so again
+    	// If we are already showing the dialog, don't do so again
     	freeDialog = (FreeDialog) getSupportFragmentManager().findFragmentByTag("FreeDialog");
     	if (freeDialog != null)
     		return true;
@@ -687,7 +715,7 @@ public class WordPlayActivity extends HostActivity
     private DrawerMenuItem findDrawerItemByTag(String tag)
     {
         for (DrawerMenuItem item : menuItems)
-            if (item.itemClass != null && tag.equals(item.itemClass.getName()))
+            if ((item.itemClass != null) && tag.equals(item.itemClass.getName()))
                 return item;
         return null;
     }

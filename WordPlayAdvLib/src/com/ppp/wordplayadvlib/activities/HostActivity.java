@@ -177,23 +177,25 @@ public class HostActivity extends BaseActivity {
 	public Fragment currentDisplayFragment(Fragment lastAddedHost)
 	{
         
-		Fragment f = null;
-        BackStackEntry bse = null; 
+		Fragment fragment = null;
+        BackStackEntry backStackEntry = null; 
 
         if (lastAddedHost != null)  {
 
         	// Return either the last fragment on the back-stack or the initial fragment
         	if (lastAdded.getChildFragmentManager().getBackStackEntryCount() > 0)  {
 	        	FragmentManager cfm = lastAdded.getChildFragmentManager();
-	        	bse = cfm.getBackStackEntryAt(cfm.getBackStackEntryCount() - 1);
-	        	f = lastAdded.getChildFragmentManager().findFragmentByTag(bse.getName());
+	        	backStackEntry = cfm.getBackStackEntryAt(cfm.getBackStackEntryCount() - 1);
+	        	fragment = lastAdded.getChildFragmentManager().findFragmentByTag(backStackEntry.getName());
 	        }
-        	else
-        		f = ((HostFragment) lastAdded).getInitialFragment();
+        	else {
+        		fragment = ((HostFragment) lastAdded).getInitialFragment();
+        		fragment = lastAdded.getChildFragmentManager().findFragmentByTag(fragment.getClass().getName());
+        	}
 
         }
         
-        return f;
+        return fragment;
 		
 	}
 

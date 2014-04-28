@@ -1,9 +1,6 @@
 package com.ppp.wordplayadvlib.fragments;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -28,30 +25,24 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
-import com.ppp.wordplayadvlib.appdata.History;
-import com.ppp.wordplayadvlib.appdata.SearchType;
-import com.ppp.wordplayadvlib.appdata.WordScoreState;
-import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
+import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
+import com.ppp.wordplayadvlib.widgets.ActionBarSpinner.ActionBarSpinnerCallback;
 
 @SuppressLint("ValidFragment")
-public class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment
+	implements
+		ActionBarSpinnerCallback
+{
 
 	private static final int RestartNotificationId = 1;
-
-	protected static final int InstallDbDialog = 1;
-	protected static final int FreeDialog = 2;
-	protected static final int UpgradeDbDialog = 3;
-	protected static final int AboutDialog = 4;
-	protected static final int NagDialog = 5;
 
 	protected static final int EmailActivity = 1;
 	protected static final int HelpViewerActivity = 2;
@@ -164,90 +155,6 @@ public class BaseFragment extends Fragment {
     	}
     	
     }
-    
-//	@Override
-//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-//	{
-//	    inflater.inflate(R.menu.search_menu, menu);
-//	}
-
-//	@Override
-//	public void onPrepareOptionsMenu(Menu menu)
-//	{
-//	
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//	
-//		// If the notification bar is turned off, don't show "Exit"
-//		MenuItem item = menu.findItem(R.id.exit_menu);
-//		item.setVisible(prefs.getBoolean("notification_bar", false));
-//	
-//	}
-    
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item)
-//	{
-//	
-//		Activity activity = getActivity();
-//	
-//		// Preferences
-//		if (item.getItemId() == R.id.prefs_menu)  {
-//			Intent intent = new Intent(activity, UserPreferenceActivity.class);
-//			try {
-//				startActivityForResult(intent, UserPrefsActivity);
-//			}
-//			catch (Exception e) {
-//				Debug.e("User Prefs Startup Failed: " + e);
-//			}
-//		}
-//	
-//		// History
-//		else if (item.getItemId() == R.id.showhistory_menu)  {
-//			showHistory();
-//		}
-//	
-//		// Clear history
-//		else if (item.getItemId() == R.id.clearhistory_menu)  {
-//	//			if (currentTab == WordJudgeTab)  {
-//	//				clearJudgeHistory(true);
-//	//				updateJudgeHistoryAdapter();
-//	//				wjAdapter.notifyDataSetChanged();
-//	//			}
-//	//			else
-//	//				clearHistory(true);
-//		}
-//	
-//		// Dictionaries
-//		else if (item.getItemId() == R.id.dictionary_menu)
-//			showDictionaries();
-//	
-//		// Help
-//		else if (item.getItemId() == R.id.showhelp_menu)
-//			showHelp();
-//	
-//		// About
-//		else if (item.getItemId() == R.id.showabout_menu)
-//			showDialog(AboutDialog);
-//	
-//		// Exit
-//		else if (item.getItemId() == R.id.exit_menu)  {
-//			removeNotification();
-//			activity.finish();
-//		}
-//	
-//		// Reinstall Dictionary
-//		else if (item.getItemId() == R.id.dictionary_reinstall_menu)  {
-//			WordlistDatabase.deleteDatabaseFile(getActivity());
-//			try {
-//				WordlistDatabase.createDatabaseFile(getActivity());
-//			}
-//			catch (Exception e) {
-//				createDatabaseExceptionDialog(getActivity(), e);
-//			}
-//		}
-//		
-//		return true;
-//		
-//	}
 
 	//
 	// Search Support
@@ -264,29 +171,15 @@ public class BaseFragment extends Fragment {
     // Menu Helpers
     //
 
-    private String getHelpText(String whichHelp, int id)
-    {
+	@Override
+	public void onSelection(int selection)
+	{
+		Debug.e("onSelection: called from BaseFragment");
+	}
 
-    	BufferedReader rd =
-    		new BufferedReader(new InputStreamReader(getResources().openRawResource(id)), Constants.BufSize);
-    	String retval = "";
-    	String line;
-    	
-    	try {
-    		while ((line = rd.readLine()) != null)  {
-    			if (line.length() == 0)
-    				continue;
-    			retval += line.replace('\n', ' ');
-    		}
-    		rd.close();
-    	}
-    	catch (IOException e) {
-    		return "Unable to view '" + whichHelp + "' help at this time.";
-    	}
-    	
-    	return retval;
-    	
-    }
+	public String[] getDictionaryNames() { return null; }
+
+	public int getSelectedDictionary() { return 0; }
 
     //
     // Database Installation

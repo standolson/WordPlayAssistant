@@ -6,17 +6,13 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
@@ -28,15 +24,13 @@ import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
 public class AnagramsFragment extends BaseFragment
 	implements
-		View.OnClickListener,
-		OnItemSelectedListener
+		View.OnClickListener
 {
 
 	private RelativeLayout rootView;
 	private Button anagramButton = null;
 	private MultiStateButton anagramScoreToggle = null;
 	private MultiStateButton anagramSortToggle = null;
-	private Spinner anagramSpinner = null;
 
 	//
 	// Activity Methods
@@ -66,33 +60,37 @@ public class AnagramsFragment extends BaseFragment
     	startSearchFragment();
     }
 
-    @Override
-	public boolean onOptionsItemSelected(MenuItem item)
+	//
+	// Menu Support
+	//
+
+	@Override
+	public String[] getDictionaryNames()
 	{
-
-    	if (item.getItemId() == R.id.dictionary_menu)
-    		anagramSpinner.performClick();
-
-    	return true;
-
+		return getResources().getStringArray(R.array.word_list_names);
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+	public int getSelectedDictionary()
+	{
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		int anagramsDict = prefs.getInt("anagramsDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+		return anagramsDict - 1;
+	}
+
+	@Override
+	public void onSelection(int selection)
 	{
 
 		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		DictionaryType dict = DictionaryType.fromInt(position + 1);
+		DictionaryType dict = DictionaryType.fromInt(selection + 1);
 
 		editor.putInt("anagramsDict", dict.ordinal());
 		Debug.v("SAVE anagramsDict = " + dict.ordinal());
 		editor.commit();
 
 	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {}
 
     //
     // UI Setup
@@ -181,11 +179,6 @@ public class AnagramsFragment extends BaseFragment
 		Debug.v("LOAD anagramsSort = " + anagramsSort);
 		anagramSortToggle.setState(anagramsSort);
 
-    	anagramSpinner = (Spinner)rootView.findViewById(R.id.anagrams_dict_spinner);
-    	int anagramsDict = prefs.getInt("anagramsDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
-    	anagramSpinner.setSelection(anagramsDict - 1);
-    	anagramSpinner.setOnItemSelectedListener(this);
-
 	}
 
 	//
@@ -209,7 +202,7 @@ public class AnagramsFragment extends BaseFragment
 
 		searchString = anagramsTrayText.getText().toString();
 		boardString = anagramsBoardText.getText().toString();
-		dictionary = DictionaryType.fromInt((int)anagramSpinner.getSelectedItemId() + 1);
+		dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 		wordScores = WordScoreState.fromInt(anagramScoreToggle.getState() + 1);
 		wordSort = WordSortState.fromInt(anagramSortToggle.getState() + 1);
 
@@ -246,7 +239,7 @@ public class AnagramsFragment extends BaseFragment
 		final EditText anagramsBoardText = (EditText)rootView.findViewById(R.id.AnagramsBoardText);
 		String searchString = anagramsTrayText.getText().toString();
 		String boardString = anagramsBoardText.getText().toString();
-		DictionaryType dictionary = DictionaryType.fromInt((int)anagramSpinner.getSelectedItemId() + 1);
+		DictionaryType dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 
 		anagramButton.setEnabled(validateString(searchString + boardString, dictionary, true, false));
 

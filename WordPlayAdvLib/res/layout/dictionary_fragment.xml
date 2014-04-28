@@ -4,14 +4,6 @@
     style="@style/InitialFragmentStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    
-	<Spinner
-		android:id="@+id/dictionary_dict_spinner"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:entries="@array/dictionary_names"
-		android:prompt="@string/dictionary_name_prompt"
-		android:visibility="invisible"/>
 
 	<LinearLayout
 		android:layout_width="fill_parent"

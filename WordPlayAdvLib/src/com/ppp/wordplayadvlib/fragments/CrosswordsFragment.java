@@ -6,17 +6,13 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
@@ -27,14 +23,12 @@ import com.ppp.wordplayadvlib.utils.Debug;
 
 public class CrosswordsFragment extends BaseFragment
 	implements
-		View.OnClickListener,
-		OnItemSelectedListener
+		View.OnClickListener
 {
 
 	private RelativeLayout rootView;
 	private Button crosswordsButton = null;
 	private EditText crosswordsText = null;
-	private Spinner crosswordsSpinner = null;
 
 	//
 	// Activity Methods
@@ -63,33 +57,37 @@ public class CrosswordsFragment extends BaseFragment
     	startSearchFragment(v);
     }
 
-    @Override
-	public boolean onOptionsItemSelected(MenuItem item)
+	//
+	// Menu Support
+	//
+
+	@Override
+	public String[] getDictionaryNames()
 	{
-
-    	if (item.getItemId() == R.id.dictionary_menu)
-    		crosswordsSpinner.performClick();
-
-    	return true;
-
+		return getResources().getStringArray(R.array.dictionary_names);
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+	public int getSelectedDictionary()
+	{
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+    	int crosswordsDict = prefs.getInt("crosswordsDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	return crosswordsDict - 1;
+	}
+
+	@Override
+	public void onSelection(int selection)
 	{
 
 		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		DictionaryType dict = DictionaryType.fromInt(position + 1);
+		DictionaryType dict = DictionaryType.fromInt(selection + 1);
 
 		editor.putInt("crosswordsDict", dict.ordinal());
 		Debug.v("SAVE crosswordsDict = " + dict.ordinal());
 		editor.commit();
 
 	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {}
 
     //
     // UI Setup
@@ -127,11 +125,6 @@ public class CrosswordsFragment extends BaseFragment
 			public void onClick(View v) { crosswordsText.setText(""); }
 		});
 
-    	crosswordsSpinner = (Spinner)rootView.findViewById(R.id.crosswords_dict_spinner);
-    	int crosswordsDict = prefs.getInt("crosswordsDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
-    	crosswordsSpinner.setSelection(crosswordsDict - 1);
-    	crosswordsSpinner.setOnItemSelectedListener(this);
-
 	}
 
 	//
@@ -151,7 +144,7 @@ public class CrosswordsFragment extends BaseFragment
     	DictionaryType dictionary = DictionaryType.DICTIONARY_UNKNOWN;
 
 		searchString = crosswordsText.getText().toString();
-		dictionary = DictionaryType.fromInt((int)crosswordsSpinner.getSelectedItemId() + 1);
+		dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 		wordScores = WordScoreState.WORD_SCORE_STATE_OFF;
 		wordSort = WordSortState.WORD_SORT_BY_ALPHA;
 
@@ -178,7 +171,7 @@ public class CrosswordsFragment extends BaseFragment
     {
 
 		String searchString = crosswordsText.getText().toString();
-		DictionaryType dictionary = DictionaryType.fromInt((int)crosswordsSpinner.getSelectedItemId() + 1);
+		DictionaryType dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 
 		crosswordsButton.setEnabled(validateString(searchString, dictionary, false, true));
     	

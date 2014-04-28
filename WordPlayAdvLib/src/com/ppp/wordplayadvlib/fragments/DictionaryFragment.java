@@ -6,13 +6,10 @@ import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -28,15 +25,13 @@ import com.ppp.wordplayadvlib.widgets.MultiStateButton;
 
 public class DictionaryFragment extends BaseFragment
 	implements
-		View.OnClickListener,
-		OnItemSelectedListener
+		View.OnClickListener
 {
 
 	private RelativeLayout rootView;
 	private Button dictButton = null;
 	private MultiStateButton dictScoreToggle = null;
 	private MultiStateButton dictSortToggle = null;
-	private Spinner dictSpinner = null;
 
 	//
 	// Activity Methods
@@ -65,24 +60,31 @@ public class DictionaryFragment extends BaseFragment
     	startSearchFragment(v);
     }
 
-    @Override
-	public boolean onOptionsItemSelected(MenuItem item)
+	//
+	// Menu Support
+	//
+
+	@Override
+	public String[] getDictionaryNames()
 	{
-
-    	if (item.getItemId() == R.id.dictionary_menu)
-    		dictSpinner.performClick();
-
-    	return true;
-
+		return getResources().getStringArray(R.array.dictionary_names);
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+	public int getSelectedDictionary()
+	{
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+    	int dictionaryDict = prefs.getInt("dictionaryDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
+    	return dictionaryDict - 1;
+	}
+
+	@Override
+	public void onSelection(int selection)
 	{
 
 		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		DictionaryType dict = DictionaryType.fromInt(position + 1);
+		DictionaryType dict = DictionaryType.fromInt(selection + 1);
 
 		int visible =
 			dict != DictionaryType.DICTIONARY_DICT_DOT_ORG ? View.VISIBLE : View.GONE;
@@ -93,9 +95,6 @@ public class DictionaryFragment extends BaseFragment
 		editor.commit();
 
 	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {}
 
     //
     // UI Setup
@@ -156,11 +155,6 @@ public class DictionaryFragment extends BaseFragment
         		dictSortToggle.setButtonState(WordSortState.WORD_SORT_BY_WORD_SCORE.ordinal() - 1, button_state);
         	}
         });
-    	
-    	dictSpinner = (Spinner)rootView.findViewById(R.id.dictionary_dict_spinner);
-    	int dictionaryDict = prefs.getInt("dictionaryDict", DictionaryType.DICTIONARY_ENABLE.ordinal());
-    	dictSpinner.setSelection(dictionaryDict - 1);
-    	dictSpinner.setOnItemSelectedListener(this);
 
 	}
 
@@ -186,7 +180,7 @@ public class DictionaryFragment extends BaseFragment
 
 		searchType = SearchType.fromInt((int)spinner.getSelectedItemId());
 		searchString = dictText.getText().toString();
-		dictionary = DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
+		dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 		if (dictionary.isScrabbleDict())  {
     		wordScores = WordScoreState.fromInt(dictScoreToggle.getState() + 1);
     		wordSort = WordSortState.fromInt(dictSortToggle.getState() + 1);
@@ -225,7 +219,7 @@ public class DictionaryFragment extends BaseFragment
 
     	final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
     	String searchString = dictText.getText().toString();
-		DictionaryType dictionary = DictionaryType.fromInt((int)dictSpinner.getSelectedItemId() + 1);
+		DictionaryType dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 
 		dictButton.setEnabled(validateString(searchString, dictionary, false, false));
 
