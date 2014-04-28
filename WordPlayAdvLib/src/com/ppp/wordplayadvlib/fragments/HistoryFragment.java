@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.appdata.History;
 import com.ppp.wordplayadvlib.appdata.HistoryObject;
 import com.ppp.wordplayadvlib.appdata.SearchType;
@@ -47,6 +48,8 @@ public class HistoryFragment extends BaseFragment
 	{
 
 		super.onResume();
+
+		Analytics.screenView(Analytics.HISTORY_SCREEN);
 
 		// Show the list or the zero result view
 		if (History.getInstance().getHistory().size() > 0)  {
@@ -85,11 +88,15 @@ public class HistoryFragment extends BaseFragment
 
 		// Handle clearing history
 		if (item.getItemId() == R.id.clearhistory_menu)  {
+
+			Analytics.sendEvent(Analytics.HISTORY, Analytics.CLEAR_HISTORY, "", 0);
+
 			History.getInstance().clearHistory(getActivity());
 			adapter.notifyDataSetChanged();
 			listView.setVisibility(View.GONE);
 			zeroView.setVisibility(View.VISIBLE);
 			return true;
+
 		}
 
 		return false;

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.analytics.Analytics;
 
 public class ExactMatchFragment extends BaseFragment {
 
@@ -31,6 +32,13 @@ public class ExactMatchFragment extends BaseFragment {
 
 		return rootView;
 
+	}
+
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		Analytics.screenView(Analytics.EXACT_MATCH_SCREEN);
 	}
 
 }

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.JudgeHistory;
 import com.ppp.wordplayadvlib.appdata.JudgeHistoryObject;
@@ -63,6 +64,7 @@ public class WordJudgeFragment extends BaseFragment
 	public void onResume()
 	{
 		super.onResume();
+		Analytics.screenView(Analytics.WORD_JUDGE_SCREEN);
 		setButtonState();
 	}
 
@@ -90,9 +92,13 @@ public class WordJudgeFragment extends BaseFragment
 
 		// Handle clearing history
 		if (item.getItemId() == R.id.clearhistory_menu)  {
+
+			Analytics.sendEvent(Analytics.HISTORY, Analytics.CLEAR_JUDGE_HISTORY, "", 0);
+
 			JudgeHistory.getInstance().clearJudgeHistory(getActivity());
 			wjAdapter.notifyDataSetChanged();
 			return true;
+
 		}
 
 		return false;

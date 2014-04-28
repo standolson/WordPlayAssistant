@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordScoreState;
@@ -48,6 +49,7 @@ public class AnagramsFragment extends BaseFragment
 	public void onResume()
 	{
 		super.onResume();
+		Analytics.screenView(Analytics.ANAGRAMS_SCREEN);
 		setButtonState();
 	}
 

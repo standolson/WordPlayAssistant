@@ -38,6 +38,7 @@ import android.widget.TextView;
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.appdata.History;
 import com.ppp.wordplayadvlib.appdata.JudgeHistory;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
@@ -446,6 +447,8 @@ public class WordPlayActivity extends HostActivity
     	int helpId = host.getFragmentHelp();
     	if (helpId != 0)  {
 
+    		Analytics.screenView(Analytics.HELP_SCREEN);
+
     		Bundle args = new Bundle();
     		args.putString("content", Utils.getHelpText(this, "Release Notes", helpId));
 
@@ -577,14 +580,22 @@ public class WordPlayActivity extends HostActivity
     	{
 
     		if (!isFinishing())  {
+
+    			Analytics.sendEvent(Analytics.DATABASE,
+    								(WordlistDatabase.dbInstallsOnExternalStorage() ?
+    									Analytics.DATABASE_INSTALL_EXTERNAL : Analytics.DATABASE_INSTALL_INTERNAL),
+    								"", 0);
+
     			progressDialog = new ProgressDialog(context);
-    			String installLocStr = WordlistDatabase.dbInstallsOnExternalStorage() ?
+    			String installLocStr =
+    				WordlistDatabase.dbInstallsOnExternalStorage() ?
 						getString(R.string.dictionary_on_external_storage) :
 						getString(R.string.dictionary_on_internal_storage);
 				String message = String.format(getString(R.string.dictionary_progress_dialog_text), installLocStr);
 				progressDialog.setMessage(message);
     			progressDialog.setCancelable(false);
     			progressDialog.show();
+
     		}
 
     	}
@@ -610,8 +621,10 @@ public class WordPlayActivity extends HostActivity
 
 			// If there was an exception during install,
 			// report it
-			if (exception != null)
+			if (exception != null)  {
+				Analytics.sendEvent(Analytics.DATABASE, Analytics.DATABASE_ERROR, "", 0);
 				createDatabaseExceptionDialog(context, exception);
+			}
 
 			// If we haven't already shown the drawer, show it now
 			if (!drawerSeen)

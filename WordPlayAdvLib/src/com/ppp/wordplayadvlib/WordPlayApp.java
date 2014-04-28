@@ -126,7 +126,7 @@ public class WordPlayApp extends Application
 
 		// Get the state of Play Services
 		googlePlayStatus = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
-		googlePlayStatus = ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED;
+//		googlePlayStatus = ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED;
 
 		// Reset the warning state
 		showPlayServicesWarning = false;

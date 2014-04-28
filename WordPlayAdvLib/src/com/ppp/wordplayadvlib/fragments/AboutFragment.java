@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.utils.Utils;
 
 public class AboutFragment extends BaseFragment
@@ -48,6 +49,12 @@ public class AboutFragment extends BaseFragment
 	}
 
 	@Override
+	public void onResume()
+	{
+		super.onResume();
+		Analytics.screenView(Analytics.ABOUT_SCREEN);
+	}
+	@Override
 	public void onClick(View v)
 	{
 
@@ -70,6 +77,8 @@ public class AboutFragment extends BaseFragment
 	private void showReleaseNotes()
 	{
 
+		Analytics.sendEvent(Analytics.ABOUT, Analytics.RELEASE_NOTES, "", 0);
+
 		Bundle args = new Bundle();
 		args.putString("content", Utils.getHelpText(getActivity(), "Release Notes", R.raw.release_notes));
 
@@ -81,6 +90,8 @@ public class AboutFragment extends BaseFragment
 
 	private void contactUs()
 	{
+
+		Analytics.sendEvent(Analytics.ABOUT, Analytics.CONTACT_US, "", 0);
 
 		Intent intent = new Intent(Intent.ACTION_SEND);
 		intent.setType("message/rfc822");
@@ -101,6 +112,8 @@ public class AboutFragment extends BaseFragment
 	private void gotoDictDotOrg()
 	{
 
+		Analytics.sendEvent(Analytics.ABOUT, Analytics.DICT_DOT_ORG, "", 0);
+
 		Intent myIntent =
 			new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.DictOrgWebAddress));
 
@@ -113,6 +126,8 @@ public class AboutFragment extends BaseFragment
 
 	private void buyIt()
 	{
+
+		Analytics.sendEvent(Analytics.ABOUT, Analytics.UPGRADE, "", 0);
 
 		Intent myIntent =
 			new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.MarketPaidWebAddress));

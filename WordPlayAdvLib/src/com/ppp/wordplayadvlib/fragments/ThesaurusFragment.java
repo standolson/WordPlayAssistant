@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.SearchType;
 import com.ppp.wordplayadvlib.appdata.WordScoreState;
@@ -43,6 +44,7 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 	public void onResume()
 	{
 		super.onResume();
+		Analytics.screenView(Analytics.THESAURUS_SCREEN);
 		setButtonState();
 	}
 
