@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.analytics.Analytics;
@@ -30,6 +29,7 @@ public class DictionaryFragment extends BaseFragment
 
 	private View rootView;
 	private Button dictButton = null;
+	private MultiStateButton searchTypeToggle = null;
 	private MultiStateButton dictScoreToggle = null;
 	private MultiStateButton dictSortToggle = null;
 
@@ -133,6 +133,13 @@ public class DictionaryFragment extends BaseFragment
 			public void onClick(View v) { dictText.setText(""); }
 		});
 
+        searchTypeToggle = (MultiStateButton)rootView.findViewById(R.id.SearchTypeButton);
+        searchTypeToggle.setStateNames(getResources().getStringArray(R.array.search_types));
+        int searchType =
+        	prefs.getInt("searchType", SearchType.OPTION_DICTIONARY_EXACT_MATCH.ordinal());
+        Debug.v("LOAD searchType = " + searchType);
+        searchTypeToggle.setState(searchType);
+
         dictScoreToggle = (MultiStateButton)rootView.findViewById(R.id.WordScoreButton);
         dictScoreToggle.setStateNames(getResources().getStringArray(R.array.word_score_toggle_states));
 		int dictScore =
@@ -177,9 +184,8 @@ public class DictionaryFragment extends BaseFragment
     	SearchType searchType = SearchType.OPTION_UNKNOWN;
 
 		final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
-		final Spinner spinner = (Spinner)rootView.findViewById(R.id.DictionarySpinner);
 
-		searchType = SearchType.fromInt((int)spinner.getSelectedItemId());
+		searchType = SearchType.fromInt(searchTypeToggle.getState());
 		searchString = dictText.getText().toString();
 		dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 		if (dictionary.isScrabbleDict())  {
@@ -195,6 +201,8 @@ public class DictionaryFragment extends BaseFragment
 		editor.putString("dictStr", (searchString == null) ? "" : searchString);
 		Debug.v("SAVE dictStr " + searchString);
 		editor.putInt("dictScore", dictScoreToggle.getState());
+		Debug.v("SAVE searchType " + searchType);
+		editor.putInt("searchType", searchTypeToggle.getState());
 		Debug.v("SAVE dictScore = " + dictScoreToggle.getState());
 		editor.putInt("dictSort", dictSortToggle.getState());
 		Debug.v("SAVE dictSort = " + dictSortToggle.getState());

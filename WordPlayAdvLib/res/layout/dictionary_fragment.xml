@@ -22,7 +22,7 @@
 				android:id="@+id/DictionaryText"
 				android:hint="@string/dictionary_edit_hint"
 				android:inputType="textFilter"
-                   android:imeOptions="actionDone" />
+				android:imeOptions="actionDone" />
 
 			<Button
 			    style="@style/ClearButtonStyle"
@@ -38,13 +38,15 @@
 
 	</LinearLayout>
 
-	<Spinner
-		android:id="@+id/DictionarySpinner"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-   		android:paddingTop="5dip"
-		android:entries="@array/search_types" 
-   		android:prompt="@string/search_type_prompt"/>
+	<com.ppp.wordplayadvlib.widgets.MultiStateButton
+	    style="@style/ButtonStyle"
+		android:id="@+id/SearchTypeButton"
+		android:layout_width="wrap_content"
+		android:layout_height="@dimen/button_height"
+		android:layout_gravity="center_horizontal"
+		android:paddingLeft="5dip"
+		android:paddingRight="5dip"
+		android:layout_marginTop="5dip" />
 
 	<include
 	    layout="@layout/word_score_sort_layout" />
