@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.analytics.Analytics;
@@ -28,7 +27,7 @@ public class AnagramsFragment extends BaseFragment
 		View.OnClickListener
 {
 
-	private RelativeLayout rootView;
+	private View rootView;
 	private Button anagramButton = null;
 	private MultiStateButton anagramScoreToggle = null;
 	private MultiStateButton anagramSortToggle = null;
@@ -40,7 +39,7 @@ public class AnagramsFragment extends BaseFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		rootView = (RelativeLayout)inflater.inflate(R.layout.anagrams_fragment, container, false);
+		rootView = inflater.inflate(R.layout.anagrams_fragment, container, false);
 		setupAnagramTab();
 		return rootView;
 	}

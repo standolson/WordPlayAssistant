@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.analytics.Analytics;
@@ -27,7 +26,7 @@ public class CrosswordsFragment extends BaseFragment
 		View.OnClickListener
 {
 
-	private RelativeLayout rootView;
+	private View rootView;
 	private Button crosswordsButton = null;
 	private EditText crosswordsText = null;
 
@@ -38,7 +37,7 @@ public class CrosswordsFragment extends BaseFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		rootView = (RelativeLayout)inflater.inflate(R.layout.crosswords_fragment, container, false);
+		rootView = inflater.inflate(R.layout.crosswords_fragment, container, false);
 		setupCrosswordsTab();
 		return rootView;
 	}

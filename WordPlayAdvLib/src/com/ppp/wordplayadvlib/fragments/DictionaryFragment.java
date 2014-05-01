@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.ppp.wordplayadvlib.R;
@@ -29,7 +28,7 @@ public class DictionaryFragment extends BaseFragment
 		View.OnClickListener
 {
 
-	private RelativeLayout rootView;
+	private View rootView;
 	private Button dictButton = null;
 	private MultiStateButton dictScoreToggle = null;
 	private MultiStateButton dictSortToggle = null;
@@ -41,7 +40,7 @@ public class DictionaryFragment extends BaseFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		rootView = (RelativeLayout)inflater.inflate(R.layout.dictionary_fragment, container, false);
+		rootView = inflater.inflate(R.layout.dictionary_fragment, container, false);
 		setupDictionaryTab();
 		return rootView;
 	}

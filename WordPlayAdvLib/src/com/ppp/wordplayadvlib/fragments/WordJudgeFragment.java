@@ -12,10 +12,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,7 +23,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +40,7 @@ public class WordJudgeFragment extends BaseFragment
 		View.OnClickListener
 {
 
-	private RelativeLayout rootView;
+	private View rootView;
 	private Button wjButton = null;
 	private EditText wjText = null;
 	private static ListView wjListview = null;
@@ -55,7 +54,7 @@ public class WordJudgeFragment extends BaseFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		rootView = (RelativeLayout)inflater.inflate(R.layout.word_judge_fragment, container, false);
+		rootView = inflater.inflate(R.layout.word_judge_fragment, container, false);
 		setupWordJudgeTab();
 		return rootView;
 	}

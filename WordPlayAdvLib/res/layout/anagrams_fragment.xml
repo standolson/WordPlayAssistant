@@ -1,70 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    style="@style/InitialFragmentStyle"
+ <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    style="@style/InitialFragmentStyle"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
 
-  	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical">
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >
 
-		<LinearLayout
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:orientation="horizontal" >
-
-		    <FrameLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginRight="10dip"
-				android:layout_weight="65" >
-				
-				<EditText
-				    style="@style/EditTextStyle"
-					android:id="@+id/AnagramsTrayText"
-					android:hint="@string/anagrams_tray_edit_hint"
-					android:inputType="textFilter"
-                    android:imeOptions="actionDone" />
-	
-				<Button
-				    style="@style/ClearButtonStyle"
-					android:id="@+id/AnagramsTrayTextClear" />
-
-			</FrameLayout>
+	    <FrameLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="10dip"
+			android:layout_weight="65" >
 			
-			<Button
-			    style="@style/ButtonStyle"
-				android:id="@+id/AnagramsButton"
-				android:layout_weight="35"
-				android:text="@string/search_button_text" />
-				
-		</LinearLayout>
-
-		<FrameLayout
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content" >
-
 			<EditText
 			    style="@style/EditTextStyle"
-				android:id="@+id/AnagramsBoardText"
-				android:layout_width="fill_parent"
-				android:layout_height="@dimen/edit_text_height"
-				android:hint="@string/anagrams_board_edit_hint"
-				android:inputType="textFilter"/>
+				android:id="@+id/AnagramsTrayText"
+				android:hint="@string/anagrams_tray_edit_hint"
+				android:inputType="textFilter"
+                   android:imeOptions="actionDone" />
 
 			<Button
 			    style="@style/ClearButtonStyle"
-				android:id="@+id/AnagramsBoardTextClear"
-				android:layout_width="@dimen/clear_button_size"
-				android:layout_height="@dimen/clear_button_size" />
+				android:id="@+id/AnagramsTrayTextClear" />
 
 		</FrameLayout>
-
-		<include
-		    layout="@layout/word_score_sort_layout" />
-
+		
+		<Button
+		    style="@style/ButtonStyle"
+			android:id="@+id/AnagramsButton"
+			android:layout_weight="35"
+			android:text="@string/search_button_text" />
+			
 	</LinearLayout>
 
-</RelativeLayout>
+	<FrameLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" >
+
+		<EditText
+		    style="@style/EditTextStyle"
+			android:id="@+id/AnagramsBoardText"
+			android:layout_width="fill_parent"
+			android:layout_height="@dimen/edit_text_height"
+			android:hint="@string/anagrams_board_edit_hint"
+			android:inputType="textFilter"/>
+
+		<Button
+		    style="@style/ClearButtonStyle"
+			android:id="@+id/AnagramsBoardTextClear"
+			android:layout_width="@dimen/clear_button_size"
+			android:layout_height="@dimen/clear_button_size" />
+
+	</FrameLayout>
+
+	<include
+	    layout="@layout/word_score_sort_layout" />
+
+</LinearLayout>
