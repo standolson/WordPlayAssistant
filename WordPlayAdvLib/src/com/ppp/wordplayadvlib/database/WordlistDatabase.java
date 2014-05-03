@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Environment;
 
-import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.appdata.ScoredWord;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
@@ -17,8 +16,7 @@ import com.ppp.wordplayadvlib.database.schema.WordlistWord;
 public class WordlistDatabase extends ApplicationDatabase {
 
     // Sub-directory of the external storage directory for this app's databases
-    private static String EXTERNAL_PAID_DB_PATH = "/com.ppp.wordplay/databases/";
-    private static String EXTERNAL_FREE_DB_PATH = "/com.ppp.wordplayfree/databases/";
+    private static String DB_PATH = "/%s/databases/";
 
 	public static final String DB_FILE_NAME = "Wordlist";
 	public static final int DB_VERSION = 1;
@@ -35,14 +33,17 @@ public class WordlistDatabase extends ApplicationDatabase {
 
 	public static String getDatabaseFilePath(Context context, String dbName)
 	{
+
+		// Get the app name
+		String appName = context.getPackageName();
+
     	// If the media is mounted read/write and they paid for the
     	// honor, we can use the SDcard
     	if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-    		return Environment.getExternalStorageDirectory() +
-    					(WordPlayApp.getInstance().isPaidMode() ? EXTERNAL_PAID_DB_PATH : EXTERNAL_FREE_DB_PATH);
-    	else {
+    		return Environment.getExternalStorageDirectory() + String.format(DB_PATH, appName);
+    	else
     		return context.getDatabasePath(dbName).getParent() + "/";
-    	}
+
 	}
 
 	public static void createDatabaseFile(Context context) throws Exception

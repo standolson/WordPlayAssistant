@@ -49,9 +49,6 @@
 			</intent-filter>
 		</activity>
 
-		<activity android:name="com.ppp.wordplayadvlib.activities.HelpViewer"/>
-		<activity android:name="com.ppp.wordplayadvlib.activities.SearchActivity"/>
-		<activity android:name="com.ppp.wordplayadvlib.activities.SearchHistoryActivity"/>
 		<activity android:name="com.ppp.wordplayadvlib.activities.UserPreferenceActivity"/>
 
 		<activity

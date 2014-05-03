@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.ppp.wordplayadvlib.R;
 
@@ -43,6 +44,9 @@ public class FreeDialog extends DialogFragment {
 	{
 
 		rootView = inflater.inflate(R.layout.free_dialog, null);
+
+		TextView tv = (TextView) rootView.findViewById(R.id.dialog_text);
+		tv.setText(getString(R.string.free_mode_text, getString(R.string.app_name)));
 
 		Button okButton = (Button) rootView.findViewById(R.id.button);
     	okButton.setText(android.R.string.ok);

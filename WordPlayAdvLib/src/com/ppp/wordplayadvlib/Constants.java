@@ -2,13 +2,9 @@ package com.ppp.wordplayadvlib;
 
 public class Constants {
 
-	public static final String FreeAppName = "com.ppp.wordplayfree";
-	public static final String PaidAppName = "com.ppp.wordplay";
-
 	public static final String EmailAddress = "portlandportable@gmail.com";
 	public static final String WebAddress = "http://portlandportable.wordpress.com/";
-	public static final String MarketPaidWebAddress = "market://details?id=com.ppp.wordplay";
-	public static final String MarketFreeWebAddress = "market://details?id=com.ppp.wordplayfree";
+	public static final String MarketPaidWebAddress = "market://details?id=%s";
 	public static final String DictOrgWebAddress = "http://www.dict.org/bin/Dict";
 
 	public static final int PaidVersionCode = 18;

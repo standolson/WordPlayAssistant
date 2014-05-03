@@ -110,7 +110,7 @@ About box accessed from the menu.\n
 </string>
 
 <string formatted="false" name="dictionary_install_dialog_text">
-WordPlay Assistant%s v%s requires\n
+%s v%s requires\n
 that the word database be installed on\n
 the device.  This database takes 8MB of\n
 space on your SD card. If you do not\n
@@ -118,15 +118,12 @@ have an SD card installed, the database\n
 will be installed in your device\'s\n
 memory.\n
 \n
-NOTE: Starting with v4.0, the online\n
-dictionary is no longer used.\n
-\n
 Click OK to start installing the\n
 database.
 </string>
 
 <string formatted="false" name="dictionary_upgrade_dialog_text">
-WordPlay Assistant%s v%s now includes\n
+%s v%s now includes\n
 support for the ENABLE dictionary.  This\n
 dictionary is the one used by Words With\n
 Friends.\n
@@ -146,11 +143,11 @@ Click OK to start the database upgrade.
 	<string name="dictionary_on_external_storage">external</string>
 	<string name="dictionary_on_internal_storage">internal</string>
 
-	<string name="free_mode_text">Thank you for trying WordPlay Assistant Free!!!\n
+	<string name="free_mode_text">Thank you for trying %s!!!\n
 \n
 If you like our app, please consider purchasing the non-advertising supported version.\n
 \n
-Please enjoy WordPlay Assistant Free!
+Enjoy!!
 </string>
 	<string name="free_mode_relnotes_button_text">Release Notes</string>
 	<string name="free_mode_continue_text">Continue</string>

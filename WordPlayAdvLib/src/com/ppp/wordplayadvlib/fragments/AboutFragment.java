@@ -127,10 +127,12 @@ public class AboutFragment extends BaseFragment
 	private void buyIt()
 	{
 
+		String appName = getActivity().getPackageName().replace("free", "");
+		String marketUrl = String.format(Constants.MarketPaidWebAddress, appName);
 		Analytics.sendEvent(Analytics.ABOUT, Analytics.UPGRADE, "", 0);
 
 		Intent myIntent =
-			new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.MarketPaidWebAddress));
+			new Intent(Intent.ACTION_VIEW, Uri.parse(marketUrl));
 
 		try {
 			startActivity(myIntent);

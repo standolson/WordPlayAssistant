@@ -60,8 +60,7 @@ public class DbInstallDialog extends DialogFragment {
     	String text = String.format(isUpgrade ?
     									getString(R.string.dictionary_upgrade_dialog_text) :
     									getString(R.string.dictionary_install_dialog_text),
-    								WordPlayApp.getInstance().isFreeMode() ?
-    									" Free" : "",
+    								getString(R.string.app_name),
     								WordPlayApp.appVersionName);
     	textView.setText(text);
 

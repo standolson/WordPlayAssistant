@@ -43,7 +43,7 @@ public class WordPlayApp extends Application
         Debug.enableAsserts();
 
         // Set the free/paid mode based on the name of the package
-        freeMode = getPackageName().equals(Constants.FreeAppName);
+        freeMode = getPackageName().contains("free");
 
         // Initialize the version
         initVersionInfo(this);
@@ -83,9 +83,7 @@ public class WordPlayApp extends Application
 		// when history needs upgrading.
         try {
         	PackageInfo pInfo =
-        		app.getPackageManager().getPackageInfo(getInstance().isFreeMode() ?
-        													Constants.FreeAppName : Constants.PaidAppName,
-        												PackageManager.GET_META_DATA);
+        		app.getPackageManager().getPackageInfo(app.getPackageName(), PackageManager.GET_META_DATA);
         	appVersionCode = pInfo.versionCode;
         	appVersionName = pInfo.versionName;
         	Debug.v("MANIFEST VERISON CODE = " + appVersionCode);
