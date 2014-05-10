@@ -854,4 +854,13 @@ public class WordPlayActivity extends HostActivity
         }, 500);
     }
 
+
+	public void initGoogleAnalytics(String trackingId)
+	{
+
+		// Initialize the global Tracker object
+		new Analytics(getApplicationContext(), trackingId);
+
+	}
+
 }

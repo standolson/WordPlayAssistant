@@ -20,6 +20,9 @@ public class WordPlayFree extends WordPlayActivity {
         // Initialize Crittercism
         Crittercism.initialize(getApplicationContext(), "531e2cdff7b7da0b4e000001");
 
+        // Initialiaze Google Analytics
+        initGoogleAnalytics("UA-50341453-2");
+
     }
 
 }

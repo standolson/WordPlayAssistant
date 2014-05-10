@@ -48,8 +48,8 @@ public class WordPlayApp extends Application
         // Initialize the version
         initVersionInfo(this);
 
-        // Initialize Google Analytics
-        initGoogleAnalytics();
+        // Initialize Google Play Services
+        initGooglePlayServices(this);
 
 	}
 
@@ -90,17 +90,6 @@ public class WordPlayApp extends Application
         	Debug.v("MANIFEST VERSION NAME = " + appVersionName);
         }
         catch (NameNotFoundException e) {}
-
-	}
-
-	private void initGoogleAnalytics()
-	{
-
-		initGooglePlayServices(this);
-
-		// Initialize the global Tracker object
-		String trackingId = isPaidMode() ? "UA-50341453-1" : "UA-50341453-2";
-		new Analytics(getApplicationContext(), trackingId);
 
 	}
 

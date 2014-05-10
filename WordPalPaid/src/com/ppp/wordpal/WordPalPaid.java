@@ -20,6 +20,9 @@ public class WordPalPaid extends WordPlayActivity {
         // Initialize Crittercism
         Crittercism.initialize(getApplicationContext(), "531e144040ec925d0e000002");
 
+        // Initialiaze Google Analytics
+        initGoogleAnalytics("UA-50341453-3");
+
     }
 
 }
