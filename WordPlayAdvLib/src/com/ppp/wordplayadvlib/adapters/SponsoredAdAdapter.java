@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.SectionIndexer;
 
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.externalads.AdMobAd;
@@ -18,7 +19,7 @@ import com.ppp.wordplayadvlib.externalads.AdMobData;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd.PlacementType;
 
-public class SponsoredAdAdapter extends BaseAdapter {
+public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
 	private static final int MAX_ADMOB_ADS = 2;
 
@@ -277,6 +278,33 @@ public class SponsoredAdAdapter extends BaseAdapter {
 		View empty = new View(context);
 		empty.setLayoutParams(new AbsListView.LayoutParams(LayoutParams.FILL_PARENT, 0));
 		return empty;
+	}
+
+	@Override
+	public Object[] getSections()
+	{
+		if (delegate instanceof SectionIndexer)
+			return ((SectionIndexer) delegate).getSections();
+		else
+			return null;
+	}
+
+	@Override
+	public int getPositionForSection(int section)
+	{
+		if (delegate instanceof SectionIndexer)
+			return ((SectionIndexer) delegate).getPositionForSection(section);
+		else
+			return 0;
+	}
+
+	@Override
+	public int getSectionForPosition(int position)
+	{
+		if (delegate instanceof SectionIndexer)
+			return ((SectionIndexer) delegate).getSectionForPosition(position);
+		else
+			return 0;
 	}
 
 }
