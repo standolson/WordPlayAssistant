@@ -9,7 +9,6 @@ import android.content.res.Configuration;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordPlayApp extends Application
@@ -120,6 +119,10 @@ public class WordPlayApp extends Application
 
 	}
 
+	//
+	// Google Play Services
+	//
+
 	public static int getGooglePlayServicesStatus() { return googlePlayStatus; }
 	public static boolean isGooglePlayServicesOk() { return googlePlayStatus == ConnectionResult.SUCCESS; }
 
@@ -163,5 +166,11 @@ public class WordPlayApp extends Application
 			return 0;
 		}
 	}
+
+	//
+	// AdMob
+	//
+
+	public String[] getAdMobAdUnitIds() { return null; }
 
 }

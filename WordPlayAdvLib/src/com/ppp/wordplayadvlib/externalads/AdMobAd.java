@@ -19,17 +19,21 @@ import com.ppp.wordplayadvlib.widgets.TextDrawable;
 
 public class AdMobAd extends SponsoredAd {
 
+	private AdMobData adMobData;
+
 	private static View emptyView = null;
 	public static boolean useAdMobPlaceholders = false;
 
-	public AdMobAd(Context context, PlacementType placementType)
+	public AdMobAd(Context context, PlacementType placementType, AdMobData adMobData)
 	{
 		super(context, placementType);
+		this.adMobData = adMobData;
 	}
 
-	public AdMobAd(Context context, PlacementType placementType, int listPosition)
+	public AdMobAd(Context context, PlacementType placementType, int listPosition, AdMobData adMobData)
 	{
 		super(context, placementType, listPosition);
+		this.adMobData = adMobData;
 	}
 
 	public View getView()
@@ -106,9 +110,13 @@ public class AdMobAd extends SponsoredAd {
 
 	private AdView getAdMobAdView(AdSize adSize)
 	{
+
+		Debug.e("AdMobAd: creating AdView for '" + adMobData.adUnitId + "'");
+
 		AdView adView = new AdView(context);
 		adView.setAdSize(adSize);
-		adView.setAdUnitId("a14d57787867bd1");
+		adView.setAdUnitId(adMobData.adUnitId);
+
 		return adView;
 	}
 

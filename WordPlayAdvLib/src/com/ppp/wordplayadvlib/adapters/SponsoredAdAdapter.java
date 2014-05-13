@@ -12,7 +12,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 
+import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.externalads.AdMobAd;
+import com.ppp.wordplayadvlib.externalads.AdMobData;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd.PlacementType;
 
@@ -101,6 +103,8 @@ public class SponsoredAdAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 
+		String[] adUnitIds = WordPlayApp.getInstance().getAdMobAdUnitIds();
+
 		// Check for no delegate
 		if (delegate == null)
 			return getEmptyView();
@@ -113,12 +117,18 @@ public class SponsoredAdAdapter extends BaseAdapter {
 		SponsoredAd ad = sponsoredAds.get(position);
 		if ((ad == null) || (ad.getView() == null))  {
 
+			// If we have no ad units to show or don't have enough,
+			// return an empty view
+			if ((adUnitIds == null) || (adUnitIds.length < 2))
+				return getEmptyView();
+
 			// Create a new ad if we haven't loaded the maximum number
 			// of AdMob ads.  If we haven't, then we use one of the ads
 			// we already have.
 			AdMobAd adMobAd = null;
 			if (availableAds.size() < MAX_ADMOB_ADS)  {
-				adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position);
+				AdMobData adMobData = new AdMobData(adUnitIds[availableAds.size()]);
+				adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position, adMobData);
 				adMobAd.setSponsoredAdAdapter(this);
 				availableAds.add(adMobAd);
 			}
