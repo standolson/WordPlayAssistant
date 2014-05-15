@@ -178,8 +178,14 @@ public class SearchObject implements Parcelable {
 			for (int i = 0; i < scoredWordList.size(); i += 1)
 				dest.writeParcelable(scoredWordList.get(i), flags);
 
-		dest.writeLong(startTime.getTime());
-		dest.writeLong(endTime.getTime());
+		if (startTime != null)
+			dest.writeLong(startTime.getTime());
+		else
+			dest.writeLong(0);
+		if (endTime != null)
+			dest.writeLong(endTime.getTime());
+		else
+			dest.writeLong(0);
 
 	}
 

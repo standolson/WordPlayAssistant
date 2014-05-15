@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.InterstitialAd;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.adapters.ScoredWordListAdapter;
@@ -69,6 +70,7 @@ public class SearchFragment extends BaseFragment
 	private static AsyncTask<Void, Void, Void> task;
 	private LocalBroadcastManager broadcastManager;
 
+	private AdMobAd interstitialAdMobAd = null;
 	private Bundle nextArgs = null;
 
 	@Override
@@ -77,9 +79,11 @@ public class SearchFragment extends BaseFragment
 
 		super.onCreate(savedInstanceState);
 
-	    // Restore the SearchObject
-		if (savedInstanceState != null)
+	    // Restore state
+		if (savedInstanceState != null)  {
 			searchObject = savedInstanceState.getParcelable("searchObject");
+			nextArgs = savedInstanceState.getBundle("nextArgs");
+		}
 
 	    // Create the new connection to the dictionary server used for this search
     	dictServer = new RFC2229();
@@ -114,6 +118,11 @@ public class SearchFragment extends BaseFragment
 	    zeroView = rootView.findViewById(R.id.zero_results);
 
 	    elapsedTextView = (TextView) rootView.findViewById(R.id.elapsed_time);
+
+	    // If this is the free version, load an interstitial ad in
+	    // case the user tries to dive deeper into the search result
+	    if (WordPlayApp.getInstance().isFreeMode())
+	    	loadInterstitial();
 
 		return rootView;
 
@@ -205,6 +214,7 @@ public class SearchFragment extends BaseFragment
 	{
 		super.onSaveInstanceState(savedInstanceState);
 		savedInstanceState.putParcelable("searchObject", searchObject);
+		savedInstanceState.putBundle("nextArgs", nextArgs);
 	}
 
     @Override
@@ -253,7 +263,7 @@ public class SearchFragment extends BaseFragment
 			}
 
 			if (WordPlayApp.getInstance().isFreeMode())
-				loadInterstitial(args);
+				showInterstitial(args);
 			else
 				startNewSearch(args);
 
@@ -481,19 +491,42 @@ public class SearchFragment extends BaseFragment
 	// Interstitial Ads
 	//
 
-	private void loadInterstitial(Bundle args)
+	private void loadInterstitial()
 	{
 
 		String adUnitId = WordPlayApp.getInstance().getAdMobInterstitialUnitId();
 		if (adUnitId == null)
 			return;
 
-		AdMobData adMobData = new AdMobData(adUnitId, args);
-		AdMobAd adMobAd = new AdMobAd(getActivity(), adMobData);
+		AdMobData adMobData = new AdMobData(adUnitId);
+		interstitialAdMobAd = new AdMobAd(getActivity(), adMobData);
+		interstitialAdMobAd.setEventCallback(this);
 
-		adMobAd.setEventCallback(this);
-		adMobAd.getInterstitialAd();
+		interstitialAdMobAd.loadInterstitialAd();
+		
+	}
 
+	private void showInterstitial(Bundle args)
+	{
+
+		InterstitialAd interstitialAd = interstitialAdMobAd.getInterstitialAd();
+
+		// If there is no interstitial ad or it hasn't been loaded
+		// yet, just run the search the user wanted
+		if ((interstitialAd == null) || !interstitialAd.isLoaded())  {
+			startNewSearch(args);
+			return;
+		}
+
+		// Append the search arguments to the AdMobAdn so that
+		// when we return, we have them to start the search the
+		// user wanted to begin with.
+		interstitialAdMobAd.getAdMobData().args = args;
+
+		// Show the ad
+		interstitialAd.show();
+
+		
 	}
 
 	@Override

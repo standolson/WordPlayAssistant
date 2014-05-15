@@ -13,4 +13,10 @@ public class WordPalFreeApp extends WordPlayApp {
 		};
 	}
 
+	@Override
+	public String getAdMobInterstitialUnitId()
+	{
+		return "ca-app-pub-8807533815804449/5730949590";
+	}
+
 }

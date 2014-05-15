@@ -71,6 +71,7 @@ public class AdMobAd extends SponsoredAd {
 
 	}
 
+	public InterstitialAd getInterstitialAd() { return interstitialAd; }
 
 	@Override
 	public void pause()
@@ -219,7 +220,7 @@ public class AdMobAd extends SponsoredAd {
 		return null;
 	}
 
-	public void getInterstitialAd()
+	public void loadInterstitialAd()
 	{
 
 		AdRequest.Builder builder = getAdBuilder();
@@ -228,10 +229,10 @@ public class AdMobAd extends SponsoredAd {
 		interstitialAd = new InterstitialAd(context);
 		interstitialAd.setAdUnitId(adMobData.adUnitId);
 		interstitialAd.setAdListener(new AdListener() {
+
         	public void onAdLoaded()
         	{
         		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdLoaded");
-        		interstitialAd.show();
 	            isLoaded = true;
 				if (eventCallback != null)
 					eventCallback.onLoaded(AdMobAd.this);
