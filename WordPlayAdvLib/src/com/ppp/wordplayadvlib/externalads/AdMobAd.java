@@ -12,6 +12,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.utils.Debug;
@@ -20,6 +21,7 @@ import com.ppp.wordplayadvlib.widgets.TextDrawable;
 public class AdMobAd extends SponsoredAd {
 
 	private AdMobData adMobData;
+	private InterstitialAd interstitialAd;
 
 	private static View emptyView = null;
 	public static boolean useAdMobPlaceholders = false;
@@ -35,6 +37,15 @@ public class AdMobAd extends SponsoredAd {
 		super(context, placementType, listPosition);
 		this.adMobData = adMobData;
 	}
+
+	public AdMobAd(Context context, AdMobData adMobData)
+	{
+		super(context);
+		this.placementType = PlacementType.Interstitial;
+		this.adMobData = adMobData;
+	}
+
+	public AdMobData getAdMobData() { return adMobData; }
 
 	public View getView()
 	{
@@ -142,9 +153,7 @@ public class AdMobAd extends SponsoredAd {
 
 			Log.e(getClass().getSimpleName(), "AdMob: loading ad for position " + listPosition);
 
-			final AdRequest.Builder builder = new AdRequest.Builder();
-			builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
-//			builder.addTestDevice("06B0FEFF5F6B39F3B712494ECD97757A");
+			final AdRequest.Builder builder = getAdBuilder();
 
 			view.setAdListener(new AdListener() {
 
@@ -177,17 +186,17 @@ public class AdMobAd extends SponsoredAd {
 
             	public void onAdOpened()
             	{
-            		Log.d(AdMobAd.class.getSimpleName(), "AdMobAd: onAdOpened");       		
+            		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdOpened");       		
             	}
 
             	public void onAdClosed()
             	{
-            		Log.d(AdMobAd.class.getSimpleName(), "AdSense: onAdClosed");
+            		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdClosed");
             	}
 
             	public void onAdLeftApplication()
             	{
-            		Log.d(AdMobAd.class.getSimpleName(), "AdSense: onAdLeftApplication");
+            		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdLeftApplication");
             	}
 
 			});
@@ -208,6 +217,55 @@ public class AdMobAd extends SponsoredAd {
 	private View getZsrpResultView()
 	{
 		return null;
+	}
+
+	public void getInterstitialAd()
+	{
+
+		AdRequest.Builder builder = getAdBuilder();
+
+		// Setup the ad
+		interstitialAd = new InterstitialAd(context);
+		interstitialAd.setAdUnitId(adMobData.adUnitId);
+		interstitialAd.setAdListener(new AdListener() {
+        	public void onAdLoaded()
+        	{
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdLoaded");
+        		interstitialAd.show();
+	            isLoaded = true;
+				if (eventCallback != null)
+					eventCallback.onLoaded(AdMobAd.this);
+        	}
+
+        	public void onAdFailedToLoad(int errorCode)
+        	{
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdFailedToLoad; errorCode " + getErrorString(errorCode));
+				if (eventCallback != null)
+					eventCallback.onError(AdMobAd.this);
+        	}
+
+        	public void onAdOpened()
+        	{
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdOpened");       		
+        	}
+
+        	public void onAdClosed()
+        	{
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdClosed");
+        		if (eventCallback != null)
+        			eventCallback.onClosed(AdMobAd.this);
+        	}
+
+        	public void onAdLeftApplication()
+        	{
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdLeftApplication");
+        	}
+			
+		});
+
+		// Create it
+		interstitialAd.loadAd(builder.build());
+
 	}
 
 	private void setListLayoutParams(Context context, View view, AdSize adSize)
@@ -240,6 +298,14 @@ public class AdMobAd extends SponsoredAd {
 			default:
 				return "Unknown error";
 		}
+	}
+
+	private AdRequest.Builder getAdBuilder()
+	{
+		AdRequest.Builder builder = new AdRequest.Builder();
+		builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+//		builder.addTestDevice("06B0FEFF5F6B39F3B712494ECD97757A");
+		return builder;
 	}
 
 	private View getEmptyView()

@@ -40,6 +40,10 @@ import com.ppp.wordplayadvlib.database.ScrabbleDatabaseClient;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.exceptions.WifiAuthException;
 import com.ppp.wordplayadvlib.exceptions.WordPlayException;
+import com.ppp.wordplayadvlib.externalads.AdMobAd;
+import com.ppp.wordplayadvlib.externalads.AdMobData;
+import com.ppp.wordplayadvlib.externalads.SponsoredAd;
+import com.ppp.wordplayadvlib.externalads.SponsoredAd.EventCallback;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment.SearchProgressListener;
 import com.ppp.wordplayadvlib.networking.NetworkUtils;
@@ -49,7 +53,8 @@ import com.ppp.wordplayadvlib.utils.Debug;
 public class SearchFragment extends BaseFragment
 	implements
 		OnItemClickListener,
-		SearchProgressListener
+		SearchProgressListener,
+		EventCallback
 {
 
 	private View rootView;
@@ -63,6 +68,8 @@ public class SearchFragment extends BaseFragment
 
 	private static AsyncTask<Void, Void, Void> task;
 	private LocalBroadcastManager broadcastManager;
+
+	private Bundle nextArgs = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -132,6 +139,14 @@ public class SearchFragment extends BaseFragment
 	{
 
 		super.onResume();
+
+		// If we came back from an interstitial ad, execute the next
+		// search
+		if (nextArgs != null)  {
+			startNewSearch(nextArgs);
+			nextArgs = null;
+			return;
+		}
 
 		// Resume all AdMob activity
 		if (adAdapter != null)
@@ -237,7 +252,10 @@ public class SearchFragment extends BaseFragment
 					args.putInt("Dictionary", searchObject.getDictionary().ordinal());
 			}
 
-			startNewSearch(args);
+			if (WordPlayApp.getInstance().isFreeMode())
+				loadInterstitial(args);
+			else
+				startNewSearch(args);
 
 		}
 
@@ -457,6 +475,45 @@ public class SearchFragment extends BaseFragment
 		Debug.e(str);
 		((TextView) rootView.findViewById(R.id.elapsed_time)).setText(str);
 
+	}
+
+	//
+	// Interstitial Ads
+	//
+
+	private void loadInterstitial(Bundle args)
+	{
+
+		String adUnitId = WordPlayApp.getInstance().getAdMobInterstitialUnitId();
+		if (adUnitId == null)
+			return;
+
+		AdMobData adMobData = new AdMobData(adUnitId, args);
+		AdMobAd adMobAd = new AdMobAd(getActivity(), adMobData);
+
+		adMobAd.setEventCallback(this);
+		adMobAd.getInterstitialAd();
+
+	}
+
+	@Override
+	public void onLoaded(SponsoredAd ad) {}
+
+	@Override
+	public void onError(SponsoredAd ad)
+	{
+		AdMobAd adMobAd = (AdMobAd) ad;
+		startNewSearch(adMobAd.getAdMobData().args);
+	}
+
+	@Override
+	public void onOpened(SponsoredAd ad) {}
+
+	@Override
+	public void onClosed(SponsoredAd ad)
+	{
+		AdMobAd adMobAd = (AdMobAd) ad;
+		nextArgs = adMobAd.getAdMobData().args;
 	}
 
 	//

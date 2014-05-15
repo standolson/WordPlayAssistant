@@ -11,11 +11,14 @@ public class SponsoredAd {
 		Unknown,
 		ListSearchResult,
 		ZeroSearchResult,
+		Interstitial
 	}
 
 	public interface EventCallback {
 		public void onLoaded(SponsoredAd ad);
 		public void onError(SponsoredAd ad);
+		public void onOpened(SponsoredAd ad);
+		public void onClosed(SponsoredAd ad);
 	}
 
 	protected Context context;
@@ -27,6 +30,11 @@ public class SponsoredAd {
 	protected SponsoredAdAdapter adapter;
 	protected EventCallback eventCallback;
 	protected int gridWidth;
+
+	public SponsoredAd(Context context)
+	{
+		this.context = context;
+	}
 
 	public SponsoredAd(Context context, PlacementType placementType)
 	{
