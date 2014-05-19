@@ -79,11 +79,7 @@ public class SearchFragment extends BaseFragment
 
 		super.onCreate(savedInstanceState);
 
-	    // Restore state
-		if (savedInstanceState != null)  {
-			searchObject = savedInstanceState.getParcelable("searchObject");
-			nextArgs = savedInstanceState.getBundle("nextArgs");
-		}
+		Log.e(getClass().getSimpleName(), "retain instance = " + getRetainInstance());
 
 	    // Create the new connection to the dictionary server used for this search
     	dictServer = new RFC2229();
@@ -116,13 +112,26 @@ public class SearchFragment extends BaseFragment
 	    searchListView.setOnItemClickListener(this);
 
 	    zeroView = rootView.findViewById(R.id.zero_results);
-
 	    elapsedTextView = (TextView) rootView.findViewById(R.id.elapsed_time);
 
 	    // If this is the free version, load an interstitial ad in
 	    // case the user tries to dive deeper into the search result
 	    if (WordPlayApp.getInstance().isFreeMode())
 	    	loadInterstitial();
+
+	    // Restore state
+		if (savedInstanceState != null)  {
+
+			searchObject = savedInstanceState.getParcelable("searchObject");
+			nextArgs = savedInstanceState.getBundle("nextArgs");
+
+			// If the search was completed, display the results
+			if (searchObject.isCompleted())
+				;
+
+		}
+		else
+			startSearch();
 
 		return rootView;
 
@@ -149,6 +158,13 @@ public class SearchFragment extends BaseFragment
 
 		super.onResume();
 
+		// Register the broadcast receiver to receive completed and
+		// cancelled notifications
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(SEARCH_COMPLETED_INTENT);
+		filter.addAction(SEARCH_CANCELED_INTENT);
+		broadcastManager.registerReceiver(searchReceiver, filter);
+
 		// If we came back from an interstitial ad, execute the next
 		// search
 		if (nextArgs != null)  {
@@ -161,51 +177,44 @@ public class SearchFragment extends BaseFragment
 		if (adAdapter != null)
 			adAdapter.resume();
 
-		// Register the broadcast receiver to receive completed and
-		// cancelled notifications
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(SEARCH_COMPLETED_INTENT);
-		filter.addAction(SEARCH_CANCELED_INTENT);
-		broadcastManager.registerReceiver(searchReceiver, filter);
-
 		// If we've already done a search, don't do another
-		if (searchObject != null)  {
-			displayResults(false);
-			return;
-		}
+//		if (searchObject != null)  {
+//			displayResults(false);
+//			return;
+//		}
 
 		// Create the SearchObject
-		searchObject = new SearchObject(getArguments());
+//		searchObject = new SearchObject(getArguments());
 
 		// Add this search to the history
-		History.getInstance().addHistory(getArguments());
+//		History.getInstance().addHistory(getArguments());
 
     	// Execute the search
-    	switch (searchObject.getSearchType())  {
-			case OPTION_DICTIONARY_EXACT_MATCH:
-				onExactMatch();
-				break;
-			case OPTION_DICTIONARY_STARTS_WITH:
-    			onStartsWith();
-    			break;
-    		case OPTION_DICTIONARY_ENDS_WITH:
-    			onEndsWith();
-    			break;
-    		case OPTION_DICTIONARY_CONTAINS:
-    			onContains();
-    			break;
-    		case OPTION_CROSSWORDS:
-    			onCrosswords();
-    			break;
-    		case OPTION_ANAGRAMS:
-    			onAnagram();
-    			break;
-    		case OPTION_THESAURUS:
-    			onThesaurus();
-    			break;
-    		default:
-    			break;
-    	}
+//    	switch (searchObject.getSearchType())  {
+//			case OPTION_DICTIONARY_EXACT_MATCH:
+//				onExactMatch();
+//				break;
+//			case OPTION_DICTIONARY_STARTS_WITH:
+//    			onStartsWith();
+//    			break;
+//    		case OPTION_DICTIONARY_ENDS_WITH:
+//    			onEndsWith();
+//    			break;
+//    		case OPTION_DICTIONARY_CONTAINS:
+//    			onContains();
+//    			break;
+//    		case OPTION_CROSSWORDS:
+//    			onCrosswords();
+//    			break;
+//    		case OPTION_ANAGRAMS:
+//    			onAnagram();
+//    			break;
+//    		case OPTION_THESAURUS:
+//    			onThesaurus();
+//    			break;
+//    		default:
+//    			break;
+//    	}
 
 	}
 
@@ -321,6 +330,51 @@ public class SearchFragment extends BaseFragment
 		// send a message to the broadcast receiver that will get the
 		// user back to where they came from.
 		task.cancel(true);
+
+	}
+
+	private void startSearch()
+	{
+
+		// Register the broadcast receiver to receive completed and
+		// cancelled notifications
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(SEARCH_COMPLETED_INTENT);
+		filter.addAction(SEARCH_CANCELED_INTENT);
+		broadcastManager.registerReceiver(searchReceiver, filter);
+
+		// Create the SearchObject
+		searchObject = new SearchObject(getArguments());
+
+		// Add this search to the history
+		History.getInstance().addHistory(getArguments());
+
+    	// Execute the search
+    	switch (searchObject.getSearchType())  {
+			case OPTION_DICTIONARY_EXACT_MATCH:
+				onExactMatch();
+				break;
+			case OPTION_DICTIONARY_STARTS_WITH:
+    			onStartsWith();
+    			break;
+    		case OPTION_DICTIONARY_ENDS_WITH:
+    			onEndsWith();
+    			break;
+    		case OPTION_DICTIONARY_CONTAINS:
+    			onContains();
+    			break;
+    		case OPTION_CROSSWORDS:
+    			onCrosswords();
+    			break;
+    		case OPTION_ANAGRAMS:
+    			onAnagram();
+    			break;
+    		case OPTION_THESAURUS:
+    			onThesaurus();
+    			break;
+    		default:
+    			break;
+    	}
 
 	}
 
@@ -498,10 +552,16 @@ public class SearchFragment extends BaseFragment
 		if (adUnitId == null)
 			return;
 
+		// Do we already have one?
+		if (interstitialAdMobAd != null)
+			return;
+
+		// Create one
 		AdMobData adMobData = new AdMobData(adUnitId);
 		interstitialAdMobAd = new AdMobAd(getActivity(), adMobData);
 		interstitialAdMobAd.setEventCallback(this);
 
+		// Load it
 		interstitialAdMobAd.loadInterstitialAd();
 		
 	}
@@ -518,7 +578,7 @@ public class SearchFragment extends BaseFragment
 			return;
 		}
 
-		// Append the search arguments to the AdMobAdn so that
+		// Append the search arguments to the AdMobAd so that
 		// when we return, we have them to start the search the
 		// user wanted to begin with.
 		interstitialAdMobAd.getAdMobData().args = args;

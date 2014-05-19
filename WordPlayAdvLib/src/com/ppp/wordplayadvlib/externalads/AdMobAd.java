@@ -152,7 +152,7 @@ public class AdMobAd extends SponsoredAd {
 
 		if (view != null)  {
 
-			Log.e(getClass().getSimpleName(), "AdMob: loading ad for position " + listPosition);
+			Log.e(getClass().getSimpleName(), "AdMob SRP: loading ad for position " + listPosition);
 
 			final AdRequest.Builder builder = getAdBuilder();
 
@@ -160,7 +160,7 @@ public class AdMobAd extends SponsoredAd {
 
             	public void onAdLoaded()
             	{
-            		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdLoaded");
+            		Log.d(AdMobAd.class.getSimpleName(), "AdMob SRP: onAdLoaded");
 		            isLoaded = true;
 		            if (useAdMobPlaceholders)
 		            	view.setBackgroundDrawable(null);
@@ -172,7 +172,7 @@ public class AdMobAd extends SponsoredAd {
 
             	public void onAdFailedToLoad(int errorCode)
             	{
-            		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdFailedToLoad; errorCode " + getErrorString(errorCode));
+            		Log.d(AdMobAd.class.getSimpleName(), "AdMob SRP: onAdFailedToLoad; errorCode " + getErrorString(errorCode));
 					if (useAdMobPlaceholders)
 						view.setBackgroundDrawable(new TextDrawable(context, context.getString(R.string.SponsoredAdFailed), Color.WHITE, 22, 5));
 					else {
@@ -187,27 +187,28 @@ public class AdMobAd extends SponsoredAd {
 
             	public void onAdOpened()
             	{
-            		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdOpened");       		
+            		Log.d(AdMobAd.class.getSimpleName(), "AdMob SRP: onAdOpened");
+            		if (eventCallback != null)
+            			eventCallback.onOpened(AdMobAd.this);
             	}
 
             	public void onAdClosed()
             	{
-            		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdClosed");
+            		Log.d(AdMobAd.class.getSimpleName(), "AdMob SRP: onAdClosed");
+            		if (eventCallback != null)
+            			eventCallback.onClosed(AdMobAd.this);
             	}
 
             	public void onAdLeftApplication()
             	{
-            		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdLeftApplication");
+            		Log.d(AdMobAd.class.getSimpleName(), "AdMob SRP: onAdLeftApplication");
             	}
 
 			});
 
             if (useAdMobPlaceholders)
     			view.setBackgroundDrawable(new TextDrawable(context, context.getString(R.string.SponsoredAd), Color.WHITE, 22, 5));
-            view.post(new Runnable() {
-				@Override
-				public void run() { view.loadAd(builder.build()); }
-            });
+            view.loadAd(builder.build());
 
 		}
 
@@ -225,6 +226,8 @@ public class AdMobAd extends SponsoredAd {
 
 		AdRequest.Builder builder = getAdBuilder();
 
+		Log.e(getClass().getSimpleName(), "AdMob INTERSTITIAL: loading ad");
+
 		// Setup the ad
 		interstitialAd = new InterstitialAd(context);
 		interstitialAd.setAdUnitId(adMobData.adUnitId);
@@ -232,7 +235,7 @@ public class AdMobAd extends SponsoredAd {
 
         	public void onAdLoaded()
         	{
-        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdLoaded");
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob INTERSTITIAL: onAdLoaded");
 	            isLoaded = true;
 				if (eventCallback != null)
 					eventCallback.onLoaded(AdMobAd.this);
@@ -240,26 +243,28 @@ public class AdMobAd extends SponsoredAd {
 
         	public void onAdFailedToLoad(int errorCode)
         	{
-        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdFailedToLoad; errorCode " + getErrorString(errorCode));
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob INTERSTITIAL: onAdFailedToLoad; errorCode " + getErrorString(errorCode));
 				if (eventCallback != null)
 					eventCallback.onError(AdMobAd.this);
         	}
 
         	public void onAdOpened()
         	{
-        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdOpened");       		
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob INTERSTITIAL: onAdOpened");
+        		if (eventCallback != null)
+        			eventCallback.onOpened(AdMobAd.this);
         	}
 
         	public void onAdClosed()
         	{
-        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdClosed");
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob INTERSTITIAL: onAdClosed");
         		if (eventCallback != null)
         			eventCallback.onClosed(AdMobAd.this);
         	}
 
         	public void onAdLeftApplication()
         	{
-        		Log.d(AdMobAd.class.getSimpleName(), "AdMob: onAdLeftApplication");
+        		Log.d(AdMobAd.class.getSimpleName(), "AdMob INTERSTITIAL: onAdLeftApplication");
         	}
 			
 		});

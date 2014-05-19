@@ -110,62 +110,70 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 		if (delegate == null)
 			return getEmptyView();
 
-		// If this is a regular item, just return it now
-		if (!isSponsoredAd(position))
-			return delegate.getView(getRealPosition(position), convertView, parent);
-
-		// Do we already have a SponsoredAd for this position?
-		SponsoredAd ad = sponsoredAds.get(position);
-		if ((ad == null) || (ad.getView() == null))  {
-
-			// If we have no ad units to show or don't have enough,
-			// return an empty view
-			if ((adUnitIds == null) || (adUnitIds.length < 2))
-				return getEmptyView();
-
-			// Create a new ad if we haven't loaded the maximum number
-			// of AdMob ads.  If we haven't, then we use one of the ads
-			// we already have.
-			AdMobAd adMobAd = null;
-			if (availableAds.size() < MAX_ADMOB_ADS)  {
-				AdMobData adMobData = new AdMobData(adUnitIds[availableAds.size()]);
-				adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position, adMobData);
-				adMobAd.setSponsoredAdAdapter(this);
-				availableAds.add(adMobAd);
-			}
-			else
-				adMobAd = (AdMobAd) availableAds.get(sponsoredAds.size() % 2);
-			View view = adMobAd.getView();
+		if (isSponsoredAd(position))  {
 
 			// Add this position to the list of positions
 			sponsoredAdPositions.add(position);
 
-			// Save it for later
-			sponsoredAds.put(position, adMobAd);
+			// Do we already have a SponsoredAd for this position?
+			SponsoredAd ad = sponsoredAds.get(position);
+			if ((ad == null) || (ad.getView() == null))  {
 
-			// Notify all observers as by adding another sponsored ad,
-			// we've increased the size of what the adapter is showing.
-			notifyDataSetChanged();
+				// If we have no ad units to show or don't have enough,
+				// return an empty view
+				if ((adUnitIds == null) || (adUnitIds.length < 2))
+					return getEmptyView();
 
-			// Return a zero height view to hide where the ad is going
-			// to go until it is loaded
-			if (AdMobAd.useAdMobPlaceholders)
-				return view;
-			else
-				return getEmptyView();
+				// Create a new ad if we haven't loaded the maximum number
+				// of AdMob ads.  If we haven't, then we use one of the ads
+				// we already have.
+				AdMobAd adMobAd = null;
+				if (availableAds.size() < MAX_ADMOB_ADS)  {
+					AdMobData adMobData = new AdMobData(adUnitIds[availableAds.size()]);
+					adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position, adMobData);
+					adMobAd.setSponsoredAdAdapter(this);
+					availableAds.add(adMobAd);
+				}
+				else {
+					adMobAd = (AdMobAd) availableAds.get(sponsoredAds.size() % 2);
+					ad = adMobAd;
+				}
+
+				// Either load the ad or get the view we already have
+				View view = adMobAd.getView();
+
+				// Save it for later
+				sponsoredAds.put(position, adMobAd);
+
+				// Notify all observers as by adding another sponsored ad,
+				// we've increased the size of what the adapter is showing.
+				notifyDataSetChanged();
+
+				// Return a zero height view to hide where the ad is going
+				// to go until it is loaded
+				if (((ad != null) && ad.isLoaded()) || AdMobAd.useAdMobPlaceholders)
+					return view;
+				else
+					return getEmptyView();
+
+			}
+			else {
+
+				// We have a cached SponsoredAd.  Return its view
+				// if the ad is loaded otherwise return a zero height
+				// view.
+				if (ad.isLoaded() || AdMobAd.useAdMobPlaceholders)
+					return ad.getView();
+				else
+					return getEmptyView();
+
+			}
 
 		}
-		else {
 
-			// We have a cached SponsoredAd.  Return its view
-			// if the ad is loaded otherwise return a zero height
-			// view.
-			if (ad.isLoaded() || AdMobAd.useAdMobPlaceholders)
-				return ad.getView();
-			else
-				return getEmptyView();
-
-		}
+		// This is a regular item...just return it now
+		else
+			return delegate.getView(getRealPosition(position), convertView, parent);
 
 	}
 

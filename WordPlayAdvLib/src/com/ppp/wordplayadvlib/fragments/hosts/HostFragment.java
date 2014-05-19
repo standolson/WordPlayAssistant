@@ -31,6 +31,9 @@ public class HostFragment extends Fragment
 
         super.onCreate(savedInstanceState);
 
+        // Retain instance state
+        setRetainInstance(true);
+
         // In case any children have an options menu, turn this on.
         setHasOptionsMenu(true);
 

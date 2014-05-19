@@ -26,6 +26,8 @@ public class SearchObject implements Parcelable {
 	public ArrayList<ScoredWord> scoredWordList;
 	public Exception exception;
 
+	private boolean isCompleted;
+
 	private Date startTime;
 	private Date endTime;
 	
@@ -44,9 +46,13 @@ public class SearchObject implements Parcelable {
 		wordScores = WordScoreState.fromInt(b.getInt("WordScores"));
 		wordSort = WordSortState.fromInt(b.getInt("WordSort"));
 
+		isCompleted = false;
+
 		startTime = new Date();
 
 	}
+
+	public boolean isCompleted() { return isCompleted; }
 
 	public SearchType getSearchType() { return searchType; }
 	public DictionaryType getDictionary() { return dictionary; }
@@ -58,6 +64,7 @@ public class SearchObject implements Parcelable {
 	public void setDefinition(WordDefinition d)
 	{
 		definition = d;
+		isCompleted = true;
 		endTime = new Date();
 	}
 	public WordDefinition getDefinition() { return definition; }
@@ -65,6 +72,7 @@ public class SearchObject implements Parcelable {
 	public void setWordList(ArrayList<String> l)
 	{
 		wordList = l;
+		isCompleted = true;
 		endTime = new Date();
 	}
 	public ArrayList<String> getWordList() { return wordList; }
@@ -72,6 +80,7 @@ public class SearchObject implements Parcelable {
 	public void setDefinitionList(ArrayList<String> l)
 	{
 		defnList = l;
+		isCompleted = true;
 		endTime = new Date();
 	}
 	public ArrayList<String> getDefinitionList() { return defnList; }
@@ -79,6 +88,7 @@ public class SearchObject implements Parcelable {
 	public void setScoredWordList(ArrayList<ScoredWord> l)
 	{
 		scoredWordList = l;
+		isCompleted = true;
 		endTime = new Date();
 	}
 	public ArrayList<ScoredWord> getScoredWordList() { return scoredWordList; }
@@ -86,6 +96,7 @@ public class SearchObject implements Parcelable {
 	public void setException(Exception e)
 	{
 		exception = e;
+		isCompleted = true;
 		endTime = new Date();
 	}
 	public Exception getException() { return exception; }
@@ -145,6 +156,8 @@ public class SearchObject implements Parcelable {
 				scoredWordList.add((ScoredWord) in.readParcelable(ScoredWord.class.getClassLoader()));
 		}
 
+		isCompleted = in.readInt() == 1;
+
 		startTime = new Date(in.readLong());
 		endTime = new Date(in.readLong());
 
@@ -177,6 +190,8 @@ public class SearchObject implements Parcelable {
 		if (scoredWordList != null)
 			for (int i = 0; i < scoredWordList.size(); i += 1)
 				dest.writeParcelable(scoredWordList.get(i), flags);
+
+		dest.writeInt(isCompleted ? 1 : 0);
 
 		if (startTime != null)
 			dest.writeLong(startTime.getTime());
