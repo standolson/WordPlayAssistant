@@ -1,4 +1,4 @@
-package com.ppp.wordplayadvlib.appdata;
+package com.ppp.wordplayadvlib.model;
 
 import java.io.BufferedReader;
 import java.io.IOException;

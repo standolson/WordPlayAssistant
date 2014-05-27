@@ -34,7 +34,7 @@ public class WordDefinitionsAdapter extends ArrayAdapter<String> {
         View v = convertView;
 
         if (v == null)
-            v = inflater.inflate(R.layout.search_result, null);
+            v = inflater.inflate(R.layout.search_result, parent, false);
 
         String defn = getItem(position);
         if (defn != null)  {

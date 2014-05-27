@@ -26,7 +26,7 @@ public class AboutFragment extends BaseFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 
-		rootView = inflater.inflate(R.layout.about_fragment, null);
+		rootView = inflater.inflate(R.layout.about_fragment, container, false);
 
 		TextView releaseNotes = (TextView) rootView.findViewById(R.id.release_notes);
 		releaseNotes.setOnClickListener(this);

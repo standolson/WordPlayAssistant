@@ -17,9 +17,9 @@ import android.widget.TextView;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.analytics.Analytics;
-import com.ppp.wordplayadvlib.appdata.History;
-import com.ppp.wordplayadvlib.appdata.HistoryObject;
-import com.ppp.wordplayadvlib.appdata.SearchType;
+import com.ppp.wordplayadvlib.model.History;
+import com.ppp.wordplayadvlib.model.HistoryObject;
+import com.ppp.wordplayadvlib.model.SearchType;
 
 public class HistoryFragment extends BaseFragment
 	implements OnItemClickListener

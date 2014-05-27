@@ -1,6 +1,7 @@
 package com.ppp.wordplayadvlib.fragments;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,13 +32,6 @@ import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
 import com.ppp.wordplayadvlib.adapters.WordDefinitionsAdapter;
 import com.ppp.wordplayadvlib.adapters.WordListAdapter;
 import com.ppp.wordplayadvlib.analytics.Analytics;
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
-import com.ppp.wordplayadvlib.appdata.History;
-import com.ppp.wordplayadvlib.appdata.ScoredWord;
-import com.ppp.wordplayadvlib.appdata.SearchObject;
-import com.ppp.wordplayadvlib.appdata.SearchType;
-import com.ppp.wordplayadvlib.appdata.WordDefinition;
-import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.database.ScrabbleDatabaseClient;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.exceptions.WifiAuthException;
@@ -47,6 +42,13 @@ import com.ppp.wordplayadvlib.externalads.SponsoredAd;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd.EventCallback;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment.SearchProgressListener;
+import com.ppp.wordplayadvlib.model.DictionaryType;
+import com.ppp.wordplayadvlib.model.History;
+import com.ppp.wordplayadvlib.model.ScoredWord;
+import com.ppp.wordplayadvlib.model.SearchObject;
+import com.ppp.wordplayadvlib.model.SearchType;
+import com.ppp.wordplayadvlib.model.WordDefinition;
+import com.ppp.wordplayadvlib.model.WordSortState;
 import com.ppp.wordplayadvlib.networking.NetworkUtils;
 import com.ppp.wordplayadvlib.networking.RFC2229;
 import com.ppp.wordplayadvlib.utils.Debug;
@@ -72,6 +74,8 @@ public class SearchFragment extends BaseFragment
 
 	private AdMobAd interstitialAdMobAd = null;
 	private Bundle nextArgs = null;
+    private TreeSet<Integer> sponsoredAdPositions = new TreeSet<Integer>();
+    private SparseArray<SponsoredAd> sponsoredAdListAds = new SparseArray<SponsoredAd>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -106,18 +110,17 @@ public class SearchFragment extends BaseFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 
-		rootView = inflater.inflate(R.layout.search_fragment, null);
+		rootView = inflater.inflate(R.layout.search_fragment, container, false);
 
 		searchListView = (ListView) rootView.findViewById(R.id.search_result_list);
-	    searchListView.setOnItemClickListener(this);
 
 	    zeroView = rootView.findViewById(R.id.zero_results);
 	    elapsedTextView = (TextView) rootView.findViewById(R.id.elapsed_time);
 
 	    // If this is the free version, load an interstitial ad in
 	    // case the user tries to dive deeper into the search result
-	    if (WordPlayApp.getInstance().isFreeMode())
-	    	loadInterstitial();
+//	    if (WordPlayApp.getInstance().isFreeMode())
+//	    	loadInterstitial();
 
 	    // Restore state
 		if (savedInstanceState != null)  {
@@ -125,10 +128,16 @@ public class SearchFragment extends BaseFragment
 			searchObject = savedInstanceState.getParcelable("searchObject");
 			nextArgs = savedInstanceState.getBundle("nextArgs");
 
-			// If the search was completed, display the results
-			if (searchObject.isCompleted())
-				;
+			int[] positions = savedInstanceState.getIntArray("sponsoredAdListPositions");
+			sponsoredAdPositions = intArrayToTreeSet(positions);
 
+		}
+
+		if (searchObject != null)  {
+			if (searchObject.isCompleted())
+				displayResults();
+			else
+				startSearch();
 		}
 		else
 			startSearch();
@@ -177,45 +186,6 @@ public class SearchFragment extends BaseFragment
 		if (adAdapter != null)
 			adAdapter.resume();
 
-		// If we've already done a search, don't do another
-//		if (searchObject != null)  {
-//			displayResults(false);
-//			return;
-//		}
-
-		// Create the SearchObject
-//		searchObject = new SearchObject(getArguments());
-
-		// Add this search to the history
-//		History.getInstance().addHistory(getArguments());
-
-    	// Execute the search
-//    	switch (searchObject.getSearchType())  {
-//			case OPTION_DICTIONARY_EXACT_MATCH:
-//				onExactMatch();
-//				break;
-//			case OPTION_DICTIONARY_STARTS_WITH:
-//    			onStartsWith();
-//    			break;
-//    		case OPTION_DICTIONARY_ENDS_WITH:
-//    			onEndsWith();
-//    			break;
-//    		case OPTION_DICTIONARY_CONTAINS:
-//    			onContains();
-//    			break;
-//    		case OPTION_CROSSWORDS:
-//    			onCrosswords();
-//    			break;
-//    		case OPTION_ANAGRAMS:
-//    			onAnagram();
-//    			break;
-//    		case OPTION_THESAURUS:
-//    			onThesaurus();
-//    			break;
-//    		default:
-//    			break;
-//    	}
-
 	}
 
 	@Override
@@ -224,6 +194,7 @@ public class SearchFragment extends BaseFragment
 		super.onSaveInstanceState(savedInstanceState);
 		savedInstanceState.putParcelable("searchObject", searchObject);
 		savedInstanceState.putBundle("nextArgs", nextArgs);
+    	savedInstanceState.putIntArray("sponsoredAdListPositions", treeSetToIntArray(sponsoredAdPositions));
 	}
 
     @Override
@@ -231,6 +202,22 @@ public class SearchFragment extends BaseFragment
 	{
 
 		String word = null;
+
+		// If we're showing ads, we need to do some special stuff
+		if (adAdapter != null)  {
+
+			// If the user is trying to click on the sponsored ad,
+			// pass that click off to that view and be done.  If
+			// not, adjust the position according to the number of
+			// sponsored ads seen at the location.
+			if (adAdapter.isSponsoredAd(position))  {
+				adAdapter.performClick(position);
+				return;
+			}
+			else
+				position -= adAdapter.sponsoredAdCountAt(position);
+
+		}
 
 		if ((searchObject.getSearchType() == SearchType.OPTION_DICTIONARY_EXACT_MATCH) &&
 				(searchObject.getDictionary().isNormalDict()))  {
@@ -247,10 +234,6 @@ public class SearchFragment extends BaseFragment
 
 		}
 		else {
-
-			// If this is the free version, adjust the position
-			if (WordPlayApp.getInstance().isFreeMode())
-				position = adAdapter.getRealPosition(position);
 
 			Log.e(getClass().getSimpleName(), "onItemClick: position " + position);
 
@@ -394,12 +377,12 @@ public class SearchFragment extends BaseFragment
 		// If the user cancelled, the dialog was already dismissed
 		if (dialog != null)  {
 			dialog.dismiss();
-			displayResults(true);
+			displayResults();
 		}
 		
 	}
 
-	private void displayResults(boolean showToast)
+	private void displayResults()
 	{
 
 		if (searchObject.getDefinition() != null)
@@ -463,8 +446,15 @@ public class SearchFragment extends BaseFragment
 						R.layout.search_result,
 						searchObject.getDefinition().getWord(),
 						defnList);
-		searchListView.setAdapter(adapter);
-		registerForContextMenu(searchListView);
+
+		// If this is the free version, create that adapter
+		if (WordPlayApp.getInstance().isFreeMode())
+			adAdapter = new SponsoredAdAdapter(getActivity(), adapter, sponsoredAdPositions, sponsoredAdListAds);
+
+		// Attach the adapter to the ListView
+		searchListView.setAdapter(adAdapter != null ? adAdapter : adapter);
+		searchListView.setOnItemClickListener(this);
+//		registerForContextMenu(searchListView);
 		
 	}
 	
@@ -491,11 +481,12 @@ public class SearchFragment extends BaseFragment
 
 		// If this is the free version, create that adapter
 		if (WordPlayApp.getInstance().isFreeMode())
-			adAdapter = new SponsoredAdAdapter(getActivity(), adapter);
+			adAdapter = new SponsoredAdAdapter(getActivity(), adapter, sponsoredAdPositions, sponsoredAdListAds);
 
 		// Attach the adapter to the ListView
 		searchListView.setAdapter(adAdapter != null ? adAdapter : adapter);
-		registerForContextMenu(searchListView);
+		searchListView.setOnItemClickListener(this);
+//		registerForContextMenu(searchListView);
 		
 	}
 
@@ -522,11 +513,12 @@ public class SearchFragment extends BaseFragment
 
 		// If this is the free version, create that adapter
 		if (WordPlayApp.getInstance().isFreeMode())
-			adAdapter = new SponsoredAdAdapter(getActivity(), adapter);
+			adAdapter = new SponsoredAdAdapter(getActivity(), adapter, sponsoredAdPositions, sponsoredAdListAds);
 
 		// Attach the adapter to the ListView
 		searchListView.setAdapter(adAdapter != null ? adAdapter : adapter);
-		registerForContextMenu(searchListView);
+		searchListView.setOnItemClickListener(this);
+//		registerForContextMenu(searchListView);
 		
 	}
 
@@ -569,11 +561,11 @@ public class SearchFragment extends BaseFragment
 	private void showInterstitial(Bundle args)
 	{
 
-		InterstitialAd interstitialAd = interstitialAdMobAd.getInterstitialAd();
-
 		// If there is no interstitial ad or it hasn't been loaded
 		// yet, just run the search the user wanted
-		if ((interstitialAd == null) || !interstitialAd.isLoaded())  {
+		if ((interstitialAdMobAd == null) ||
+				(interstitialAdMobAd.getInterstitialAd() == null) ||
+					!interstitialAdMobAd.getInterstitialAd().isLoaded())  {
 			startNewSearch(args);
 			return;
 		}
@@ -584,7 +576,7 @@ public class SearchFragment extends BaseFragment
 		interstitialAdMobAd.getAdMobData().args = args;
 
 		// Show the ad
-		interstitialAd.show();
+		interstitialAdMobAd.getInterstitialAd().show();
 
 		
 	}
@@ -1522,5 +1514,36 @@ public class SearchFragment extends BaseFragment
 		task.execute();
 		
 	}
+
+    //
+    // Sponsored Ad Support
+    //
+
+    private int[] treeSetToIntArray(TreeSet<Integer> set)
+    {
+
+    	if (set == null)
+    		return null;
+
+		int[] retval = new int[set.size()];
+		int i = 0;
+        for (Integer aSet : set) {
+            retval[i] = aSet;
+            i += 1;
+        }
+
+    	return retval;
+
+    }
+
+    private TreeSet<Integer> intArrayToTreeSet(int[] ints)
+    {
+    	TreeSet<Integer> retval = new TreeSet<Integer>();
+    	if (ints == null)
+    		return retval;
+    	for (int i : ints)
+    		retval.add(i);
+    	return retval;
+    }
 
 }

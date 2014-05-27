@@ -21,11 +21,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ppp.wordplayadvlib.Constants;
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
-import com.ppp.wordplayadvlib.appdata.ScoredWord;
-import com.ppp.wordplayadvlib.appdata.WordSortState;
 import com.ppp.wordplayadvlib.exceptions.WifiAuthException;
 import com.ppp.wordplayadvlib.exceptions.WordPlayException;
+import com.ppp.wordplayadvlib.model.DictionaryType;
+import com.ppp.wordplayadvlib.model.ScoredWord;
+import com.ppp.wordplayadvlib.model.WordSortState;
 
 public class ScrabbleClient {
 	

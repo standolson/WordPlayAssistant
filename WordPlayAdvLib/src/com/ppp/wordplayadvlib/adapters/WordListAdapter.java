@@ -12,16 +12,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.appdata.SearchObject;
-import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.model.SearchObject;
+import com.ppp.wordplayadvlib.model.WordSortState;
 import com.ppp.wordplayadvlib.utils.Utils;
 
-public class WordListAdapter extends ArrayAdapter<String> implements SectionIndexer {
+public class WordListAdapter extends BaseAdapter implements SectionIndexer {
 
+	private ArrayList<String> items;
 	private SearchObject searchObject;
 
 	private LayoutInflater inflater;
@@ -34,8 +37,7 @@ public class WordListAdapter extends ArrayAdapter<String> implements SectionInde
 							SearchObject searchObject)
 	{
 
-		super(ctx, rowLayoutId, items);
-
+		this.items = items;
 		this.searchObject = searchObject;
 
 		this.inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -67,33 +69,37 @@ public class WordListAdapter extends ArrayAdapter<String> implements SectionInde
 
 	}
 
-//	@Override
-//	public int getCount() { return items.size(); }
-//
-//	@Override
-//	public String getItem(int position) { return items.get(position); }
+	@Override
+	public int getCount() { return items.size(); }
+
+	@Override
+	public Object getItem(int position) { return items.get(position); }
+
+	@Override
+	public long getItemId(int position) { return position; }
 
 	@Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
 
-        View v = convertView;
-        String word = getItem(position);
+        LinearLayout view = (LinearLayout) convertView;
+        String word = (String) getItem(position);
 
-        if (v == null)
-            v = inflater.inflate(R.layout.word_list, null);
+        if (view == null)
+            view = (LinearLayout) inflater.inflate(R.layout.word_list, parent, false);
+		view.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
         SpannableString ss =
         	Utils.convertToBoardString(word, word, searchObject.boardString, searchObject);
         if (ss != null)  {
-        	TextView wordView = (TextView) v.findViewById(R.id.wl_word);
+        	TextView wordView = (TextView) view.findViewById(R.id.wl_word);
         	if (wordView != null)  {
 //        		Debug.e(ss.toString());
         		wordView.setText(ss);
         	}
         }
-        
-        return v;
+
+        return view;
         
     }
 

@@ -10,9 +10,9 @@ import java.util.Set;
 import android.util.Log;
 
 import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
-import com.ppp.wordplayadvlib.appdata.ScoredWord;
-import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.model.DictionaryType;
+import com.ppp.wordplayadvlib.model.ScoredWord;
+import com.ppp.wordplayadvlib.model.WordSortState;
 import com.ppp.wordplayadvlib.networking.ScrabbleClient;
 
 public class ScrabbleDatabaseClient extends ScrabbleClient {

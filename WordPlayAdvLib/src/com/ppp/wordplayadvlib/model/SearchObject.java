@@ -1,4 +1,4 @@
-package com.ppp.wordplayadvlib.appdata;
+package com.ppp.wordplayadvlib.model;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,17 +34,19 @@ public class SearchObject implements Parcelable {
 	public SearchObject(Bundle b)
 	{
 
-		searchType = SearchType.fromInt(b.getInt("SearchType"));
-		searchString = b.getString("SearchString").toLowerCase();
-	    if (searchType == SearchType.OPTION_ANAGRAMS)
-	    	boardString = b.getString("BoardString").toLowerCase();
-	    else
-	    	boardString = "";
-		dictionary = DictionaryType.fromInt((int)b.getInt("Dictionary"));
-		if (dictionary == DictionaryType.DICTIONARY_UNKNOWN)
-			dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
-		wordScores = WordScoreState.fromInt(b.getInt("WordScores"));
-		wordSort = WordSortState.fromInt(b.getInt("WordSort"));
+		if (b != null)  {
+			searchType = SearchType.fromInt(b.getInt("SearchType"));
+			searchString = b.getString("SearchString").toLowerCase();
+		    if (searchType == SearchType.OPTION_ANAGRAMS)
+		    	boardString = b.getString("BoardString").toLowerCase();
+		    else
+		    	boardString = "";
+			dictionary = DictionaryType.fromInt((int)b.getInt("Dictionary"));
+			if (dictionary == DictionaryType.DICTIONARY_UNKNOWN)
+				dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
+			wordScores = WordScoreState.fromInt(b.getInt("WordScores"));
+			wordSort = WordSortState.fromInt(b.getInt("WordSort"));
+		}
 
 		isCompleted = false;
 

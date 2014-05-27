@@ -1,4 +1,4 @@
-package com.ppp.wordplayadvlib.appdata;
+package com.ppp.wordplayadvlib.model;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

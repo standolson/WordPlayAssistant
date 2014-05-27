@@ -130,6 +130,7 @@ public class AdMobAd extends SponsoredAd {
 		adView.setAdUnitId(adMobData.adUnitId);
 
 		return adView;
+
 	}
 
 	private View getSearchResultView()
@@ -208,7 +209,7 @@ public class AdMobAd extends SponsoredAd {
 
             if (useAdMobPlaceholders)
     			view.setBackgroundDrawable(new TextDrawable(context, context.getString(R.string.SponsoredAd), Color.WHITE, 22, 5));
-            view.loadAd(builder.build());
+			view.loadAd(builder.build());
 
 		}
 

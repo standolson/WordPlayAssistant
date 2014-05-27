@@ -1,4 +1,4 @@
-package com.ppp.wordplayadvlib.appdata;
+package com.ppp.wordplayadvlib.model;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -129,8 +129,10 @@ public class History {
 
 	public void addHistory(Bundle bundle)
 	{
-		HistoryObject newHistory = new HistoryObject(bundle);
-		addHistory(newHistory);
+		if (bundle != null)  {
+			HistoryObject newHistory = new HistoryObject(bundle);
+			addHistory(newHistory);
+		}
 	}
 
 	public HistoryObject getHistory(int position)

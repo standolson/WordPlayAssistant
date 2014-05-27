@@ -8,10 +8,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Environment;
 
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
-import com.ppp.wordplayadvlib.appdata.ScoredWord;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.database.schema.WordlistWord;
+import com.ppp.wordplayadvlib.model.DictionaryType;
+import com.ppp.wordplayadvlib.model.ScoredWord;
 
 public class WordlistDatabase extends ApplicationDatabase {
 

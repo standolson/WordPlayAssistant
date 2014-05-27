@@ -18,8 +18,8 @@ import android.text.style.ForegroundColorSpan;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.appdata.SearchObject;
-import com.ppp.wordplayadvlib.appdata.SearchType;
+import com.ppp.wordplayadvlib.model.SearchObject;
+import com.ppp.wordplayadvlib.model.SearchType;
 
 public class Utils {
 

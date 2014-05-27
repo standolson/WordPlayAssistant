@@ -28,11 +28,11 @@ import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.analytics.Analytics;
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
-import com.ppp.wordplayadvlib.appdata.JudgeHistory;
-import com.ppp.wordplayadvlib.appdata.JudgeHistoryObject;
-import com.ppp.wordplayadvlib.appdata.JudgeSearch;
-import com.ppp.wordplayadvlib.appdata.SearchType;
+import com.ppp.wordplayadvlib.model.DictionaryType;
+import com.ppp.wordplayadvlib.model.JudgeHistory;
+import com.ppp.wordplayadvlib.model.JudgeHistoryObject;
+import com.ppp.wordplayadvlib.model.JudgeSearch;
+import com.ppp.wordplayadvlib.model.SearchType;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordJudgeFragment extends BaseFragment

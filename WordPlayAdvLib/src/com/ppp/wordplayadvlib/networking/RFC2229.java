@@ -15,8 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ppp.wordplayadvlib.Constants;
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
 import com.ppp.wordplayadvlib.exceptions.WordPlayException;
+import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class RFC2229 {

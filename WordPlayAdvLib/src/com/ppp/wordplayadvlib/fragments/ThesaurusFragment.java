@@ -17,10 +17,10 @@ import android.widget.EditText;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.analytics.Analytics;
-import com.ppp.wordplayadvlib.appdata.DictionaryType;
-import com.ppp.wordplayadvlib.appdata.SearchType;
-import com.ppp.wordplayadvlib.appdata.WordScoreState;
-import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.model.DictionaryType;
+import com.ppp.wordplayadvlib.model.SearchType;
+import com.ppp.wordplayadvlib.model.WordScoreState;
+import com.ppp.wordplayadvlib.model.WordSortState;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class ThesaurusFragment extends BaseFragment implements View.OnClickListener {

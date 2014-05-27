@@ -16,9 +16,9 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.appdata.ScoredWord;
-import com.ppp.wordplayadvlib.appdata.SearchObject;
-import com.ppp.wordplayadvlib.appdata.WordSortState;
+import com.ppp.wordplayadvlib.model.ScoredWord;
+import com.ppp.wordplayadvlib.model.SearchObject;
+import com.ppp.wordplayadvlib.model.WordSortState;
 import com.ppp.wordplayadvlib.utils.Utils;
 
 public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements SectionIndexer {
@@ -74,18 +74,23 @@ public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements S
     	
         View v = convertView;
 
-        if (v == null)
-            v = inflater.inflate(R.layout.word_list, null);
+		if (v == null)
+		    v = inflater.inflate(R.layout.word_list, parent, false);
+//        if (v == null)
+//        	v = inflater.inflate(R.layout.test_list_item, parent, false);
 
         ScoredWord word = getItem(position);
         if (word != null)  {
-        	TextView wordView = (TextView)v.findViewById(R.id.wl_word);
+        	TextView wordView = (TextView) v.findViewById(R.id.wl_word);
         	SpannableString ss =
         		Utils.convertToBoardString(word.toString(), word.getWord(), searchObject.boardString, searchObject);
         	if (wordView != null)
         		wordView.setText(ss);
         }
-        
+
+//        TextView tv = (TextView) v.findViewById(R.id.test_text);
+//        tv.setText(String.format("Item %d", position));
+
         return v;
         
     }

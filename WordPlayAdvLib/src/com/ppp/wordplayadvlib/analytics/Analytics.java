@@ -9,7 +9,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.appdata.SearchObject;
+import com.ppp.wordplayadvlib.model.SearchObject;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class Analytics {

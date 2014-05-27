@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/wl_word"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:padding="5dip"
-	android:text="Word Goes Here"
-	android:textColor="@color/white"
-	android:textSize="20dip"
-	android:textStyle="bold"
-	android:typeface="serif"
-	android:background="@drawable/list_item" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+	<TextView
+		android:id="@+id/wl_word"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:padding="5dip"
+		android:text="Word Goes Here"
+		android:textColor="@color/white"
+		android:textSize="20dip"
+		android:textStyle="bold"
+		android:typeface="serif"
+		android:background="@drawable/list_item" />
+
+</LinearLayout>

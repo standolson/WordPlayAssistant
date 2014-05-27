@@ -1,10 +1,12 @@
 package com.ppp.wordplayadvlib.adapters;
 
-import java.util.ArrayList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import android.content.Context;
+import android.database.DataSetObservable;
+import android.database.DataSetObserver;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,24 +23,25 @@ import com.ppp.wordplayadvlib.externalads.SponsoredAd.PlacementType;
 
 public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
-	private static final int MAX_ADMOB_ADS = 2;
+	private final DataSetObservable observers = new DataSetObservable();
 
 	private Context context;
 	private BaseAdapter delegate;
-
 	protected TreeSet<Integer> sponsoredAdPositions;
 	private SparseArray<SponsoredAd> sponsoredAds;
-	private ArrayList<SponsoredAd> availableAds;
 
-	public SponsoredAdAdapter(Context context, BaseAdapter delegate)
+	public SponsoredAdAdapter(Context context,
+								BaseAdapter delegate,
+								TreeSet<Integer> sponsoredAdPositions,
+								SparseArray<SponsoredAd> sponsoredAds)
 	{
 
 		this.context = context;
 		this.delegate = delegate;
+		this.sponsoredAdPositions = sponsoredAdPositions;
+		this.sponsoredAds = sponsoredAds;
 
-		sponsoredAdPositions = new TreeSet<Integer>();
 		sponsoredAds = new SparseArray<SponsoredAd>();
-		availableAds = new ArrayList<SponsoredAd>(2);
 
 	}
 
@@ -51,11 +54,13 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 			return 0;
 
 		int trueCount = delegate.getCount();
-		int adCount = sponsoredAds.size();
+		int adCount = sponsoredAdPositions.size();
 
 		// If no results, then show no ads
 		if (trueCount == 0)
 			return trueCount;
+
+		Log.e(getClass().getSimpleName(), "getCount: " + (trueCount + adCount));
 
 		return trueCount + adCount;
 
@@ -64,32 +69,37 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public Object getItem(int position)
 	{
-		if (delegate == null)
+		Object obj = null;
+		if (delegate == null)  {
+			Log.e(getClass().getSimpleName(), "getItem: delegate == null");
 			return null;
-		if (isSponsoredAd(position))
+		}
+		if (isSponsoredAd(position))  {
+			Log.e(getClass().getSimpleName(), "getItem: position " + position + " = isSponsoredAd");
 			return null;
-		return delegate.getItem(getRealPosition(position));
+		}
+		obj = delegate.getItem(getRealPosition(position));
+		Log.e(getClass().getSimpleName(), "getItem: position " + position + " = " + obj);
+		return obj;
 	}
 
 	@Override
-	public long getItemId(int position)
-	{
-		if (delegate == null)
-			return position;
-		return delegate.getItemId(position);
-	}
+	public long getItemId(int position) { return position; }
 
 	@Override
 	public int getItemViewType(int position)
 	{
+		int type = -1;
 		if (delegate != null)  {
 			if (isSponsoredAd(position))
-				return delegate.getViewTypeCount();
+				type = delegate.getViewTypeCount();
 			else
-				return delegate.getItemViewType(getRealPosition(position));
+				type = delegate.getItemViewType(getRealPosition(position));
 		}
 		else
-			return 0;
+			type = 0;
+		Log.e(getClass().getSimpleName(), "getItemViewType: position " + position + " = " + type);
+		return type;
 	}
 
 	@Override
@@ -97,7 +107,9 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	{
 		if (delegate == null)
 			return 1;
-		return delegate.getViewTypeCount() + 1;
+		int delegateCount = delegate.getViewTypeCount();
+		Log.e(getClass().getSimpleName(), "getViewTypeCount: " + (delegateCount + 1));
+		return delegateCount + 1;
 	}
 
 	@Override
@@ -111,6 +123,8 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 			return getEmptyView();
 
 		if (isSponsoredAd(position))  {
+
+			Log.e(getClass().getSimpleName(), "isSponsoredAd: " + position);
 
 			// Add this position to the list of positions
 			sponsoredAdPositions.add(position);
@@ -127,17 +141,9 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 				// Create a new ad if we haven't loaded the maximum number
 				// of AdMob ads.  If we haven't, then we use one of the ads
 				// we already have.
-				AdMobAd adMobAd = null;
-				if (availableAds.size() < MAX_ADMOB_ADS)  {
-					AdMobData adMobData = new AdMobData(adUnitIds[availableAds.size()]);
-					adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position, adMobData);
-					adMobAd.setSponsoredAdAdapter(this);
-					availableAds.add(adMobAd);
-				}
-				else {
-					adMobAd = (AdMobAd) availableAds.get(sponsoredAds.size() % 2);
-					ad = adMobAd;
-				}
+				AdMobData adMobData = new AdMobData(adUnitIds[sponsoredAds.size() % adUnitIds.length]);
+				AdMobAd adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position, adMobData);
+				adMobAd.setSponsoredAdAdapter(this);
 
 				// Either load the ad or get the view we already have
 				View view = adMobAd.getView();
@@ -172,8 +178,10 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 		}
 
 		// This is a regular item...just return it now
-		else
+		else {
+			Log.e(getClass().getSimpleName(), "NOT isSponsoredAd: " + position);
 			return delegate.getView(getRealPosition(position), convertView, parent);
+		}
 
 	}
 
@@ -185,43 +193,33 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
     public void pause()
     {
-
-    	if ((availableAds == null) || (availableAds.size() == 0))
-    		return;
-
-    	for (SponsoredAd ad : availableAds)
-    		if (ad != null)
-    			ad.pause();
-
+    	for (int i = 0; i < sponsoredAds.size(); i += 1)  {
+    		int key = sponsoredAds.keyAt(i);
+    		SponsoredAd ad = sponsoredAds.get(key);
+    		ad.pause();
+    	}
     }
 
     public void resume()
     {
-
-    	if ((availableAds == null) || (availableAds.size() == 0))
-    		return;
-
-    	for (SponsoredAd ad : availableAds)
-    		if (ad != null)
-    			ad.resume();
-
+    	for (int i = 0; i < sponsoredAds.size(); i += 1)  {
+    		int key = sponsoredAds.keyAt(i);
+    		SponsoredAd ad = sponsoredAds.get(key);
+    		ad.resume();
+    	}
     }
 
     public void destroy()
     {
-
-    	if ((availableAds == null) || (availableAds.size() == 0))
-    		return;
-
-    	for (SponsoredAd ad : availableAds)
-    		if (ad != null)
-    			ad.destroy();
-
+    	for (int i = 0; i < sponsoredAds.size(); i += 1)  {
+    		int key = sponsoredAds.keyAt(i);
+    		SponsoredAd ad = sponsoredAds.get(key);
+    		ad.destroy();
+    	}
     	delegate = null;
-
     }
 
-	private boolean isSponsoredAd(int position)
+	public boolean isSponsoredAd(int position)
 	{
 
 		// If we already know this position is and ad, quit now
@@ -245,7 +243,26 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
 	}
 
-	private int sponsoredAdCountAt(int position)
+	public void performClick(int position)
+	{
+
+		// If not a sponsored ad at this position, skip it
+		if (!sponsoredAdPositions.contains(position))
+			return;
+
+		// Get the SponsoredAd for this position and pass the click
+		// on to its view (if it has one)
+		SponsoredAd ad = sponsoredAds.get(position);
+		if (ad != null)  {
+			Log.e(getClass().getSimpleName(), "performClick: position " + position);
+			View v = ad.getView();
+			if (v != null)
+				v.performClick();
+		}
+
+	}
+
+	public int sponsoredAdCountAt(int position)
 	{
 
 		// Get the ordered set of the positions of sponsored ads whose
@@ -283,14 +300,15 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
 	private View getEmptyView()
 	{
-		View empty = new View(context);
-		empty.setLayoutParams(new AbsListView.LayoutParams(LayoutParams.FILL_PARENT, 0));
-		return empty;
+		View emptyView = new View(context);
+		emptyView.setLayoutParams(new AbsListView.LayoutParams(LayoutParams.FILL_PARENT, 0));
+		return emptyView;
 	}
 
 	@Override
 	public Object[] getSections()
 	{
+		Log.e(getClass().getSimpleName(), "getSections");
 		if (delegate instanceof SectionIndexer)
 			return ((SectionIndexer) delegate).getSections();
 		else
@@ -300,6 +318,7 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public int getPositionForSection(int section)
 	{
+		Log.e(getClass().getSimpleName(), "getPositionForSection");
 		if (delegate instanceof SectionIndexer)
 			return ((SectionIndexer) delegate).getPositionForSection(section);
 		else
@@ -309,10 +328,54 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public int getSectionForPosition(int position)
 	{
+		Log.e(getClass().getSimpleName(), "getSectionForPosition");
 		if (delegate instanceof SectionIndexer)
 			return ((SectionIndexer) delegate).getSectionForPosition(position);
 		else
 			return 0;
+	}
+
+	@Override
+	public boolean hasStableIds() { return true; }
+
+	@Override
+	public boolean isEnabled(int position) { return true; }
+
+	@Override
+	public View getDropDownView(int position, View convertView, ViewGroup parent)
+	{
+		return getView(position, convertView, parent);
+	}
+
+	@Override
+	public boolean isEmpty() { return getCount() == 0; }
+
+	@Override
+	public void notifyDataSetChanged()
+	{
+		Log.e(getClass().getSimpleName(), "notifyDataSetChanged");
+		observers.notifyChanged();
+	}
+
+	@Override
+	public void notifyDataSetInvalidated()
+	{
+		Log.e(getClass().getSimpleName(), "notifyDataSetInvalidated");
+		observers.notifyInvalidated();
+	}
+
+	@Override
+	public void registerDataSetObserver(DataSetObserver observer)
+	{
+		Log.e(getClass().getSimpleName(), "registerDataSetObserver: " + observer);
+		observers.registerObserver(observer);
+	}
+
+	@Override
+	public void unregisterDataSetObserver(DataSetObserver observer)
+	{
+		Log.e(getClass().getSimpleName(), "unregisterDataSetObserver: " + observer);
+		observers.unregisterObserver(observer);
 	}
 
 }
