@@ -201,8 +201,8 @@ public class AnagramsFragment extends BaseFragment
 		final EditText anagramsTrayText = (EditText)rootView.findViewById(R.id.AnagramsTrayText);
 		final EditText anagramsBoardText = (EditText)rootView.findViewById(R.id.AnagramsBoardText);
 
-		searchString = anagramsTrayText.getText().toString();
-		boardString = anagramsBoardText.getText().toString();
+		searchString = anagramsTrayText.getText().toString().toLowerCase();
+		boardString = anagramsBoardText.getText().toString().toLowerCase();
 		dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 		wordScores = WordScoreState.fromInt(anagramScoreToggle.getState() + 1);
 		wordSort = WordSortState.fromInt(anagramSortToggle.getState() + 1);

@@ -13,8 +13,6 @@ public class ExactMatchFragment extends BaseFragment {
 
 	private View rootView;
 
-	private String word;
-
 	public ExactMatchFragment() { super(); }
 
 	@Override
@@ -25,7 +23,7 @@ public class ExactMatchFragment extends BaseFragment {
 
 		Bundle args = getArguments();
 	    String contents = args.getString("ExactMatchResult");
-	    word = args.getString("ExactMatchString");
+	    String word = args.getString("ExactMatchString");
 
 	    TextView text = (TextView) rootView.findViewById(R.id.em_textview);
 	    text.setText(contents);

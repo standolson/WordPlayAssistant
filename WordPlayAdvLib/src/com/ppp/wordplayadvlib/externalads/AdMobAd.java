@@ -123,7 +123,7 @@ public class AdMobAd extends SponsoredAd {
 	private AdView getAdMobAdView(AdSize adSize)
 	{
 
-		Debug.e("AdMobAd: creating AdView for '" + adMobData.adUnitId + "'");
+//		Debug.e("AdMobAd: creating AdView for '" + adMobData.adUnitId + "'");
 
 		AdView adView = new AdView(context);
 		adView.setAdSize(adSize);
@@ -153,7 +153,7 @@ public class AdMobAd extends SponsoredAd {
 
 		if (view != null)  {
 
-			Log.e(getClass().getSimpleName(), "AdMob SRP: loading ad for position " + listPosition);
+//			Log.e(getClass().getSimpleName(), "AdMob SRP: loading ad for position " + listPosition);
 
 			final AdRequest.Builder builder = getAdBuilder();
 
@@ -311,7 +311,7 @@ public class AdMobAd extends SponsoredAd {
 	{
 		AdRequest.Builder builder = new AdRequest.Builder();
 		builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
-//		builder.addTestDevice("06B0FEFF5F6B39F3B712494ECD97757A");
+		builder.addTestDevice("06B0FEFF5F6B39F3B712494ECD97757A");
 		return builder;
 	}
 

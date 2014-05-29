@@ -175,4 +175,6 @@ public class WordPlayApp extends Application
 
 	public String getAdMobInterstitialUnitId() { return null; }
 
+	public String getWordJudgeAdUnitId() { return null; }
+
 }

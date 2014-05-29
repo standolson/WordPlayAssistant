@@ -144,7 +144,7 @@ public class CrosswordsFragment extends BaseFragment
     	WordSortState wordSort = WordSortState.WORD_SORT_UNKNOWN;
     	DictionaryType dictionary = DictionaryType.DICTIONARY_UNKNOWN;
 
-		searchString = crosswordsText.getText().toString();
+		searchString = crosswordsText.getText().toString().toLowerCase();
 		dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 		wordScores = WordScoreState.WORD_SCORE_STATE_OFF;
 		wordSort = WordSortState.WORD_SORT_BY_ALPHA;

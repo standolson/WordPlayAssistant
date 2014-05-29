@@ -121,7 +121,7 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 
 		final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
 
-		searchString = dictText.getText().toString();
+		searchString = dictText.getText().toString().toLowerCase();
 		dictionary = DictionaryType.DICTIONARY_DICT_DOT_ORG;
 		wordScores = WordScoreState.WORD_SCORE_UNKNOWN;
 		wordSort = WordSortState.WORD_SORT_UNKNOWN;

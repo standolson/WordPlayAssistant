@@ -24,7 +24,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.InterstitialAd;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.adapters.ScoredWordListAdapter;
@@ -83,8 +82,6 @@ public class SearchFragment extends BaseFragment
 
 		super.onCreate(savedInstanceState);
 
-		Log.e(getClass().getSimpleName(), "retain instance = " + getRetainInstance());
-
 	    // Create the new connection to the dictionary server used for this search
     	dictServer = new RFC2229();
 
@@ -119,8 +116,8 @@ public class SearchFragment extends BaseFragment
 
 	    // If this is the free version, load an interstitial ad in
 	    // case the user tries to dive deeper into the search result
-//	    if (WordPlayApp.getInstance().isFreeMode())
-//	    	loadInterstitial();
+	    if (WordPlayApp.getInstance().isFreeMode())
+	    	loadInterstitial();
 
 	    // Restore state
 		if (savedInstanceState != null)  {

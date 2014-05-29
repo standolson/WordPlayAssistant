@@ -4,8 +4,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import android.content.Context;
-import android.database.DataSetObservable;
-import android.database.DataSetObserver;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
@@ -23,7 +21,7 @@ import com.ppp.wordplayadvlib.externalads.SponsoredAd.PlacementType;
 
 public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
-	private final DataSetObservable observers = new DataSetObservable();
+//	private final DataSetObservable observers = new DataSetObservable();
 
 	private Context context;
 	private BaseAdapter delegate;
@@ -60,8 +58,6 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 		if (trueCount == 0)
 			return trueCount;
 
-		Log.e(getClass().getSimpleName(), "getCount: " + (trueCount + adCount));
-
 		return trueCount + adCount;
 
 	}
@@ -69,18 +65,11 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public Object getItem(int position)
 	{
-		Object obj = null;
-		if (delegate == null)  {
-			Log.e(getClass().getSimpleName(), "getItem: delegate == null");
+		if (delegate == null)
 			return null;
-		}
-		if (isSponsoredAd(position))  {
-			Log.e(getClass().getSimpleName(), "getItem: position " + position + " = isSponsoredAd");
+		if (isSponsoredAd(position))
 			return null;
-		}
-		obj = delegate.getItem(getRealPosition(position));
-		Log.e(getClass().getSimpleName(), "getItem: position " + position + " = " + obj);
-		return obj;
+		return delegate.getItem(getRealPosition(position));
 	}
 
 	@Override
@@ -89,17 +78,14 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public int getItemViewType(int position)
 	{
-		int type = -1;
 		if (delegate != null)  {
 			if (isSponsoredAd(position))
-				type = delegate.getViewTypeCount();
+				return delegate.getViewTypeCount();
 			else
-				type = delegate.getItemViewType(getRealPosition(position));
+				return delegate.getItemViewType(getRealPosition(position));
 		}
 		else
-			type = 0;
-		Log.e(getClass().getSimpleName(), "getItemViewType: position " + position + " = " + type);
-		return type;
+			return 0;
 	}
 
 	@Override
@@ -107,9 +93,7 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	{
 		if (delegate == null)
 			return 1;
-		int delegateCount = delegate.getViewTypeCount();
-		Log.e(getClass().getSimpleName(), "getViewTypeCount: " + (delegateCount + 1));
-		return delegateCount + 1;
+		return delegate.getViewTypeCount() + 1;
 	}
 
 	@Override
@@ -123,8 +107,6 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 			return getEmptyView();
 
 		if (isSponsoredAd(position))  {
-
-			Log.e(getClass().getSimpleName(), "isSponsoredAd: " + position);
 
 			// Add this position to the list of positions
 			sponsoredAdPositions.add(position);
@@ -157,7 +139,7 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
 				// Return a zero height view to hide where the ad is going
 				// to go until it is loaded
-				if (((ad != null) && ad.isLoaded()) || AdMobAd.useAdMobPlaceholders)
+				if (AdMobAd.useAdMobPlaceholders)
 					return view;
 				else
 					return getEmptyView();
@@ -178,10 +160,8 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 		}
 
 		// This is a regular item...just return it now
-		else {
-			Log.e(getClass().getSimpleName(), "NOT isSponsoredAd: " + position);
+		else
 			return delegate.getView(getRealPosition(position), convertView, parent);
-		}
 
 	}
 
@@ -308,7 +288,6 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public Object[] getSections()
 	{
-		Log.e(getClass().getSimpleName(), "getSections");
 		if (delegate instanceof SectionIndexer)
 			return ((SectionIndexer) delegate).getSections();
 		else
@@ -318,7 +297,6 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public int getPositionForSection(int section)
 	{
-		Log.e(getClass().getSimpleName(), "getPositionForSection");
 		if (delegate instanceof SectionIndexer)
 			return ((SectionIndexer) delegate).getPositionForSection(section);
 		else
@@ -328,54 +306,53 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public int getSectionForPosition(int position)
 	{
-		Log.e(getClass().getSimpleName(), "getSectionForPosition");
 		if (delegate instanceof SectionIndexer)
 			return ((SectionIndexer) delegate).getSectionForPosition(position);
 		else
 			return 0;
 	}
 
-	@Override
-	public boolean hasStableIds() { return true; }
-
-	@Override
-	public boolean isEnabled(int position) { return true; }
-
-	@Override
-	public View getDropDownView(int position, View convertView, ViewGroup parent)
-	{
-		return getView(position, convertView, parent);
-	}
-
-	@Override
-	public boolean isEmpty() { return getCount() == 0; }
-
-	@Override
-	public void notifyDataSetChanged()
-	{
-		Log.e(getClass().getSimpleName(), "notifyDataSetChanged");
-		observers.notifyChanged();
-	}
-
-	@Override
-	public void notifyDataSetInvalidated()
-	{
-		Log.e(getClass().getSimpleName(), "notifyDataSetInvalidated");
-		observers.notifyInvalidated();
-	}
-
-	@Override
-	public void registerDataSetObserver(DataSetObserver observer)
-	{
-		Log.e(getClass().getSimpleName(), "registerDataSetObserver: " + observer);
-		observers.registerObserver(observer);
-	}
-
-	@Override
-	public void unregisterDataSetObserver(DataSetObserver observer)
-	{
-		Log.e(getClass().getSimpleName(), "unregisterDataSetObserver: " + observer);
-		observers.unregisterObserver(observer);
-	}
+//	@Override
+//	public boolean hasStableIds() { return true; }
+//
+//	@Override
+//	public boolean isEnabled(int position) { return true; }
+//
+//	@Override
+//	public View getDropDownView(int position, View convertView, ViewGroup parent)
+//	{
+//		return getView(position, convertView, parent);
+//	}
+//
+//	@Override
+//	public boolean isEmpty() { return getCount() == 0; }
+//
+//	@Override
+//	public void notifyDataSetChanged()
+//	{
+//		Log.e(getClass().getSimpleName(), "notifyDataSetChanged");
+//		observers.notifyChanged();
+//	}
+//
+//	@Override
+//	public void notifyDataSetInvalidated()
+//	{
+//		Log.e(getClass().getSimpleName(), "notifyDataSetInvalidated");
+//		observers.notifyInvalidated();
+//	}
+//
+//	@Override
+//	public void registerDataSetObserver(DataSetObserver observer)
+//	{
+//		Log.e(getClass().getSimpleName(), "registerDataSetObserver: " + observer);
+//		observers.registerObserver(observer);
+//	}
+//
+//	@Override
+//	public void unregisterDataSetObserver(DataSetObserver observer)
+//	{
+//		Log.e(getClass().getSimpleName(), "unregisterDataSetObserver: " + observer);
+//		observers.unregisterObserver(observer);
+//	}
 
 }

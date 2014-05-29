@@ -19,4 +19,10 @@ public class WordPalFreeApp extends WordPlayApp {
 		return "ca-app-pub-8807533815804449/5730949590";
 	}
 
+	@Override
+	public String getWordJudgeAdUnitId()
+	{
+		return "ca-app-pub-8807533815804449/5584675594";
+	}
+
 }

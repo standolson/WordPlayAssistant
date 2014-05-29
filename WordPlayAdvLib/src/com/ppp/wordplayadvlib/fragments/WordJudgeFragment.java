@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,12 +23,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.analytics.Analytics;
+import com.ppp.wordplayadvlib.externalads.AdMobAd;
+import com.ppp.wordplayadvlib.externalads.AdMobData;
+import com.ppp.wordplayadvlib.externalads.SponsoredAd;
+import com.ppp.wordplayadvlib.externalads.SponsoredAd.EventCallback;
+import com.ppp.wordplayadvlib.externalads.SponsoredAd.PlacementType;
 import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.model.JudgeHistory;
 import com.ppp.wordplayadvlib.model.JudgeHistoryObject;
@@ -37,7 +45,8 @@ import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordJudgeFragment extends BaseFragment
 	implements
-		View.OnClickListener
+		View.OnClickListener,
+		EventCallback
 {
 
 	private View rootView;
@@ -45,7 +54,10 @@ public class WordJudgeFragment extends BaseFragment
 	private EditText wjText = null;
 	private static ListView wjListview = null;
 	private static WordJudgeAdapter wjAdapter = null;
+	private LinearLayout adView = null;
+
 	private JudgeSearch wjSearchObj = null;
+	private AdMobAd adMobAd = null;
 
 	//
 	// Activity Methods
@@ -178,6 +190,12 @@ public class WordJudgeFragment extends BaseFragment
 			public void onClick(View v) { wjText.setText(""); }
 		});
 
+        // Load an ad into the AdView
+//        if (WordPlayApp.getInstance().isFreeMode())  {
+//        	adView = (LinearLayout) rootView.findViewById(R.id.WordJudgeAdView);
+//        	getAdMobView();
+//        }
+
         updateJudgeHistoryAdapter();
 
 	}
@@ -189,7 +207,7 @@ public class WordJudgeFragment extends BaseFragment
     private void startWordJudgeSearch()
     {
 
-		String searchString = wjText.getText().toString();
+		String searchString = wjText.getText().toString().toLowerCase();
 		DictionaryType dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 
 		wjSearchObj = new JudgeSearch();
@@ -296,5 +314,39 @@ public class WordJudgeFragment extends BaseFragment
     		Toast.makeText(getActivity(), "Cannot search for unknown words", Toast.LENGTH_SHORT).show();
 
     }
+
+    private void getAdMobView()
+    {
+    	String adUnitId = WordPlayApp.getInstance().getWordJudgeAdUnitId();
+    	AdMobData adMobData = new AdMobData(adUnitId);
+    	adMobAd = new AdMobAd(getActivity(), PlacementType.ListSearchResult, adMobData);
+    	adMobAd.setEventCallback(this);
+    	adMobAd.getView();
+    }
+
+	@Override
+	public void onLoaded(SponsoredAd ad)
+	{
+		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onLoaded");
+		adView.addView(adMobAd.getView());
+	}
+
+	@Override
+	public void onError(SponsoredAd ad)
+	{
+		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onError");
+	}
+
+	@Override
+	public void onOpened(SponsoredAd ad)
+	{
+		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onOpened");		
+	}
+
+	@Override
+	public void onClosed(SponsoredAd ad)
+	{
+		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onClosed");
+	}
 
 }

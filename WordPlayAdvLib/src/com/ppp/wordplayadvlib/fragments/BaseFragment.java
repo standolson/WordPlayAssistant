@@ -494,7 +494,7 @@ public class BaseFragment extends Fragment
     			String destText = dest.toString();
     			String resultText =
     				destText.substring(0, dstart) + source.subSequence(start, end) + destText.substring(dend);
-    			if (!resultText.matches("([a-zA-Z]+,?)*"))  {
+    			if (!resultText.matches("([a-zA-Z]+,\\?)*"))  {
     				if (source instanceof Spanned)
     					return new SpannableString("");
     				else
@@ -513,7 +513,7 @@ public class BaseFragment extends Fragment
     			String destText = dest.toString();
     			String resultText =
     				destText.substring(0, dstart) + source.subSequence(start, end) + destText.substring(dend);
-    			if (!resultText.matches("[a-zA-Z?.]*"))  {
+    			if (!resultText.matches("[a-zA-Z\\?\\.]*"))  {
     				if (source instanceof Spanned)
     					return new SpannableString("");
     				else

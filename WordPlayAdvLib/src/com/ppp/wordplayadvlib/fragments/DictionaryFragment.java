@@ -186,7 +186,7 @@ public class DictionaryFragment extends BaseFragment
 		final EditText dictText = (EditText)rootView.findViewById(R.id.DictionaryText);
 
 		searchType = SearchType.fromInt(searchTypeToggle.getState());
-		searchString = dictText.getText().toString();
+		searchString = dictText.getText().toString().toLowerCase();
 		dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 		if (dictionary.isScrabbleDict())  {
     		wordScores = WordScoreState.fromInt(dictScoreToggle.getState() + 1);
