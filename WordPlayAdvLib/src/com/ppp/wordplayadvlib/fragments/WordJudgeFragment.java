@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -28,6 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdSize;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.analytics.Analytics;
@@ -72,11 +74,40 @@ public class WordJudgeFragment extends BaseFragment
 	}
 
 	@Override
+	public void onPause()
+	{
+
+		super.onPause();
+
+		if (adMobAd != null)
+			adMobAd.pause();
+
+	}
+
+	@Override
 	public void onResume()
 	{
+
 		super.onResume();
+
 		Analytics.screenView(Analytics.WORD_JUDGE_SCREEN);
+
 		setButtonState();
+
+		if (adMobAd != null)
+			adMobAd.resume();
+
+	}
+
+	@Override
+	public void onDestroy()
+	{
+
+		super.onDestroy();
+
+		if (adMobAd != null)
+			adMobAd.destroy();
+
 	}
 
 	@Override
@@ -190,11 +221,18 @@ public class WordJudgeFragment extends BaseFragment
 			public void onClick(View v) { wjText.setText(""); }
 		});
 
-        // Load an ad into the AdView
-//        if (WordPlayApp.getInstance().isFreeMode())  {
-//        	adView = (LinearLayout) rootView.findViewById(R.id.WordJudgeAdView);
-//        	getAdMobView();
-//        }
+        // Load an ad into the AdView if we don't already have one.
+        // If we have one and it is loaded, place it into the view.
+    	adView = (LinearLayout) rootView.findViewById(R.id.WordJudgeAdView);
+        if (WordPlayApp.getInstance().isFreeMode())  {
+        	setupAdView();
+        	if (adMobAd == null)
+        		loadAdMobAd();
+        	else {
+        		if ((adMobAd.getView() != null) && adMobAd.isLoaded())
+        			showAdMobAd(adMobAd);
+        	}
+        }
 
         updateJudgeHistoryAdapter();
 
@@ -315,20 +353,57 @@ public class WordJudgeFragment extends BaseFragment
 
     }
 
-    private void getAdMobView()
+    //
+    // AdView
+    //
+
+    private void setupAdView()
     {
+
+		float density = getResources().getDisplayMetrics().density;
+//		int width = Math.round(AdSize.BANNER.getWidth() * density);
+		DisplayMetrics metrics = new DisplayMetrics();
+		getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		int width = metrics.widthPixels;
+		int height = Math.round(AdSize.BANNER.getHeight() * density);
+
+		Log.e(getClass().getSimpleName(), "width " + width);
+		Log.e(getClass().getSimpleName(), "height " + height);
+
+		LinearLayout.LayoutParams params =
+			new LinearLayout.LayoutParams(width, height);
+		adView.setLayoutParams(params);
+
+    }
+
+    private void loadAdMobAd()
+    {
+
+    	// Create the ad
     	String adUnitId = WordPlayApp.getInstance().getWordJudgeAdUnitId();
     	AdMobData adMobData = new AdMobData(adUnitId);
     	adMobAd = new AdMobAd(getActivity(), PlacementType.ListSearchResult, adMobData);
+
+    	// Load it
     	adMobAd.setEventCallback(this);
     	adMobAd.getView();
+
+    }
+
+    private void showAdMobAd(SponsoredAd ad)
+    {
+    	if ((ad.getView() != null) && (ad.getView().getParent() != null))  {
+    		LinearLayout parent = (LinearLayout) ad.getView().getParent();
+    		parent.removeAllViews();
+    	}
+		adView.addView(ad.getView());    	
     }
 
 	@Override
 	public void onLoaded(SponsoredAd ad)
 	{
 		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onLoaded");
-		adView.addView(adMobAd.getView());
+		showAdMobAd(ad);
 	}
 
 	@Override

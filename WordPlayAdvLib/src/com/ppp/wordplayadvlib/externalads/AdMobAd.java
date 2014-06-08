@@ -24,7 +24,7 @@ public class AdMobAd extends SponsoredAd {
 	private InterstitialAd interstitialAd;
 
 	private static View emptyView = null;
-	public static boolean useAdMobPlaceholders = false;
+	public static boolean useAdMobPlaceholders = true;
 
 	public AdMobAd(Context context, PlacementType placementType, AdMobData adMobData)
 	{

@@ -22,7 +22,7 @@ public class WordPalFreeApp extends WordPlayApp {
 	@Override
 	public String getWordJudgeAdUnitId()
 	{
-		return "ca-app-pub-8807533815804449/5584675594";
+		return "ca-app-pub-8807533815804449/8004601597";
 	}
 
 }
