@@ -1,14 +1,18 @@
 package com.ppp.wordplayadvlib.fragments;
 
-import java.util.LinkedList;
+import java.util.TreeSet;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
-import android.util.DisplayMetrics;
-import android.util.Log;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,56 +24,79 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdSize;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
+import com.ppp.wordplayadvlib.adapters.WordJudgeAdapter;
 import com.ppp.wordplayadvlib.analytics.Analytics;
-import com.ppp.wordplayadvlib.externalads.AdMobAd;
-import com.ppp.wordplayadvlib.externalads.AdMobData;
+import com.ppp.wordplayadvlib.database.ScrabbleDatabaseClient;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd;
-import com.ppp.wordplayadvlib.externalads.SponsoredAd.EventCallback;
-import com.ppp.wordplayadvlib.externalads.SponsoredAd.PlacementType;
+import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment;
+import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment.SearchProgressListener;
 import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.model.JudgeHistory;
 import com.ppp.wordplayadvlib.model.JudgeHistoryObject;
-import com.ppp.wordplayadvlib.model.JudgeSearch;
+import com.ppp.wordplayadvlib.model.JudgeSearchObject;
 import com.ppp.wordplayadvlib.model.SearchType;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordJudgeFragment extends BaseFragment
 	implements
 		View.OnClickListener,
-		EventCallback
+		OnItemClickListener,
+		SearchProgressListener
 {
 
 	private View rootView;
 	private Button wjButton = null;
 	private EditText wjText = null;
-	private static ListView wjListview = null;
-	private static WordJudgeAdapter wjAdapter = null;
-	private LinearLayout adView = null;
+	private ListView wjListview = null;
+	private SponsoredAdAdapter wjAdAdapter = null;
+	private WordJudgeAdapter wjAdapter = null;
 
-	private JudgeSearch wjSearchObj = null;
-	private AdMobAd adMobAd = null;
+	private JudgeSearchObject judgeSearchObject = null;
+
+	private static AsyncTask<Void, Void, Void> task;
+	private LocalBroadcastManager broadcastManager;
+
+    private TreeSet<Integer> sponsoredAdPositions = new TreeSet<Integer>();
+    private SparseArray<SponsoredAd> sponsoredAdListAds = new SparseArray<SponsoredAd>();
 
 	//
 	// Activity Methods
 	//
 
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+
+    	super.onCreate(savedInstanceState);
+
+    	// Create the broadcast maanger that will receive the completion
+    	// and cancel callbacks of the AsyncTasks doing the searches
+		broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+
+    }
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
+
 		rootView = inflater.inflate(R.layout.word_judge_fragment, container, false);
+
+		if (savedInstanceState != null)  {
+			int[] positions = savedInstanceState.getIntArray("sponsoredAdListPositions");
+			sponsoredAdPositions = SponsoredAd.intArrayToTreeSet(positions);
+		}
+
 		setupWordJudgeTab();
+
 		return rootView;
 	}
 
@@ -79,8 +106,8 @@ public class WordJudgeFragment extends BaseFragment
 
 		super.onPause();
 
-		if (adMobAd != null)
-			adMobAd.pause();
+		// Unregister the broadcast receiver
+		broadcastManager.unregisterReceiver(wordJudgeReceiver);
 
 	}
 
@@ -92,22 +119,22 @@ public class WordJudgeFragment extends BaseFragment
 
 		Analytics.screenView(Analytics.WORD_JUDGE_SCREEN);
 
-		setButtonState();
+		// Register the broadcast receiver to receive completed and
+		// cancelled notifications
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(SEARCH_COMPLETED_INTENT);
+		filter.addAction(SEARCH_CANCELED_INTENT);
+		broadcastManager.registerReceiver(wordJudgeReceiver, filter);
 
-		if (adMobAd != null)
-			adMobAd.resume();
+		setButtonState();
 
 	}
 
 	@Override
-	public void onDestroy()
+	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
-
-		super.onDestroy();
-
-		if (adMobAd != null)
-			adMobAd.destroy();
-
+		super.onSaveInstanceState(savedInstanceState);
+    	savedInstanceState.putIntArray("sponsoredAdListPositions", SponsoredAd.treeSetToIntArray(sponsoredAdPositions));		
 	}
 
 	@Override
@@ -118,6 +145,30 @@ public class WordJudgeFragment extends BaseFragment
         imm.hideSoftInputFromWindow(wjText.getWindowToken(), 0);
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     	startWordJudgeSearch();
+    }
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+    {
+
+		// If we're showing ads, we need to do some special stuff
+		if (wjAdAdapter != null)  {
+
+			// If the user is trying to click on the sponsored ad,
+			// pass that click off to that view and be done.  If
+			// not, adjust the position according to the number of
+			// sponsored ads seen at the location.
+			if (wjAdAdapter.isSponsoredAd(position))  {
+				wjAdAdapter.performClick(position);
+				return;
+			}
+			else
+				position -= wjAdAdapter.sponsoredAdCountAt(position);
+
+		}
+
+		startJudgeHistorySearch(position);
+
     }
 
     @Override
@@ -208,31 +259,12 @@ public class WordJudgeFragment extends BaseFragment
         wjText.addTextChangedListener(buttonTextWatcher);
 		
         wjListview = (ListView)rootView.findViewById(R.id.wordjudge_listview);
-        wjListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        	public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-            {
-        		startJudgeHistorySearch(position);
-            }
-        });
 
         final Button wjClearButton = (Button)rootView.findViewById(R.id.WordJudgeTextClear);
         wjClearButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) { wjText.setText(""); }
 		});
-
-        // Load an ad into the AdView if we don't already have one.
-        // If we have one and it is loaded, place it into the view.
-    	adView = (LinearLayout) rootView.findViewById(R.id.WordJudgeAdView);
-        if (WordPlayApp.getInstance().isFreeMode())  {
-        	setupAdView();
-        	if (adMobAd == null)
-        		loadAdMobAd();
-        	else {
-        		if ((adMobAd.getView() != null) && adMobAd.isLoaded())
-        			showAdMobAd(adMobAd);
-        	}
-        }
 
         updateJudgeHistoryAdapter();
 
@@ -248,8 +280,9 @@ public class WordJudgeFragment extends BaseFragment
 		String searchString = wjText.getText().toString().toLowerCase();
 		DictionaryType dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 
-		wjSearchObj = new JudgeSearch();
-		wjSearchObj.execute(this, searchString, dictionary);
+		judgeSearchObject = new JudgeSearchObject(searchString, dictionary);
+		doWordJudgeSearch();
+
 		wjText.setText("");
 
     }
@@ -269,65 +302,22 @@ public class WordJudgeFragment extends BaseFragment
     // Word Judge & Adapter
     //
 
-	public void setWordJudgeObject(JudgeSearch o) { wjSearchObj = o; }
-	
-	public WordJudgeAdapter getWordJudgeAdapter() { return wjAdapter; }
-
 	public void updateJudgeHistoryAdapter()
 	{
+
 		wjAdapter =
-			new WordJudgeAdapter(getActivity(), R.layout.judge_history, JudgeHistory.getInstance().getJudgeHistory());
-        wjListview.setAdapter(wjAdapter);	
-	}
+			new WordJudgeAdapter(getActivity(),
+									R.layout.judge_history,
+									JudgeHistory.getInstance().getJudgeHistory());
 
-	public class WordJudgeAdapter extends ArrayAdapter<JudgeHistoryObject> {
+		// If this is the free version, create that adapter
+		if (WordPlayApp.getInstance().isFreeMode())
+			wjAdAdapter = new SponsoredAdAdapter(getActivity(), wjAdapter, sponsoredAdPositions, sponsoredAdListAds);
 
-		private LinkedList<JudgeHistoryObject> history;
-		
-		WordJudgeAdapter(Context ctx, int rowLayoutId, LinkedList<JudgeHistoryObject> items)
-		{
-			super(ctx, rowLayoutId, items);
-			this.history = items;
-		}
+		// Attach the adapter to the ListView
+        wjListview.setAdapter(wjAdAdapter != null ? wjAdAdapter : wjAdapter);
+        wjListview.setOnItemClickListener(this);
 
-		public void updateHistory() { history = JudgeHistory.getInstance().getJudgeHistory(); }
-		
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-        	
-            View v = convertView;
-
-            if (v == null)  {
-                LayoutInflater vi = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.judge_history, null);
-            }
-
-            JudgeHistoryObject item = history.get(position);
-            if (item != null)  {
-
-            	ImageView imageView = (ImageView)v.findViewById(R.id.jh_state_image);
-            	if (imageView != null)
-            		if (item.getState())
-            			imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_listitem_thumbsup));
-            		else
-            			imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_listitem_thumbsdown));
-
-            	TextView wordView = (TextView)v.findViewById(R.id.jh_word);
-            	if (wordView != null)  {
-            		if (item.getState())
-            			wordView.setTextColor(Color.GREEN);
-            		else
-            			wordView.setTextColor(Color.RED);
-            		wordView.setText(item.getWord());
-
-            	}
-
-            }
-            
-            return v;
-            
-        }
-		
 	}
 
     private void startJudgeHistorySearch(int position)
@@ -354,74 +344,138 @@ public class WordJudgeFragment extends BaseFragment
     }
 
     //
-    // AdView
+    // Word Judge Search
     //
 
-    private void setupAdView()
+    private static final String SEARCH_COMPLETED_INTENT = "WordJudgeSearchCompleted";
+    private static final String SEARCH_CANCELED_INTENT = "WordJudgeSearchCanceled";
+
+	protected BroadcastReceiver wordJudgeReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			if (action.equals(SEARCH_COMPLETED_INTENT))  {
+				JudgeSearchObject searchObject = (JudgeSearchObject) intent.getParcelableExtra("judgeSearchObject");
+				onSearchComplete(searchObject);
+			}
+			else if (action.equals(SEARCH_CANCELED_INTENT))
+				;
+		}
+		
+	};
+
+	private void onSearchComplete(JudgeSearchObject judgeSearchObject)
+	{
+
+		FragmentManager fm = getFragmentManager();
+		SearchProgressDialogFragment dialog = null;
+
+		this.judgeSearchObject = judgeSearchObject;
+
+		// Find the dialog in the FragmentManager
+		if (fm != null)
+			dialog =
+				(SearchProgressDialogFragment) fm.findFragmentByTag(SearchProgressDialogFragment.class.getName());
+
+		// If the user cancelled, the dialog was already dismissed
+		if (dialog == null)
+			return;
+
+		dialog.dismiss();
+
+		JudgeHistory.getInstance().addJudgeHistory(judgeSearchObject.getSearchString(),
+													judgeSearchObject.getResult());
+		updateJudgeHistoryAdapter();
+		if (WordPlayApp.getInstance().isFreeMode())
+			wjAdAdapter.notifyDataSetChanged();
+		else
+			wjAdapter.notifyDataSetChanged();
+
+	}
+
+	@Override
+	public void onProgressCancel()
+	{
+
+		// Cancel the running task.  The onCancelled handler there will
+		// send a message to the broadcast receiver that will get the
+		// user back to where they came from.
+		task.cancel(true);
+
+	}
+
+    private void doWordJudgeSearch()
     {
 
-		float density = getResources().getDisplayMetrics().density;
-//		int width = Math.round(AdSize.BANNER.getWidth() * density);
-		DisplayMetrics metrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		int width = metrics.widthPixels;
-		int height = Math.round(AdSize.BANNER.getHeight() * density);
+		task = new AsyncTask<Void, Void, Void>() {
 
-		Log.e(getClass().getSimpleName(), "width " + width);
-		Log.e(getClass().getSimpleName(), "height " + height);
+			@Override
+			protected void onPreExecute()
+			{
+				SearchProgressDialogFragment dialog =
+					SearchProgressDialogFragment.newInstance(SearchFragment.class.getName());
+			    dialog.show(getFragmentManager(), SearchProgressDialogFragment.class.getName());		
+			}
 
-		LinearLayout.LayoutParams params =
-			new LinearLayout.LayoutParams(width, height);
-		adView.setLayoutParams(params);
+			@Override
+			protected Void doInBackground(Void... params)
+			{
+
+    			ScrabbleDatabaseClient client = new ScrabbleDatabaseClient();
+    			String[] words = judgeSearchObject.getSearchString().split(",");
+
+				try {
+    				if (words.length > 1)  {
+    					judgeSearchObject.setResult(
+    							client.judgeWordList(
+    									words,
+    									judgeSearchObject.getDictionary()));
+    				}
+    				else
+    					judgeSearchObject.setResult(
+    							client.judgeWord(
+    									judgeSearchObject.getSearchString().replace(",", ""),
+    									judgeSearchObject.getDictionary()));
+    			}
+    			catch (Exception e) {
+    				judgeSearchObject.setException(e);
+    			}
+
+				return null;
+
+			}
+
+			@Override
+			protected void onPostExecute(Void result)
+			{
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_COMPLETED_INTENT);
+				intent.putExtra("judgeSearchObject", judgeSearchObject);
+				broadcastManager.sendBroadcast(intent);
+			}
+
+			@Override
+			protected void onCancelled(Void result)
+			{
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
+			}
+
+			@Override
+			protected void onCancelled()
+			{
+				Intent intent = new Intent();
+				intent.setAction(SEARCH_CANCELED_INTENT);
+				broadcastManager.sendBroadcast(intent);
+			}
+
+		};
+
+		task.execute();
 
     }
-
-    private void loadAdMobAd()
-    {
-
-    	// Create the ad
-    	String adUnitId = WordPlayApp.getInstance().getWordJudgeAdUnitId();
-    	AdMobData adMobData = new AdMobData(adUnitId);
-    	adMobAd = new AdMobAd(getActivity(), PlacementType.ListSearchResult, adMobData);
-
-    	// Load it
-    	adMobAd.setEventCallback(this);
-    	adMobAd.getView();
-
-    }
-
-    private void showAdMobAd(SponsoredAd ad)
-    {
-    	if ((ad.getView() != null) && (ad.getView().getParent() != null))  {
-    		LinearLayout parent = (LinearLayout) ad.getView().getParent();
-    		parent.removeAllViews();
-    	}
-		adView.addView(ad.getView());    	
-    }
-
-	@Override
-	public void onLoaded(SponsoredAd ad)
-	{
-		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onLoaded");
-		showAdMobAd(ad);
-	}
-
-	@Override
-	public void onError(SponsoredAd ad)
-	{
-		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onError");
-	}
-
-	@Override
-	public void onOpened(SponsoredAd ad)
-	{
-		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onOpened");		
-	}
-
-	@Override
-	public void onClosed(SponsoredAd ad)
-	{
-		Log.d(getClass().getSimpleName(), "AdMob WordJudge: onClosed");
-	}
 
 }

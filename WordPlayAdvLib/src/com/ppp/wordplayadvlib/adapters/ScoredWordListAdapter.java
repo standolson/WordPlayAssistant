@@ -76,8 +76,6 @@ public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements S
 
 		if (v == null)
 		    v = inflater.inflate(R.layout.word_list, parent, false);
-//        if (v == null)
-//        	v = inflater.inflate(R.layout.test_list_item, parent, false);
 
         ScoredWord word = getItem(position);
         if (word != null)  {
@@ -87,9 +85,6 @@ public class ScoredWordListAdapter extends ArrayAdapter<ScoredWord> implements S
         	if (wordView != null)
         		wordView.setText(ss);
         }
-
-//        TextView tv = (TextView) v.findViewById(R.id.test_text);
-//        tv.setText(String.format("Item %d", position));
 
         return v;
         

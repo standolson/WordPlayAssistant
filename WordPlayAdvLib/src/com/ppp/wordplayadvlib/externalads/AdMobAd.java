@@ -20,11 +20,12 @@ import com.ppp.wordplayadvlib.widgets.TextDrawable;
 
 public class AdMobAd extends SponsoredAd {
 
+	public static boolean useAdMobPlaceholders = false;
+
 	private AdMobData adMobData;
 	private InterstitialAd interstitialAd;
 
 	private static View emptyView = null;
-	public static boolean useAdMobPlaceholders = true;
 
 	public AdMobAd(Context context, PlacementType placementType, AdMobData adMobData)
 	{

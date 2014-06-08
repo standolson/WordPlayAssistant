@@ -38,16 +38,11 @@
 			android:text="@string/judge_button_text"/>
 
 	</LinearLayout>
-
-	<LinearLayout
-	    android:id="@+id/WordJudgeAdView"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical" />
 	
 	<ListView
 		android:id="@+id/wordjudge_listview"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"/>
+		android:layout_height="fill_parent"
+		android:choiceMode="singleChoice" />
 	
 </LinearLayout>

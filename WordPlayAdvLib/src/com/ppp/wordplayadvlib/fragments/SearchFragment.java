@@ -126,7 +126,7 @@ public class SearchFragment extends BaseFragment
 			nextArgs = savedInstanceState.getBundle("nextArgs");
 
 			int[] positions = savedInstanceState.getIntArray("sponsoredAdListPositions");
-			sponsoredAdPositions = intArrayToTreeSet(positions);
+			sponsoredAdPositions = SponsoredAd.intArrayToTreeSet(positions);
 
 		}
 
@@ -191,7 +191,7 @@ public class SearchFragment extends BaseFragment
 		super.onSaveInstanceState(savedInstanceState);
 		savedInstanceState.putParcelable("searchObject", searchObject);
 		savedInstanceState.putBundle("nextArgs", nextArgs);
-    	savedInstanceState.putIntArray("sponsoredAdListPositions", treeSetToIntArray(sponsoredAdPositions));
+    	savedInstanceState.putIntArray("sponsoredAdListPositions", SponsoredAd.treeSetToIntArray(sponsoredAdPositions));
 	}
 
     @Override
@@ -1511,36 +1511,5 @@ public class SearchFragment extends BaseFragment
 		task.execute();
 		
 	}
-
-    //
-    // Sponsored Ad Support
-    //
-
-    private int[] treeSetToIntArray(TreeSet<Integer> set)
-    {
-
-    	if (set == null)
-    		return null;
-
-		int[] retval = new int[set.size()];
-		int i = 0;
-        for (Integer aSet : set) {
-            retval[i] = aSet;
-            i += 1;
-        }
-
-    	return retval;
-
-    }
-
-    private TreeSet<Integer> intArrayToTreeSet(int[] ints)
-    {
-    	TreeSet<Integer> retval = new TreeSet<Integer>();
-    	if (ints == null)
-    		return retval;
-    	for (int i : ints)
-    		retval.add(i);
-    	return retval;
-    }
 
 }

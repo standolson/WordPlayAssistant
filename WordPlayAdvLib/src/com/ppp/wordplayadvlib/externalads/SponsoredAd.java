@@ -1,5 +1,7 @@
 package com.ppp.wordplayadvlib.externalads;
 
+import java.util.TreeSet;
+
 import android.content.Context;
 import android.view.View;
 
@@ -78,5 +80,36 @@ public class SponsoredAd {
 	{
 		return "placement: " + placementType + " position: " + listPosition + " loaded: " + isLoaded;
 	}
+
+    //
+    // Sponsored Ad Support
+    //
+
+    public static int[] treeSetToIntArray(TreeSet<Integer> set)
+    {
+
+    	if (set == null)
+    		return null;
+
+		int[] retval = new int[set.size()];
+		int i = 0;
+        for (Integer aSet : set) {
+            retval[i] = aSet;
+            i += 1;
+        }
+
+    	return retval;
+
+    }
+
+    public static TreeSet<Integer> intArrayToTreeSet(int[] ints)
+    {
+    	TreeSet<Integer> retval = new TreeSet<Integer>();
+    	if (ints == null)
+    		return retval;
+    	for (int i : ints)
+    		retval.add(i);
+    	return retval;
+    }
 
 }

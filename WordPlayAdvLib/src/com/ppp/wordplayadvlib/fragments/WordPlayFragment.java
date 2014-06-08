@@ -59,10 +59,8 @@ import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.model.History;
 import com.ppp.wordplayadvlib.model.JudgeHistory;
 import com.ppp.wordplayadvlib.model.JudgeHistoryObject;
-import com.ppp.wordplayadvlib.model.JudgeSearch;
 import com.ppp.wordplayadvlib.model.WordScoreState;
 import com.ppp.wordplayadvlib.model.WordSortState;
-import com.ppp.wordplayadvlib.model.JudgeSearch.JudgeSearchObject;
 import com.ppp.wordplayadvlib.utils.Debug;
 import com.ppp.wordplayadvlib.utils.Utils;
 import com.ppp.wordplayadvlib.widgets.MultiStateButton;
@@ -107,7 +105,7 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 	
 	private static ListView wjListview = null;
 	private static WordJudgeAdapter wjAdapter = null;
-	private JudgeSearch wjSearchObj = null;
+//	private JudgeSearch wjSearchObj = null;
 	
 	private Intent searchIntent = null;
 	private Intent savedSearchIntent = null;
@@ -165,29 +163,29 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
         // If the device was reoriented, then reconnect to the word judge
         // search.  In these cases, the JudgeSearch object is retained because
 		// we called setRetainInstance(true) above.
-		if (wjSearchObj != null)  {
-	        JudgeSearch.JudgeThread searchThread = wjSearchObj.getSearchThread();
-			if (searchThread != null)  {
-				JudgeSearchObject searchObject = searchThread.getSearchObject();
-				if (searchThread.isAlive())  {
-					Debug.v("WordPlay Reconfiguration: THREAD ALIVE!");
-					searchObject.getJudgeObject().openProgressDialog(getActivity());
-					try {
-						searchThread.join();
-					}
-					catch (Exception e) {
-						searchObject.setException(e);
-					}
-					searchObject.getJudgeObject().displayResults();
-					return;
-				}
-				else {
-					Debug.v("WordPlay Reconfiguration: DISPLAY RESULTS");
-					searchObject.getJudgeObject().displayResults();
-					return;
-				}
-			}
-		}
+//		if (wjSearchObj != null)  {
+//	        JudgeSearch.JudgeThread searchThread = wjSearchObj.getSearchThread();
+//			if (searchThread != null)  {
+//				JudgeSearchObject searchObject = searchThread.getSearchObject();
+//				if (searchThread.isAlive())  {
+//					Debug.v("WordPlay Reconfiguration: THREAD ALIVE!");
+//					searchObject.getJudgeObject().openProgressDialog(getActivity());
+//					try {
+//						searchThread.join();
+//					}
+//					catch (Exception e) {
+//						searchObject.setException(e);
+//					}
+//					searchObject.getJudgeObject().displayResults();
+//					return;
+//				}
+//				else {
+//					Debug.v("WordPlay Reconfiguration: DISPLAY RESULTS");
+//					searchObject.getJudgeObject().displayResults();
+//					return;
+//				}
+//			}
+//		}
 
         // For the free mode, see if we've shown the free dialog
         // and if we haven't, show it.  If we show it, when we're
@@ -222,12 +220,12 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
 		//
 		// The search object is retained because the fragment is retained
 		// during orientation.
-		if (wjSearchObj != null)  {
-			Debug.v("WordPlay: onDetach executing");
-			if (wjSearchObj.getProgressDialog() != null)
-				wjSearchObj.closeProgressDialog();
-			wjSearchObj.getSearchThread().getSearchObject().setSearchHandler(null);
-		}
+//		if (wjSearchObj != null)  {
+//			Debug.v("WordPlay: onDetach executing");
+//			if (wjSearchObj.getProgressDialog() != null)
+//				wjSearchObj.closeProgressDialog();
+//			wjSearchObj.getSearchThread().getSearchObject().setSearchHandler(null);
+//		}
 
 	}
 
@@ -1063,7 +1061,7 @@ public class WordPlayFragment extends Fragment implements View.OnClickListener
     // Word Judge & Adapter
     //
 
-	public void setWordJudgeObject(JudgeSearch o) { wjSearchObj = o; }
+//	public void setWordJudgeObject(JudgeSearch o) { wjSearchObj = o; }
 	
 	public WordJudgeAdapter getWordJudgeAdapter() { return wjAdapter; }
 
