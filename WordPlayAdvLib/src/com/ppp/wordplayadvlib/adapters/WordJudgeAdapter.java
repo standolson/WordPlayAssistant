@@ -34,7 +34,7 @@ public class WordJudgeAdapter extends ArrayAdapter<JudgeHistoryObject> {
 
         if (v == null)  {
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.judge_history, null);
+            v = vi.inflate(R.layout.judge_history, parent, false);
         }
 
         JudgeHistoryObject item = history.get(position);
@@ -54,7 +54,6 @@ public class WordJudgeAdapter extends ArrayAdapter<JudgeHistoryObject> {
         		else
         			wordView.setTextColor(Color.RED);
         		wordView.setText(item.getWord());
-
         	}
 
         }

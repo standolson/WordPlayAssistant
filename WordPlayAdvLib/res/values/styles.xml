@@ -49,6 +49,20 @@
         <item name="android:background">@drawable/positive_button</item>
     </style>
 
+    <style name="ListItemStyle">
+        <item name="android:minHeight">48dip</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingRight">10dip</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ListItemTextStyle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="MultiStateButtonStyle" parent="ButtonStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">@dimen/button_height</item>

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    style="@style/ListItemStyle"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="3dip"
-    android:layout_marginTop="3dip"
     android:orientation="horizontal" >
 
 	<ImageView
@@ -12,17 +11,14 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="center_vertical"
-	    android:paddingLeft="10dip"
-	    android:paddingRight="10dip"
+	    android:paddingRight="5dip"
 	    android:src="@drawable/ic_listitem_thumbsup" />
 	
 	<TextView
+	    style="@style/ListItemTextStyle"
 	    android:id="@+id/jh_word"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:text="Word Goes Here"
-	    android:textSize="20sp"
-	    android:textStyle="normal"
-	    android:typeface="serif" />
+	    android:text="Word Goes Here" />
 
 </LinearLayout>

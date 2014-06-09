@@ -314,6 +314,7 @@ public class AdMobAd extends SponsoredAd {
 		builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
 		builder.addTestDevice("06B0FEFF5F6B39F3B712494ECD97757A");
 		builder.addTestDevice("7D0963E5F7D8F1C546F4A9A66D0ABD32");
+		builder.addTestDevice("51AD760CF1B7E77A165A46F95165143C");
 		return builder;
 	}
 
