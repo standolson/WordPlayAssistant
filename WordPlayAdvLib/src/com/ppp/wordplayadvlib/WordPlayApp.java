@@ -171,10 +171,10 @@ public class WordPlayApp extends Application
 	// AdMob
 	//
 
-	public String[] getAdMobAdUnitIds() { return null; }
+	public String[] getSearchAdUnitIds() { return null; }
 
-	public String getAdMobInterstitialUnitId() { return null; }
+	public String[] getWordJudgeAdUnitIds() { return null; }
 
-	public String getWordJudgeAdUnitId() { return null; }
+	public String getInterstitialAdUnitId() { return null; }
 
 }

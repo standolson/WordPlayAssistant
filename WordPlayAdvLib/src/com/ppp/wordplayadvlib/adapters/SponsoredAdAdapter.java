@@ -1,5 +1,6 @@
 package com.ppp.wordplayadvlib.adapters;
 
+import java.util.ArrayList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -25,22 +26,21 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
 	private Context context;
 	private BaseAdapter delegate;
+	private String[] adUnitIds;
 	protected TreeSet<Integer> sponsoredAdPositions;
 	private SparseArray<SponsoredAd> sponsoredAds;
 
 	public SponsoredAdAdapter(Context context,
 								BaseAdapter delegate,
+								String[] adUnitIds,
 								TreeSet<Integer> sponsoredAdPositions,
 								SparseArray<SponsoredAd> sponsoredAds)
 	{
-
 		this.context = context;
 		this.delegate = delegate;
+		this.adUnitIds = adUnitIds;
 		this.sponsoredAdPositions = sponsoredAdPositions;
 		this.sponsoredAds = sponsoredAds;
-
-		sponsoredAds = new SparseArray<SponsoredAd>();
-
 	}
 
 	@Override
@@ -100,8 +100,6 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 
-		String[] adUnitIds = WordPlayApp.getInstance().getAdMobAdUnitIds();
-
 		// Check for no delegate
 		if (delegate == null)
 			return getEmptyView();
@@ -117,12 +115,10 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
 				// If we have no ad units to show or don't have enough,
 				// return an empty view
-				if ((adUnitIds == null) || (adUnitIds.length < 2))
+				if (adUnitIds == null)
 					return getEmptyView();
 
-				// Create a new ad if we haven't loaded the maximum number
-				// of AdMob ads.  If we haven't, then we use one of the ads
-				// we already have.
+				// Create a new ad using only the available unit ids
 				AdMobData adMobData = new AdMobData(adUnitIds[sponsoredAds.size() % adUnitIds.length]);
 				AdMobAd adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position, adMobData);
 				adMobAd.setSponsoredAdAdapter(this);

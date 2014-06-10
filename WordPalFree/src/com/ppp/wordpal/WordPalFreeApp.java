@@ -5,7 +5,7 @@ import com.ppp.wordplayadvlib.WordPlayApp;
 public class WordPalFreeApp extends WordPlayApp {
 
 	@Override
-	public String[] getAdMobAdUnitIds()
+	public String[] getSearchAdUnitIds()
 	{
 		return new String[] {
 			"ca-app-pub-8807533815804449/5584675594",
@@ -14,15 +14,17 @@ public class WordPalFreeApp extends WordPlayApp {
 	}
 
 	@Override
-	public String getAdMobInterstitialUnitId()
+	public String[] getWordJudgeAdUnitIds()
 	{
-		return "ca-app-pub-8807533815804449/5730949590";
+		return new String[] {
+			"ca-app-pub-8807533815804449/8004601597"
+		};
 	}
 
 	@Override
-	public String getWordJudgeAdUnitId()
+	public String getInterstitialAdUnitId()
 	{
-		return "ca-app-pub-8807533815804449/8004601597";
+		return "ca-app-pub-8807533815804449/5730949590";
 	}
 
 }

@@ -257,16 +257,32 @@ public class WordJudgeFragment extends BaseFragment
 			}
         });
         wjText.addTextChangedListener(buttonTextWatcher);
-		
-        wjListview = (ListView)rootView.findViewById(R.id.wordjudge_listview);
 
         final Button wjClearButton = (Button)rootView.findViewById(R.id.WordJudgeTextClear);
         wjClearButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) { wjText.setText(""); }
 		});
+		
+        wjListview = (ListView)rootView.findViewById(R.id.wordjudge_listview);
 
-        updateJudgeHistoryAdapter();
+        // Create the content adapter
+        wjAdapter =
+			new WordJudgeAdapter(getActivity(),
+									R.layout.judge_history,
+									JudgeHistory.getInstance().getJudgeHistory());
+
+		// If this is the free version, create that adapter
+		if (WordPlayApp.getInstance().isFreeMode())
+			wjAdAdapter = new SponsoredAdAdapter(getActivity(),
+													wjAdapter,
+													WordPlayApp.getInstance().getWordJudgeAdUnitIds(),
+													sponsoredAdPositions,
+													sponsoredAdListAds);
+
+		// Attach the adapter to the ListView
+        wjListview.setAdapter(wjAdAdapter != null ? wjAdAdapter : wjAdapter);
+        wjListview.setOnItemClickListener(this);
 
 	}
 
@@ -299,26 +315,8 @@ public class WordJudgeFragment extends BaseFragment
     }
 
     //
-    // Word Judge & Adapter
+    // Word Judge Search
     //
-
-	public void updateJudgeHistoryAdapter()
-	{
-
-		wjAdapter =
-			new WordJudgeAdapter(getActivity(),
-									R.layout.judge_history,
-									JudgeHistory.getInstance().getJudgeHistory());
-
-		// If this is the free version, create that adapter
-		if (WordPlayApp.getInstance().isFreeMode())
-			wjAdAdapter = new SponsoredAdAdapter(getActivity(), wjAdapter, sponsoredAdPositions, sponsoredAdListAds);
-
-		// Attach the adapter to the ListView
-        wjListview.setAdapter(wjAdAdapter != null ? wjAdAdapter : wjAdapter);
-        wjListview.setOnItemClickListener(this);
-
-	}
 
     private void startJudgeHistorySearch(int position)
     {
@@ -342,10 +340,6 @@ public class WordJudgeFragment extends BaseFragment
     		Toast.makeText(getActivity(), "Cannot search for unknown words", Toast.LENGTH_SHORT).show();
 
     }
-
-    //
-    // Word Judge Search
-    //
 
     private static final String SEARCH_COMPLETED_INTENT = "WordJudgeSearchCompleted";
     private static final String SEARCH_CANCELED_INTENT = "WordJudgeSearchCanceled";
@@ -385,9 +379,11 @@ public class WordJudgeFragment extends BaseFragment
 
 		dialog.dismiss();
 
+		// Update the history
 		JudgeHistory.getInstance().addJudgeHistory(judgeSearchObject.getSearchString(),
 													judgeSearchObject.getResult());
-		updateJudgeHistoryAdapter();
+
+		// Update the adapter
 		if (WordPlayApp.getInstance().isFreeMode())
 			wjAdAdapter.notifyDataSetChanged();
 		else

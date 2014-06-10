@@ -454,7 +454,11 @@ public class SearchFragment extends BaseFragment
 
 		// If this is the free version, create that adapter
 		if (WordPlayApp.getInstance().isFreeMode())
-			adAdapter = new SponsoredAdAdapter(getActivity(), adapter, sponsoredAdPositions, sponsoredAdListAds);
+			adAdapter = new SponsoredAdAdapter(getActivity(),
+												adapter,
+												WordPlayApp.getInstance().getSearchAdUnitIds(),
+												sponsoredAdPositions,
+												sponsoredAdListAds);
 
 		// Attach the adapter to the ListView
 		searchListView.setAdapter(adAdapter != null ? adAdapter : adapter);
@@ -486,7 +490,11 @@ public class SearchFragment extends BaseFragment
 
 		// If this is the free version, create that adapter
 		if (WordPlayApp.getInstance().isFreeMode())
-			adAdapter = new SponsoredAdAdapter(getActivity(), adapter, sponsoredAdPositions, sponsoredAdListAds);
+			adAdapter = new SponsoredAdAdapter(getActivity(),
+												adapter,
+												WordPlayApp.getInstance().getSearchAdUnitIds(),
+												sponsoredAdPositions,
+												sponsoredAdListAds);
 
 		// Attach the adapter to the ListView
 		searchListView.setAdapter(adAdapter != null ? adAdapter : adapter);
@@ -518,7 +526,11 @@ public class SearchFragment extends BaseFragment
 
 		// If this is the free version, create that adapter
 		if (WordPlayApp.getInstance().isFreeMode())
-			adAdapter = new SponsoredAdAdapter(getActivity(), adapter, sponsoredAdPositions, sponsoredAdListAds);
+			adAdapter = new SponsoredAdAdapter(getActivity(),
+												adapter,
+												WordPlayApp.getInstance().getSearchAdUnitIds(),
+												sponsoredAdPositions,
+												sponsoredAdListAds);
 
 		// Attach the adapter to the ListView
 		searchListView.setAdapter(adAdapter != null ? adAdapter : adapter);
@@ -545,7 +557,7 @@ public class SearchFragment extends BaseFragment
 	private void loadInterstitial()
 	{
 
-		String adUnitId = WordPlayApp.getInstance().getAdMobInterstitialUnitId();
+		String adUnitId = WordPlayApp.getInstance().getInterstitialAdUnitId();
 		if (adUnitId == null)
 			return;
 
