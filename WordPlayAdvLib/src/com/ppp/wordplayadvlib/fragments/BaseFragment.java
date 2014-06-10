@@ -49,7 +49,6 @@ public class BaseFragment extends Fragment
 	protected static final int UserPrefsActivity = 3;
 
 	protected static int searchCount = 0;
-	protected static int nagFrequency = Constants.NagDialogFrequency;
 	protected static Boolean hasNagged = false;
 	private static boolean notificationIconEnabled = false;
 
