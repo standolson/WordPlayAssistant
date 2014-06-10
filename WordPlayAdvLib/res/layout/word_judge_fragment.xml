@@ -9,9 +9,7 @@
 	<LinearLayout
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:paddingLeft="5dip"
-	    android:paddingRight="5dip"
-	    android:paddingBottom="5dip"
+	    android:padding="5dip"
 	    android:orientation="horizontal" >
 
 	    <FrameLayout

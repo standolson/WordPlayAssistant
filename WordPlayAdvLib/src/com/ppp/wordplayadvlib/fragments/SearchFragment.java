@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -72,6 +71,7 @@ public class SearchFragment extends BaseFragment
 	private LocalBroadcastManager broadcastManager;
 
 	private AdMobAd interstitialAdMobAd = null;
+	private boolean showedInterstitial = false;
 	private Bundle nextArgs = null;
     private TreeSet<Integer> sponsoredAdPositions = new TreeSet<Integer>();
     private SparseArray<SponsoredAd> sponsoredAdListAds = new SparseArray<SponsoredAd>();
@@ -123,6 +123,7 @@ public class SearchFragment extends BaseFragment
 		if (savedInstanceState != null)  {
 
 			searchObject = savedInstanceState.getParcelable("searchObject");
+			showedInterstitial = savedInstanceState.getBoolean("showedInterstitial");
 			nextArgs = savedInstanceState.getBundle("nextArgs");
 
 			int[] positions = savedInstanceState.getIntArray("sponsoredAdListPositions");
@@ -190,7 +191,9 @@ public class SearchFragment extends BaseFragment
 	{
 		super.onSaveInstanceState(savedInstanceState);
 		savedInstanceState.putParcelable("searchObject", searchObject);
-		savedInstanceState.putBundle("nextArgs", nextArgs);
+		savedInstanceState.putBoolean("showedInterstitial", showedInterstitial);
+		savedInstanceState.putBundle("nextArgs",
+			(nextArgs == null) ? interstitialAdMobAd.getAdMobData().args : nextArgs);
     	savedInstanceState.putIntArray("sponsoredAdListPositions", SponsoredAd.treeSetToIntArray(sponsoredAdPositions));
 	}
 
@@ -201,6 +204,7 @@ public class SearchFragment extends BaseFragment
 		String word = null;
 
 		// If we're showing ads, we need to do some special stuff
+		// to adjust the position of the click.
 		if (adAdapter != null)  {
 
 			// If the user is trying to click on the sponsored ad,
@@ -216,6 +220,7 @@ public class SearchFragment extends BaseFragment
 
 		}
 
+		// Exact match lookups need to show the full definition
 		if ((searchObject.getSearchType() == SearchType.OPTION_DICTIONARY_EXACT_MATCH) &&
 				(searchObject.getDictionary().isNormalDict()))  {
 
@@ -230,9 +235,9 @@ public class SearchFragment extends BaseFragment
 			pushToStack(fragment);
 
 		}
-		else {
 
-			Log.e(getClass().getSimpleName(), "onItemClick: position " + position);
+		// Search for all of the exact matches
+		else {
 
 			if (searchObject.getWordScores().isScored())
 				word = searchObject.getScoredWordList().get(position).getWord();
@@ -251,7 +256,10 @@ public class SearchFragment extends BaseFragment
 					args.putInt("Dictionary", searchObject.getDictionary().ordinal());
 			}
 
-			if (WordPlayApp.getInstance().isFreeMode())
+			// If this is the free version, we need to show the
+			// interstitial ad at some point but only if we haven't
+			// already shown it.
+			if (WordPlayApp.getInstance().isFreeMode() && !showedInterstitial)
 				showInterstitial(args);
 			else
 				startNewSearch(args);
@@ -541,8 +549,9 @@ public class SearchFragment extends BaseFragment
 		if (adUnitId == null)
 			return;
 
-		// Do we already have one?
-		if (interstitialAdMobAd != null)
+		// Do we already have one or did we previously and lost it
+		// due to reconfiguration?
+		if ((interstitialAdMobAd != null) || showedInterstitial)
 			return;
 
 		// Create one
@@ -566,6 +575,8 @@ public class SearchFragment extends BaseFragment
 			startNewSearch(args);
 			return;
 		}
+
+		showedInterstitial = true;
 
 		// Append the search arguments to the AdMobAd so that
 		// when we return, we have them to start the search the
