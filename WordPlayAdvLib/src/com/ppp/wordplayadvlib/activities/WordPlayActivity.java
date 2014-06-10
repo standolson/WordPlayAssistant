@@ -200,24 +200,6 @@ public class WordPlayActivity extends HostActivity
 
     }
 
-    @Override
-	public void onStop()
-    {
-
-    	super.onStop();
-
-    	History.getInstance().saveHistory(this);
-    	JudgeHistory.getInstance().saveJudgeHistory(this);
-
-    }
-
-    @Override
-    public void onAttachFragment(Fragment fragment)
-    {
-    	super.onAttachFragment(fragment);
-    	Debug.e("onAttachFragment: " + fragment + ", " + fragment.getId() + ", " + fragment.getTag());
-    }
-
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState)
 	{

@@ -336,6 +336,7 @@ public class SearchFragment extends BaseFragment
 
 		// Add this search to the history
 		History.getInstance().addHistory(getArguments());
+		History.getInstance().saveHistory(getActivity());
 
     	// Execute the search
     	switch (searchObject.getSearchType())  {

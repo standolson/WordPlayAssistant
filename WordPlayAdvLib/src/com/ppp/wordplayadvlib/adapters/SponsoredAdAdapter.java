@@ -1,6 +1,5 @@
 package com.ppp.wordplayadvlib.adapters;
 
-import java.util.ArrayList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -14,7 +13,6 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.SectionIndexer;
 
-import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.externalads.AdMobAd;
 import com.ppp.wordplayadvlib.externalads.AdMobData;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd;
@@ -119,9 +117,10 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 					return getEmptyView();
 
 				// Create a new ad using only the available unit ids
-				AdMobData adMobData = new AdMobData(adUnitIds[sponsoredAds.size() % adUnitIds.length]);
+				AdMobData adMobData = new AdMobData(adUnitIds[(sponsoredAdPositions.size() - 1) % adUnitIds.length]);
 				AdMobAd adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position, adMobData);
 				adMobAd.setSponsoredAdAdapter(this);
+
 
 				// Either load the ad or get the view we already have
 				View view = adMobAd.getView();

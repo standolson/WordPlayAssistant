@@ -382,6 +382,7 @@ public class WordJudgeFragment extends BaseFragment
 		// Update the history
 		JudgeHistory.getInstance().addJudgeHistory(judgeSearchObject.getSearchString(),
 													judgeSearchObject.getResult());
+		JudgeHistory.getInstance().saveJudgeHistory(getActivity());
 
 		// Update the adapter
 		if (WordPlayApp.getInstance().isFreeMode())
