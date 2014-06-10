@@ -1,43 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ListItemStyle"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="5dip"
+    android:paddingBottom="5dip"
     android:orientation="vertical" >
 
     <TextView
+        style="@style/ListItemTextStyle"
         android:id="@+id/sh_search_string"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="2dip"
-        android:paddingTop="2dip"
-        android:text="Word Goes Here"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:typeface="serif" />
+        android:paddingBottom="5dip"
+        android:text="Word Goes Here" />
 
     <TextView
+		style="@style/ListItemSmallTextStyle"
         android:id="@+id/sh_search_type"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingBottom="3dip"
-        android:paddingTop="3dip"
-        android:text="Search Type Goes Here"
-        android:textSize="15sp"
-        android:textStyle="normal"
-        android:typeface="serif" />
+        android:paddingBottom="5dip"
+        android:text="Search Type Goes Here" />
 
     <TextView
+		style="@style/ListItemSmallTextStyle"
         android:id="@+id/sh_search_dict"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingBottom="2dip"
-        android:paddingTop="2dip"
-        android:text="Search Dictionary Goes Here"
-        android:textSize="15sp"
-        android:textStyle="normal"
-        android:typeface="serif" />
+        android:text="Search Dictionary Goes Here" />
 
 </LinearLayout>

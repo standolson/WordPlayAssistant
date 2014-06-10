@@ -81,24 +81,23 @@ public class WordListAdapter extends BaseAdapter implements SectionIndexer {
     public View getView(int position, View convertView, ViewGroup parent)
     {
 
-        LinearLayout view = (LinearLayout) convertView;
+		View v = convertView;
+
+        if (v == null)
+            v = (TextView) inflater.inflate(R.layout.word_list, parent, false);
+
         String word = (String) getItem(position);
-
-        if (view == null)
-            view = (LinearLayout) inflater.inflate(R.layout.word_list, parent, false);
-		view.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-
         SpannableString ss =
         	Utils.convertToBoardString(word, word, searchObject.boardString, searchObject);
         if (ss != null)  {
-        	TextView wordView = (TextView) view.findViewById(R.id.wl_word);
+        	TextView wordView = (TextView) v.findViewById(R.id.wl_word);
         	if (wordView != null)  {
 //        		Debug.e(ss.toString());
         		wordView.setText(ss);
         	}
         }
 
-        return view;
+        return v;
         
     }
 

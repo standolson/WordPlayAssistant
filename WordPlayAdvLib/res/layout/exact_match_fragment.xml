@@ -11,11 +11,10 @@
 		android:layout_height="wrap_content" >
 				
 		<TextView
+		    style="@style/ListItemSmallTextStyle"
 			android:id="@+id/em_textview"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:typeface="serif"
-			android:textSize="15dip" />
+			android:layout_height="wrap_content" />
 		
 	</HorizontalScrollView>
 

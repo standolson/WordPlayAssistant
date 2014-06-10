@@ -582,11 +582,7 @@ public class SearchFragment extends BaseFragment
 	public void onLoaded(SponsoredAd ad) {}
 
 	@Override
-	public void onError(SponsoredAd ad)
-	{
-		AdMobAd adMobAd = (AdMobAd) ad;
-		startNewSearch(adMobAd.getAdMobData().args);
-	}
+	public void onError(SponsoredAd ad) {}
 
 	@Override
 	public void onOpened(SponsoredAd ad) {}
