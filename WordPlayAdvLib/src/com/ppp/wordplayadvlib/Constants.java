@@ -15,7 +15,9 @@ public class Constants {
 	public static final int MaxAnagramLength = 20;
 	
 	public static final int MaxNetworkRetries = 5;
-	
+
+	public static final int ConfirmExitToastDuration = 3500;
+
 	public static final int BufSize = 8192;
 
 	public static final String BLANK = "";

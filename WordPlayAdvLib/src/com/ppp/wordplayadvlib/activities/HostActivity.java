@@ -8,7 +8,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.ppp.wordplayadvlib.Constants;
+import com.ppp.wordplayadvlib.R;
+import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.fragments.hosts.HostFragment;
 
 public class HostActivity extends BaseActivity {
@@ -67,8 +71,27 @@ public class HostActivity extends BaseActivity {
         if ((lastAdded != null) &&
 					(lastAdded.getChildFragmentManager().getBackStackEntryCount() > 0))  
 			popBackStackPlus(lastAdded);
-        else
-        	super.onBackPressed();
+
+        else {
+
+        	// If there is one or more fragments on the back stack, just act
+        	// normal
+			if (getSupportFragmentManager().getBackStackEntryCount() > 0)
+				super.onBackPressed();
+
+			// Show a message to tell the user they're about to exit
+			else {
+
+		        long currentTime = System.currentTimeMillis();
+		        if (currentTime - lastBackPressTime > Constants.ConfirmExitToastDuration)  {
+		            Toast.makeText(getBaseContext(), getString(R.string.ConfirmExitToastMessage), Toast.LENGTH_LONG).show();
+		            lastBackPressTime = currentTime;
+		        }
+		        else
+		            super.onBackPressed();
+
+			}
+        }
 
     }
 

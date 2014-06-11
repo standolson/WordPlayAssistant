@@ -169,6 +169,7 @@ Enjoy!!
 	<string name="SponsoredAd">Loading sponsored ad...</string>
 	<string name="SponsoredAdFailed">Failed to load sponsored ad</string>
 
+	<string name="ConfirmExitToastMessage">Press BACK again to exit</string>
 	<string name="elapsed_time" formatted="false">Found %d %s in %.3f seconds</string>
 
 </resources>
