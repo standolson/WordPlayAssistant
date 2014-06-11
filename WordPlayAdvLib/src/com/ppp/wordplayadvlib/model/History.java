@@ -74,7 +74,7 @@ public class History {
 
 		Debug.v("LOAD HISTORY = '" + historyStr + "'");
 
-		clearHistory(activity);
+		history.clear();
 
 		BufferedReader historyBuf = new BufferedReader(new StringReader(historyStr), Constants.BufSize);
 		try {

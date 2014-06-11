@@ -70,7 +70,7 @@ public class JudgeHistory {
 
 		Debug.v("LOAD JUDGE_HISTORY = '" + judgeHistoryStr + "'");
 
-		clearJudgeHistory(activity);
+		judge_history.clear();
 
 		BufferedReader judgeBuf = new BufferedReader(new StringReader(judgeHistoryStr), Constants.BufSize);
 		try {
