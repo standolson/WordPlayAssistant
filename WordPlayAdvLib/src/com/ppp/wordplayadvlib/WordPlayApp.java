@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.ppp.wordplayadvlib.externalads.AdMobData;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordPlayApp extends Application
@@ -171,9 +172,9 @@ public class WordPlayApp extends Application
 	// AdMob
 	//
 
-	public String[] getSearchAdUnitIds() { return null; }
+	public AdMobData[] getSearchAdUnitIds() { return null; }
 
-	public String[] getWordJudgeAdUnitIds() { return null; }
+	public AdMobData[] getWordJudgeAdUnitIds() { return null; }
 
 	public String getInterstitialAdUnitId() { return null; }
 

@@ -121,14 +121,14 @@ public class AdMobAd extends SponsoredAd {
 
 	}
 
-	private AdView getAdMobAdView(AdSize adSize)
+	private AdView getAdMobAdView()
 	{
 
-//		Debug.e("AdMobAd: creating AdView for '" + adMobData.adUnitId + "'");
+		Debug.e("AdMobAd: creating AdView for '" + adMobData.adUnitId + "' size " + adMobData.adSize);
 
 		AdView adView = new AdView(context);
-		adView.setAdSize(adSize);
 		adView.setAdUnitId(adMobData.adUnitId);
+		adView.setAdSize(adMobData.adSize);
 
 		return adView;
 
@@ -143,10 +143,9 @@ public class AdMobAd extends SponsoredAd {
 			return getEmptyView();
 		}
 
-		AdSize adSize = AdSize.BANNER;
-		final AdView view = getAdMobAdView(adSize);
+		final AdView view = getAdMobAdView();
 		if (useAdMobPlaceholders)
-			setListLayoutParams(context, view, adSize);
+			setListLayoutParams(context, view, adMobData.adSize);
 
 		// Block descendant focusability so we don't have to click twice
 		// on the ad

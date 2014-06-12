@@ -1,23 +1,25 @@
 package com.ppp.wordpal;
 
+import com.google.android.gms.ads.AdSize;
 import com.ppp.wordplayadvlib.WordPlayApp;
+import com.ppp.wordplayadvlib.externalads.AdMobData;
 
 public class WordPalFreeApp extends WordPlayApp {
 
 	@Override
-	public String[] getSearchAdUnitIds()
+	public AdMobData[] getSearchAdUnitIds()
 	{
-		return new String[] {
-			"ca-app-pub-8807533815804449/5584675594",
-			"ca-app-pub-8807533815804449/7061408794"
+		return new AdMobData[] {
+			new AdMobData("ca-app-pub-8807533815804449/5584675594", new AdSize(320, 100)),
+			new AdMobData("ca-app-pub-8807533815804449/7061408794", AdSize.BANNER)
 		};
 	}
 
 	@Override
-	public String[] getWordJudgeAdUnitIds()
+	public AdMobData[] getWordJudgeAdUnitIds()
 	{
-		return new String[] {
-			"ca-app-pub-8807533815804449/8004601597"
+		return new AdMobData[] {
+			new AdMobData("ca-app-pub-8807533815804449/8004601597", AdSize.BANNER)
 		};
 	}
 

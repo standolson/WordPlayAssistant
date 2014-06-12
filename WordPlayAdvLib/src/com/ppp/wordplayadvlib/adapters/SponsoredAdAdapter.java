@@ -24,13 +24,13 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 
 	private Context context;
 	private BaseAdapter delegate;
-	private String[] adUnitIds;
+	private AdMobData[] adUnitIds;
 	protected TreeSet<Integer> sponsoredAdPositions;
 	private SparseArray<SponsoredAd> sponsoredAds;
 
 	public SponsoredAdAdapter(Context context,
 								BaseAdapter delegate,
-								String[] adUnitIds,
+								AdMobData[] adUnitIds,
 								TreeSet<Integer> sponsoredAdPositions,
 								SparseArray<SponsoredAd> sponsoredAds)
 	{
@@ -117,7 +117,7 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 					return getEmptyView();
 
 				// Create a new ad using only the available unit ids
-				AdMobData adMobData = new AdMobData(adUnitIds[(sponsoredAdPositions.size() - 1) % adUnitIds.length]);
+				AdMobData adMobData = adUnitIds[(sponsoredAdPositions.size() - 1) % adUnitIds.length];
 				AdMobAd adMobAd = new AdMobAd(context, PlacementType.ListSearchResult, position, adMobData);
 				adMobAd.setSponsoredAdAdapter(this);
 
