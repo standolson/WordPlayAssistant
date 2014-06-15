@@ -138,6 +138,7 @@ public class ThesaurusFragment extends BaseFragment implements View.OnClickListe
 		args.putInt("Dictionary", dictionary.ordinal());
 		args.putInt("WordScores", wordScores.ordinal());
 		args.putInt("WordSort", wordSort.ordinal());
+		args.putBoolean("isTopLevelSearch", true);
 
 		BaseFragment fragment = new SearchFragment();
 		fragment.setArguments(args);

@@ -160,6 +160,7 @@ public class CrosswordsFragment extends BaseFragment
 		args.putInt("Dictionary", dictionary.ordinal());
 		args.putInt("WordScores", wordScores.ordinal());
 		args.putInt("WordSort", wordSort.ordinal());
+		args.putBoolean("isTopLevelSearch", true);
 
 		BaseFragment fragment = new SearchFragment();
 		fragment.setArguments(args);

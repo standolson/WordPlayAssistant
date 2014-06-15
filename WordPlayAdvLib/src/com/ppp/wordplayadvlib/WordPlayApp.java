@@ -2,6 +2,7 @@ package com.ppp.wordplayadvlib;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -177,5 +178,7 @@ public class WordPlayApp extends Application
 	public AdMobData[] getWordJudgeAdUnitIds() { return null; }
 
 	public String getInterstitialAdUnitId() { return null; }
+
+	public long getInterstitialInterval() { return 5; }
 
 }

@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -71,6 +72,7 @@ public class SearchFragment extends BaseFragment
 	private LocalBroadcastManager broadcastManager;
 
 	private AdMobAd interstitialAdMobAd = null;
+	private boolean isTopLevelSearch = false;
 	private boolean showedInterstitial = false;
 	private Bundle nextArgs = null;
     private TreeSet<Integer> sponsoredAdPositions = new TreeSet<Integer>();
@@ -88,6 +90,15 @@ public class SearchFragment extends BaseFragment
     	// Create the broadcast maanger that will receive the completion
     	// and cancel callbacks of the AsyncTasks doing the searches
 		broadcastManager = LocalBroadcastManager.getInstance(getActivity());
+
+		// Pull stuff from the arguments
+		Bundle args = getArguments();
+		isTopLevelSearch = args.getBoolean("isTopLevelSearch");
+
+	    // If this is the free version, load an interstitial ad in
+	    // case the user tries to dive deeper into the search result
+	    if (WordPlayApp.getInstance().isFreeMode())
+	    	loadInterstitial();
 
 	}
 
@@ -113,11 +124,6 @@ public class SearchFragment extends BaseFragment
 
 	    zeroView = rootView.findViewById(R.id.zero_results);
 	    elapsedTextView = (TextView) rootView.findViewById(R.id.elapsed_time);
-
-	    // If this is the free version, load an interstitial ad in
-	    // case the user tries to dive deeper into the search result
-	    if (WordPlayApp.getInstance().isFreeMode())
-	    	loadInterstitial();
 
 	    // Restore state
 		if (savedInstanceState != null)  {
@@ -189,12 +195,20 @@ public class SearchFragment extends BaseFragment
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
+
 		super.onSaveInstanceState(savedInstanceState);
+
 		savedInstanceState.putParcelable("searchObject", searchObject);
 		savedInstanceState.putBoolean("showedInterstitial", showedInterstitial);
-		savedInstanceState.putBundle("nextArgs",
-			(nextArgs == null) ? interstitialAdMobAd.getAdMobData().args : nextArgs);
     	savedInstanceState.putIntArray("sponsoredAdListPositions", SponsoredAd.treeSetToIntArray(sponsoredAdPositions));
+
+    	if (nextArgs != null)
+    		savedInstanceState.putBundle("nextArgs", nextArgs);
+    	else if ((interstitialAdMobAd != null) && (interstitialAdMobAd.getAdMobData().args != null))
+    		savedInstanceState.putBundle("nextArgs", interstitialAdMobAd.getAdMobData().args);
+    	else
+    		savedInstanceState.putBundle("nextArgs", null);
+
 	}
 
     @Override
@@ -255,6 +269,7 @@ public class SearchFragment extends BaseFragment
 				else
 					args.putInt("Dictionary", searchObject.getDictionary().ordinal());
 			}
+			args.putBoolean("isTopLevelSearch", false);
 
 			// If this is the free version, we need to show the
 			// interstitial ad at some point but only if we haven't
@@ -562,9 +577,23 @@ public class SearchFragment extends BaseFragment
 		if (adUnitId == null)
 			return;
 
+		// If this isn't a search from the top level of one of the
+		// drawer items, skip loading
+		if (!isTopLevelSearch)
+			return;
+
 		// Do we already have one or did we previously and lost it
 		// due to reconfiguration?
 		if ((interstitialAdMobAd != null) || showedInterstitial)
+			return;
+
+		// Get and update the interstitial count
+		long count = getInterstitialCount() + 1;
+		long interval = WordPlayApp.getInstance().getInterstitialInterval();
+		saveInterstitialCount(count);
+
+		// Only show an interstitial every so often
+		if (count % interval != 0)
 			return;
 
 		// Create one
@@ -600,6 +629,20 @@ public class SearchFragment extends BaseFragment
 		interstitialAdMobAd.getInterstitialAd().show();
 
 		
+	}
+
+	private long getInterstitialCount()
+	{
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		return prefs.getLong("interstitialCount", 0);
+	}
+
+	private void saveInterstitialCount(long count)
+	{
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putLong("interstitialCount", count);
+		editor.commit();
 	}
 
 	@Override
