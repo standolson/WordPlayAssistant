@@ -5,14 +5,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.fragments.hosts.HostFragment;
 
 public class HostActivity extends BaseActivity {
@@ -161,19 +159,13 @@ public class HostActivity extends BaseActivity {
 
         ft.setTransition(FragmentTransaction.TRANSIT_NONE);
 
-        if (lastAdded != null)  {
-        	Log.e(getClass().getSimpleName(), "replaceStack: detach " + lastAdded);
+        if (lastAdded != null)
             ft.detach(lastAdded);
-        }
 
-        if (freshAdd)  {
-        	Log.e(getClass().getSimpleName(), "replaceStack: add " + newFragment);
+        if (freshAdd)
             ft.add(getFragmentContainer(), newFragment, newFragment.getClass().getName());
-        }
-        else {
-        	Log.e(getClass().getSimpleName(), "replaceStack: existing " + newFragment);
+        else
             ft.attach(newFragment);
-        }
 
         ft.commit();
 

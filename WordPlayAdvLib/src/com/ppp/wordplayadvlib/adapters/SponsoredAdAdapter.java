@@ -4,7 +4,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -229,7 +228,6 @@ public class SponsoredAdAdapter extends BaseAdapter implements SectionIndexer {
 		// on to its view (if it has one)
 		SponsoredAd ad = sponsoredAds.get(position);
 		if (ad != null)  {
-			Log.e(getClass().getSimpleName(), "performClick: position " + position);
 			View v = ad.getView();
 			if (v != null)
 				v.performClick();
