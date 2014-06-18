@@ -587,14 +587,23 @@ public class SearchFragment extends BaseFragment
 		if ((interstitialAdMobAd != null) || showedInterstitial)
 			return;
 
-		// Get and update the interstitial count
-		long count = getInterstitialCount() + 1;
-		long interval = WordPlayApp.getInstance().getInterstitialInterval();
-		saveInterstitialCount(count);
+		// Does the user owe us one because they skipped out when one
+		// was available?
+		if (!isOwedInterstitial())  {
 
-		// Only show an interstitial every so often
-		if (count % interval != 0)
-			return;
+			// Get and update the interstitial count
+			long count = getInterstitialCount() + 1;
+			long interval = WordPlayApp.getInstance().getInterstitialInterval();
+			saveInterstitialCount(count);
+
+			// Only show an interstitial every so often
+			if (count % interval != 0)
+				return;
+
+		}
+
+		// The user now owes us an interstitial view
+		setOwedInterstitial(true);
 
 		// Create one
 		AdMobData adMobData = new AdMobData(adUnitId);
@@ -619,6 +628,7 @@ public class SearchFragment extends BaseFragment
 		}
 
 		showedInterstitial = true;
+		setOwedInterstitial(false);
 
 		// Append the search arguments to the AdMobAd so that
 		// when we return, we have them to start the search the
@@ -642,6 +652,20 @@ public class SearchFragment extends BaseFragment
 		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putLong("interstitialCount", count);
+		editor.commit();
+	}
+
+	private boolean isOwedInterstitial()
+	{
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		return prefs.getBoolean("owedInterstitial", false);
+	}
+
+	private void setOwedInterstitial(boolean b)
+	{
+		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putBoolean("owedInterstitial", b);
 		editor.commit();
 	}
 
