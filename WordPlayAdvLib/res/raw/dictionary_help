@@ -5,7 +5,7 @@
 <p>To select a dictionary, select <b>Dictionaries</b> from the main menu.</p>
 
 <p><b>NOTE:</b> The dictionary selection for this tab is independent from the dictionary
- selected in the <b>Word Judge</b> or <b>Anagrams</b> tabs.</p>
+ selected in the other tabs.</p>
 
 <p>When using the DICT.ORG dictionaries, if a word in the dictionary exactly matches the text
  entered, a list of dictionary definitions will be displayed.  Selecting one of these entries

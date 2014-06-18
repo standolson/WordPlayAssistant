@@ -80,6 +80,8 @@ public class Analytics {
 		tracker.setScreenName(screenName);
 		tracker.send(event.build());
 
+		GoogleAnalytics.getInstance(context).dispatchLocalHits();
+
 	}
 
 	public static void sendEvent(String category, String action, String label, long value)
@@ -105,6 +107,8 @@ public class Analytics {
 		addBasicCustomDimensions(event);
 		tracker.send(event.build());
 
+		GoogleAnalytics.getInstance(context).dispatchLocalHits();
+
 	}
 
 	public static void sendEvent(String category, String action, SearchObject searchObject, long value)
@@ -128,6 +132,7 @@ public class Analytics {
 		addBasicCustomDimensions(event);
 		addCustomDimensions(event, searchObject);
 		tracker.send(event.build());
+
 		GoogleAnalytics.getInstance(context).dispatchLocalHits();
 
 	}

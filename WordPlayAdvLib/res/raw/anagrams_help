@@ -10,13 +10,14 @@
 <p><b>NOTE:</b> Some words in Scrabble(TM) word lists may not have definitions in the
  online dictionary.</p>
 
-<p>To select a dictionary, select <b>Dictionaries</b> from the main menu.</p>
+<p>To select a dictionary, select the Dictionary icon on the top menu.</p>
 
 <p><b>NOTE:</b> The dictionary selection for this tab is independent from the dictionary
- selected in the <b>Dictionary</b> or <b>Word Judge</b> tabs.</p>
+ selected in the other tabs.</p>
 
 <p>You may specify <b>ONE</b> wildcard character using either a period (<b>.</b>) or a
- question mark (<b>?</b>).</p>
+ question mark (<b>?</b>).  Wildcard letters are highlighted in green in the search
+ results.</p>
 
 <h4>Sorting and Scoring</h4>
 

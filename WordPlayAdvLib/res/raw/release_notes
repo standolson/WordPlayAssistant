@@ -1,5 +1,9 @@
 <h3>Release Notes</h3>
 
+<h4>Version 5.0</h4>
+
+All new user interface based on newer Android designs.
+ 
 <h4>Version 4.2a</h4>
 
 <p>Fixed problem that caused the paid version to want to install
@@ -54,7 +58,7 @@
 
 <h4>Version 4.0</h4>
 
-<p>Both the free and paid versions of WordPlay Assistant now use
+<p>Both the free and paid versions of the application now use
  an on device database for word lookup.  The online database is no
  longer being used.  The database will be installed on your SD memory
  card if it is installed.  If you do not have an SD memory card
