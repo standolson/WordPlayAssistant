@@ -46,8 +46,8 @@ import com.ppp.wordplayadvlib.fragments.BaseFragment;
 import com.ppp.wordplayadvlib.fragments.WebViewFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialogFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialogFragment.DbInstallDialogListener;
-import com.ppp.wordplayadvlib.fragments.dialog.FreeDialogFragment;
-import com.ppp.wordplayadvlib.fragments.dialog.FreeDialogFragment.FreeDialogListener;
+import com.ppp.wordplayadvlib.fragments.dialog.GeneralDialogFragment;
+import com.ppp.wordplayadvlib.fragments.dialog.GeneralDialogFragment.GeneralDialogListener;
 import com.ppp.wordplayadvlib.fragments.hosts.AboutHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.AnagramsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.CrosswordsHostFragment;
@@ -67,7 +67,7 @@ public class WordPlayActivity extends HostActivity
 	implements
 		OnItemClickListener,
 		DbInstallDialogListener,
-		FreeDialogListener
+		GeneralDialogListener
 {
 
 	private static final int RestartNotificationId = 1;
@@ -466,11 +466,11 @@ public class WordPlayActivity extends HostActivity
     private boolean showFreeDialog()
     {
 
-    	FreeDialogFragment freeDialog;
+    	GeneralDialogFragment freeDialog;
 
     	// If we are already showing the dialog, don't do so again
     	freeDialog =
-    		(FreeDialogFragment) getSupportFragmentManager().findFragmentByTag("FreeDialog");
+    		(GeneralDialogFragment) getSupportFragmentManager().findFragmentByTag("FreeDialog");
     	if (freeDialog != null)
     		return true;
 
@@ -481,7 +481,11 @@ public class WordPlayActivity extends HostActivity
     		return false;
 
     	// Create and show it
-    	freeDialog = FreeDialogFragment.newInstance();
+    	freeDialog =
+    		GeneralDialogFragment.newInstance(getString(R.string.FreeDialog),
+    											getString(R.string.free_mode_text, getString(R.string.app_name)),
+    											null);
+    	freeDialog.setCancelable(false);
     	freeDialog.show(getSupportFragmentManager(), "FreeDialog");
 
     	return true;
@@ -493,7 +497,7 @@ public class WordPlayActivity extends HostActivity
     //
 
 	@Override
-	public void onFreeDialogDimissed()
+	public void onGeneralDialogDimissed()
 	{
 
 		// Update the preferences to indicate we've show the dialog
