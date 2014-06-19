@@ -1,7 +1,9 @@
 package com.ppp.wordplayadvlib.model;
 
 public class JudgeHistoryObject {
-	
+
+	public static final int JUDGE_HISTORY_ITEM_LEN = 2;
+
 	private String word;
 	private boolean state;
 	

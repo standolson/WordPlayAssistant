@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.ppp.wordplayadvlib.R;
 
-public class FreeDialog extends DialogFragment {
+public class FreeDialogFragment extends DialogFragment {
 
 	public interface FreeDialogListener {
 		public void onFreeDialogDimissed();
@@ -20,9 +20,9 @@ public class FreeDialog extends DialogFragment {
 	private View rootView;
 	private FreeDialogListener listener;
 
-	public static FreeDialog newInstance()
+	public static FreeDialogFragment newInstance()
 	{
-		return new FreeDialog();
+		return new FreeDialogFragment();
 	}
 
 	@Override

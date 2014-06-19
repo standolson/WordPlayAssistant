@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
 
-public class DbInstallDialog extends DialogFragment {
+public class DbInstallDialogFragment extends DialogFragment {
 
 	public interface DbInstallDialogListener {
 		public void startDatabaseInstall();
@@ -21,10 +21,10 @@ public class DbInstallDialog extends DialogFragment {
 	private View rootView;
 	private DbInstallDialogListener listener;
 
-	public static DbInstallDialog newInstance(boolean isUpgrade)
+	public static DbInstallDialogFragment newInstance(boolean isUpgrade)
 	{
 
-		DbInstallDialog dialog = new DbInstallDialog();
+		DbInstallDialogFragment dialog = new DbInstallDialogFragment();
 
         Bundle args = new Bundle();
         args.putBoolean("isUpgrade", isUpgrade);

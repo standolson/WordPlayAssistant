@@ -49,6 +49,10 @@ public class ActionBarSpinner implements OnItemClickListener {
 	public void show()
 	{
 
+		// If there are no items to display, do nothing
+		if (items == null)
+			return;
+
 		// Create the PopupWindow that will hold the view
 		popup = new PopupWindow(context);
 

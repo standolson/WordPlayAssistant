@@ -9,6 +9,7 @@ import java.util.ListIterator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.WordPlayApp;
@@ -45,8 +46,8 @@ public class JudgeHistory {
 
 		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
+		StringBuilder judgeBuf = new StringBuilder("");
 
-		StringBuilder judgeBuf = new StringBuilder();
 		ListIterator<JudgeHistoryObject> iterator = getJudgeHistory().listIterator(judge_history.size());
 		while (iterator.hasPrevious())  {
 			JudgeHistoryObject elem = iterator.previous();
@@ -76,6 +77,12 @@ public class JudgeHistory {
 		try {
 			String input;
 			while ((input = judgeBuf.readLine()) != null)  {
+				Log.e(getClass().getSimpleName(), "input = '" + input + "'");
+				input = input.trim();
+				if ((input == null) || (input.length() == 0) || !input.contains(":"))
+					continue;
+				if (input.split(":").length != JudgeHistoryObject.JUDGE_HISTORY_ITEM_LEN)
+					continue;
 				JudgeHistoryObject history = new JudgeHistoryObject(input);
 				addJudgeHistory(history);
 			}

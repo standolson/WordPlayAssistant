@@ -44,10 +44,10 @@ import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
 import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.fragments.BaseFragment;
 import com.ppp.wordplayadvlib.fragments.WebViewFragment;
-import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialog;
-import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialog.DbInstallDialogListener;
-import com.ppp.wordplayadvlib.fragments.dialog.FreeDialog;
-import com.ppp.wordplayadvlib.fragments.dialog.FreeDialog.FreeDialogListener;
+import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialogFragment;
+import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialogFragment.DbInstallDialogListener;
+import com.ppp.wordplayadvlib.fragments.dialog.FreeDialogFragment;
+import com.ppp.wordplayadvlib.fragments.dialog.FreeDialogFragment.FreeDialogListener;
 import com.ppp.wordplayadvlib.fragments.hosts.AboutHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.AnagramsHostFragment;
 import com.ppp.wordplayadvlib.fragments.hosts.CrosswordsHostFragment;
@@ -449,15 +449,16 @@ public class WordPlayActivity extends HostActivity
     private void showInstallDbDialog(boolean upgrade)
     {
 
-    	DbInstallDialog dbInstallDialog;
+    	DbInstallDialogFragment dbInstallDialog;
 
     	// If we are already showing the dialog, don't do so again
-    	dbInstallDialog = (DbInstallDialog) getSupportFragmentManager().findFragmentByTag("InstallDbDialog");
+    	dbInstallDialog =
+    		(DbInstallDialogFragment) getSupportFragmentManager().findFragmentByTag("InstallDbDialog");
     	if (dbInstallDialog != null)
     		return;
 
     	// Create and show it
-    	dbInstallDialog = DbInstallDialog.newInstance(upgrade);
+    	dbInstallDialog = DbInstallDialogFragment.newInstance(upgrade);
 		dbInstallDialog.show(getSupportFragmentManager(), "InstallDbDialog");
 
     }
@@ -465,10 +466,11 @@ public class WordPlayActivity extends HostActivity
     private boolean showFreeDialog()
     {
 
-    	FreeDialog freeDialog;
+    	FreeDialogFragment freeDialog;
 
     	// If we are already showing the dialog, don't do so again
-    	freeDialog = (FreeDialog) getSupportFragmentManager().findFragmentByTag("FreeDialog");
+    	freeDialog =
+    		(FreeDialogFragment) getSupportFragmentManager().findFragmentByTag("FreeDialog");
     	if (freeDialog != null)
     		return true;
 
@@ -479,7 +481,7 @@ public class WordPlayActivity extends HostActivity
     		return false;
 
     	// Create and show it
-    	freeDialog = FreeDialog.newInstance();
+    	freeDialog = FreeDialogFragment.newInstance();
     	freeDialog.show(getSupportFragmentManager(), "FreeDialog");
 
     	return true;

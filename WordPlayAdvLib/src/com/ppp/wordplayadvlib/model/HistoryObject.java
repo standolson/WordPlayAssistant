@@ -3,7 +3,9 @@ package com.ppp.wordplayadvlib.model;
 import android.os.Bundle;
 
 public class HistoryObject {
-	
+
+	public static final int HISTORY_ITEM_LEN = 6;
+
 	private SearchType searchType;
 	private String searchString;
 	private String boardString;
