@@ -7,13 +7,6 @@ public class WordPlayException extends Exception {
 
 	private static final long serialVersionUID = -3843457052376896154L;
 
-	public WordPlayException(String s, int code, String resp)
-	{
-		super(s);
-		status_code = code;
-		response = resp;
-	}
-
 	public WordPlayException(String s)
 	{
 		super(s);

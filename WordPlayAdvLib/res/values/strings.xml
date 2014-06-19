@@ -169,6 +169,13 @@ Enjoy!!
 	<string name="SponsoredAd">Loading sponsored ad...</string>
 	<string name="SponsoredAdFailed">Failed to load sponsored ad</string>
 
+	<string name="ErrorTitle">Error!</string>
+	<string name="JudgeHistoryLoadError">Problem loading word judge history</string>
+	<string name="HistoryLoadError">Problem loading search history</string>
+	<string name="DatabaseCreateError">Unable to create or upgrade word database on %1$s storage (exception %2$s, cause %3$s).</string>
+	<string name="NoCauseAvailable">None available</string>
+	<string name="PleaseFreeSpace">Please either free some storage space if you have less than 8MB of free space and retry or contact support if necessary.</string>
+
 	<string name="ConfirmExitToastMessage">Press BACK again to exit</string>
 	<string name="elapsed_time" formatted="false">Found %d %s in %.3f seconds</string>
 

@@ -1,7 +1,6 @@
 package com.ppp.wordplayadvlib.model;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -12,8 +11,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.ppp.wordplayadvlib.Constants;
-import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class JudgeHistory {
@@ -56,14 +53,14 @@ public class JudgeHistory {
 			judgeBuf.append("\n");
 		}
 
-		editor.putString("wordjudgeHistory", judgeBuf.toString());
-		Debug.v("SAVE JUDGE_HISTORY = '" + judgeBuf.toString() + "'");
+		editor.putString("wordjudgeHistory", judgeBuf.toString().trim());
+		Debug.v("SAVE JUDGE_HISTORY = '" + judgeBuf.toString().trim() + "'");
 
 		editor.commit();
 
 	}
 
-	public void loadJudgeHistory(Activity activity)
+	public boolean loadJudgeHistory(Activity activity)
 	{
 
 		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
@@ -75,6 +72,7 @@ public class JudgeHistory {
 
 		BufferedReader judgeBuf = new BufferedReader(new StringReader(judgeHistoryStr), Constants.BufSize);
 		try {
+
 			String input;
 			while ((input = judgeBuf.readLine()) != null)  {
 				Log.e(getClass().getSimpleName(), "input = '" + input + "'");
@@ -86,11 +84,13 @@ public class JudgeHistory {
 				JudgeHistoryObject history = new JudgeHistoryObject(input);
 				addJudgeHistory(history);
 			}
+
+			return true;
+
 		}
-		catch (IOException e) {
-			new AppErrDialog(WordPlayApp.getInstance()).showMessage("Problem loading word judge history");
-			return;
-		}
+		catch (Exception e) {}
+
+		return false;
 
 	}
 

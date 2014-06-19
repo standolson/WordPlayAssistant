@@ -1,8 +1,8 @@
 package com.ppp.wordplayadvlib.fragments.dialog;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,22 +14,28 @@ import com.ppp.wordplayadvlib.R;
 public class GeneralDialogFragment extends DialogFragment {
 
 	public interface GeneralDialogListener {
-		public void onGeneralDialogDimissed();
+		public void onGeneralDialogDimissed(String dialogName);
 	}
 
 	private View rootView;
-	private GeneralDialogListener listener;
 
-	public static GeneralDialogFragment newInstance(String title, String message, String listener)
+	private String dialogName;
+	private String listener;
+
+	public static GeneralDialogFragment newInstance(String dialogName,
+													String title,
+													String message,
+													String listener)
 	{
 
 		GeneralDialogFragment dialog = new GeneralDialogFragment();
 
 		Bundle args = new Bundle();
+		args.putString("dialogName", dialogName);
 		args.putString("title", title);
 		args.putString("message", message);
 		if (listener != null)
-			args.putString("listener", listener);
+			args.putString("altListener", listener);
 		dialog.setArguments(args);
 
 		return dialog;
@@ -54,8 +60,10 @@ public class GeneralDialogFragment extends DialogFragment {
 		rootView = inflater.inflate(R.layout.general_dialog_fragment, null);
 
 		Bundle args = getArguments();
+		dialogName = args.getString("dialogName");
 		String title = args.getString("title");
 		String message = args.getString("message");
+		listener = args.getString("altListener");
 
 		((TextView) rootView.findViewById(R.id.title)).setText(title);
 		((TextView) rootView.findViewById(R.id.dialog_text)).setText(message);
@@ -74,30 +82,25 @@ public class GeneralDialogFragment extends DialogFragment {
 
 	}
 
-    @Override
-    public void onAttach(Activity activity)
-    {
-    	super.onAttach(activity);
-
-    	if (activity instanceof GeneralDialogListener)
-    		listener = (GeneralDialogListener) activity;
-    	else
-    		listener = null;
-
-    }
-
-    @Override
-    public void onDetach()
-    {
-    	super.onDetach();
-    	listener = null;
-    }
-
     private void returnToApp()
     {
+
+    	GeneralDialogListener l = null;
+
     	dismiss();
-    	if (listener != null)
-    		listener.onGeneralDialogDimissed();
+
+        if (getActivity() instanceof GeneralDialogListener)
+            l = (GeneralDialogListener) getActivity();
+
+        if ((listener != null) && (l == null))  {
+            Fragment frag = getFragmentManager().findFragmentByTag(listener);
+            if (frag instanceof GeneralDialogListener)
+                l = (GeneralDialogListener) frag;
+        }
+
+        if (l != null)
+            l.onGeneralDialogDimissed(dialogName);
+
     }
 
 }

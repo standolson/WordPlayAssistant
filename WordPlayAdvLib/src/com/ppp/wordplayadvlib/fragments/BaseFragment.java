@@ -1,21 +1,13 @@
 package com.ppp.wordplayadvlib.fragments;
 
-import java.io.File;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -29,11 +21,8 @@ import android.view.inputmethod.InputMethodManager;
 import com.ppp.wordplayadvlib.Constants;
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.database.WordlistDatabase;
-import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.utils.Debug;
-import com.ppp.wordplayadvlib.utils.Utils;
 import com.ppp.wordplayadvlib.widgets.ActionBarSpinner.ActionBarSpinnerCallback;
 
 @SuppressLint("ValidFragment")
@@ -44,13 +33,8 @@ public class BaseFragment extends Fragment
 
 	private static final int RestartNotificationId = 1;
 
-	protected static final int EmailActivity = 1;
-	protected static final int HelpViewerActivity = 2;
-	protected static final int UserPrefsActivity = 3;
-
 	protected static int searchCount = 0;
 	protected static Boolean hasNagged = false;
-	private static boolean notificationIconEnabled = false;
 
 	protected Bundle searchBundle = null;
 	protected static Bundle savedSearchBundle = null;
@@ -90,71 +74,6 @@ public class BaseFragment extends Fragment
 
 	}
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-
-		super.onActivityCreated(savedInstanceState);
-
-        // For the free mode, see if we've shown the free dialog
-        // and if we haven't, show it.  If we show it, when we're
-        // done, the database will get installed.
-        //
-        // For the paid mode, make sure we've got a database.
-		if (WordPlayApp.getInstance().isFreeMode())
-			freeDialogCheck();
-		else
-			createDatabaseIfMissing();
-
-	}
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-
-    	switch (requestCode)  {
-	
-	    	case EmailActivity:
-	
-	    		// When returning from email sent from the nag dialog, finish
-	    		// the search the user started
-	    		if (savedSearchBundle != null)  {
-	    			try {
-//	    				startActivity(savedSearchIntent);
-	    			}
-	    			catch (Exception e) {}
-	    		}
-	    		break;
-	
-	    	case HelpViewerActivity:
-	 
-	    		// We're returning from showing the release notes from the
-	    		// free app installed dialog.  Proceed to creating the database
-	    		// if that is required.
-	    		createDatabaseIfMissing();
-	    		break;
-	
-	    	case UserPrefsActivity:
-	
-	    		// We've returned from setting preferences.  Apply the only one we
-	    		// know about now by adding or removing the notification icon.
-	    		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-	        	boolean newNotificationSetting = prefs.getBoolean("notification_bar", false);
-	        	if (newNotificationSetting != notificationIconEnabled)  {
-	        		if (newNotificationSetting)  {
-	        	    	Intent intent = new Intent(getActivity(), getActivity().getClass());
-	        	    	addRestartNotification(intent);
-	        		}
-	        		else
-	        			removeNotification();
-	        		notificationIconEnabled = newNotificationSetting;
-	        	}
-	        	break;
-
-    	}
-    	
-    }
-
 	//
 	// Search Support
 	//
@@ -179,137 +98,6 @@ public class BaseFragment extends Fragment
 	public String[] getDictionaryNames() { return null; }
 
 	public int getSelectedDictionary() { return 0; }
-
-    //
-    // Database Installation
-    //
-
-    private void startDatabaseInstallation(Context context, DialogFragment dialog)
-    {
-		new DatabaseWaitTask(context, dialog).execute();    	
-    }
-
-    private void createDatabaseIfMissing()
-    {
-
-//    	WordlistDatabase db =
-//    		(WordlistDatabase) new WordlistDatabase(getActivity()).openReadOnly();
-//
-//    	// If the database is old or missing, the version will be -1
-//    	int dbVersion = db.getDatabaseVersion();
-//		if (dbVersion == DatabaseInfo.INVALID_DB_VERSION)  {
-//			Debug.e("bad db version " + dbVersion);
-//			showDialog(InstallDbDialog);
-//		}
-//		else if (dbVersion != DatabaseInfo.CURRENT_DB_VERSION)  {
-//			Debug.e("old db version " + dbVersion);
-//			showDialog(UpgradeDbDialog);
-//		}
-//
-//		db.close();
-
-    }
-
-    private class DatabaseWaitTask extends AsyncTask<Void, Void, Void> {
-
-    	private Context context = null;
-    	private DialogFragment dialogFragment = null;
-
-    	private Exception exception = null;
-    	private ProgressDialog progressDialog = null;
-
-    	public DatabaseWaitTask(Context ctx, DialogFragment dialog)
-    	{
-    		context = ctx;
-    		dialogFragment = dialog;
-    	}
-
-    	protected void onPreExecute()
-    	{
-
-    		if (dialogFragment != null)
-    			if (!getActivity().isFinishing())
-    				dialogFragment.dismiss();
-
-    		if (!getActivity().isFinishing())  {
-    			progressDialog = new ProgressDialog(context);
-    			String installLocStr = WordlistDatabase.dbInstallsOnExternalStorage() ?
-						getString(R.string.dictionary_on_external_storage) :
-						getString(R.string.dictionary_on_internal_storage);
-				String message = String.format(getString(R.string.dictionary_progress_dialog_text), installLocStr);
-				progressDialog.setMessage(message);
-    			progressDialog.setCancelable(false);
-    			progressDialog.show();
-    		}
-
-    	}
-
-		@Override
-		protected Void doInBackground(Void... params)
-		{
-			try {
-				WordlistDatabase.deleteDatabaseFile(getActivity());
-				WordlistDatabase.createDatabaseFile(getActivity());
-			}
-			catch (Exception e) { exception = e; }
-			return null;
-		}
-
-		protected void onPostExecute(Void result)
-		{
-
-			// Reset the dictionaries to ENABLE in preferences
-			// and in the spinners
-			SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = prefs.edit();
-			int defaultDict = DictionaryType.DICTIONARY_ENABLE.ordinal();
-			editor.putInt("dictionary_dict", defaultDict - 1);
-			editor.putInt("anagrams_dict", defaultDict - 1);
-			editor.putInt("wordjudge_dict", defaultDict - 1);
-			editor.putInt("crosswords_dict", defaultDict - 1);
-			editor.commit();
-
-			// Dismiss the dialog
-			if (progressDialog != null)
-				if (!getActivity().isFinishing())
-					progressDialog.dismiss();
-
-			// If there was an exception during install,
-			// report it
-			if (exception != null)
-				createDatabaseExceptionDialog(context, exception);
-
-		}
-
-    }
-
-    private void createDatabaseExceptionDialog(Context context, Exception exception)
-    {
-
-		StringBuilder builder = new StringBuilder();
-
-		File file = Environment.getDataDirectory();
-		builder.append(file.getPath());
-		builder.append(" ");
-		builder.append(Utils.getFreeSpaceForFile(context, file));
-		builder.append("\n");
-
-		file = Environment.getExternalStorageDirectory();
-		builder.append(file.getPath());
-		builder.append(" ");
-		builder.append(Utils.getFreeSpaceForFile(context, file));
-		builder.append("\n");
-
-		builder.append("Installs on " +
-						(WordlistDatabase.dbInstallsOnExternalStorage() ?
-								getString(R.string.dictionary_on_external_storage) :
-									getString(R.string.dictionary_on_internal_storage)) + " storage");
-		builder.append("\n");
-
-		if (!getActivity().isFinishing())
-			new AppErrDialog(context, exception, builder.toString()).show();
-
-    }
 
     //
     // Notification Bar Icon Support
@@ -358,30 +146,6 @@ public class BaseFragment extends Fragment
 	//
 	// Miscellaneous Support
 	//
-
-    private void freeDialogCheck()
-    {
-
-		SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-
-		// Have we show the dialog already?  It is shown only on the
-		// very first run.
-		boolean hasShown = prefs.getBoolean("free_dialog_shown", false);
-		if (!hasShown)  {
-
-			// Update the preferences to mark that its been shown
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putBoolean("free_dialog_shown", true);
-			editor.commit();
-
-			// Show the dialog
-//			showDialog(FreeDialog);
-
-		}
-		else
-			createDatabaseIfMissing();
-
-    }
 
     protected boolean validateString(String searchString,
     									DictionaryType dictionary,

@@ -81,6 +81,7 @@ public class DbInstallDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity)
     {
+
     	super.onAttach(activity);
 
     	if (activity instanceof DbInstallDialogListener)

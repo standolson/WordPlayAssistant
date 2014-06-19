@@ -82,7 +82,7 @@ public class SearchProgressDialogFragment extends DialogFragment
     {
 
         SearchProgressListener l = null;
-        
+
         dismiss();
 
         if (getActivity() instanceof SearchProgressListener)

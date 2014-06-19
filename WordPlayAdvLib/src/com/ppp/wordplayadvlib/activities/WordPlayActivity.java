@@ -41,7 +41,6 @@ import com.ppp.wordplayadvlib.WordPlayApp;
 import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.database.WordlistDatabase;
 import com.ppp.wordplayadvlib.database.schema.DatabaseInfo;
-import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.fragments.BaseFragment;
 import com.ppp.wordplayadvlib.fragments.WebViewFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.DbInstallDialogFragment;
@@ -115,8 +114,12 @@ public class WordPlayActivity extends HostActivity
         menuItems.add(new DrawerMenuItem(getString(R.string.showabout_menu_str), 0, AboutHostFragment.class));
 
         // Clear and load history
-        History.getInstance().loadHistory(this);
-        JudgeHistory.getInstance().loadJudgeHistory(this);
+        boolean historyLoaded = History.getInstance().loadHistory(this);
+        boolean judgeHistoryLoaded = JudgeHistory.getInstance().loadJudgeHistory(this);
+        if (!historyLoaded)
+        	showErrorDialog(getString(R.string.HistoryLoadError));
+        else if (!judgeHistoryLoaded)
+        	showErrorDialog(getString(R.string.JudgeHistoryLoadError));
 
         // Create and show the initial fragment or the last
         // fragment seen
@@ -482,7 +485,8 @@ public class WordPlayActivity extends HostActivity
 
     	// Create and show it
     	freeDialog =
-    		GeneralDialogFragment.newInstance(getString(R.string.FreeDialog),
+    		GeneralDialogFragment.newInstance("FreeDialog",
+    											getString(R.string.FreeDialog),
     											getString(R.string.free_mode_text, getString(R.string.app_name)),
     											null);
     	freeDialog.setCancelable(false);
@@ -497,23 +501,28 @@ public class WordPlayActivity extends HostActivity
     //
 
 	@Override
-	public void onGeneralDialogDimissed()
+	public void onGeneralDialogDimissed(String dialogName)
 	{
 
-		// Update the preferences to indicate we've show the dialog
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor edit = prefs.edit();
-		edit.putBoolean("freeDialogShown", true);
-		edit.commit();
+		// Handle the free dialog
+		if (dialogName.equals("FreeDialog"))  {
 
-		// Create or upgrade the database
-		if (createOrUpgradeDatabase())
-			return;
+			// Update the preferences to indicate we've show the dialog
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			SharedPreferences.Editor edit = prefs.edit();
+			edit.putBoolean("freeDialogShown", true);
+			edit.commit();
+	
+			// Create or upgrade the database
+			if (createOrUpgradeDatabase())
+				return;
+	
+			// All dialogs have been shown so we can now show
+			// the drawer if it hasn't been seen before
+			if (!drawerSeen)
+				showDrawer();
 
-		// All dialogs have been shown so we can now show
-		// the drawer if it hasn't been seen before
-		if (!drawerSeen)
-			showDrawer();
+		}
 
 	}
 
@@ -626,28 +635,54 @@ public class WordPlayActivity extends HostActivity
     {
 
 		StringBuilder builder = new StringBuilder();
+		String exceptionMessage = exception.getLocalizedMessage();
 
-		File file = Environment.getDataDirectory();
-		builder.append(file.getPath());
-		builder.append(" ");
-		builder.append(Utils.getFreeSpaceForFile(context, file));
+		builder.append(getString(R.string.DatabaseCreateError,
+									WordlistDatabase.dbInstallsOnExternalStorage() ?
+										getString(R.string.dictionary_on_external_storage) :
+										getString(R.string.dictionary_on_internal_storage),
+									exception.getClass().getSimpleName(),
+									exceptionMessage == null ?
+										getString(R.string.NoCauseAvailable) :
+										exceptionMessage));
+		builder.append("\n\n");
+
+		File file;
+		if (WordlistDatabase.dbInstallsOnExternalStorage())  {
+			file = Environment.getExternalStorageDirectory();
+			builder.append(file.getPath());
+			builder.append(" ");
+			builder.append(Utils.getFreeSpaceForFile(context, file));
+			builder.append("\n");
+		}
+		else {
+			file = Environment.getDataDirectory();
+			builder.append(file.getPath());
+			builder.append(" ");
+			builder.append(Utils.getFreeSpaceForFile(context, file));
+			builder.append("\n");
+		}
 		builder.append("\n");
 
-		file = Environment.getExternalStorageDirectory();
-		builder.append(file.getPath());
-		builder.append(" ");
-		builder.append(Utils.getFreeSpaceForFile(context, file));
-		builder.append("\n");
-
-		builder.append("Installs on " +
-						(WordlistDatabase.dbInstallsOnExternalStorage() ?
-								getString(R.string.dictionary_on_external_storage) :
-									getString(R.string.dictionary_on_internal_storage)) + " storage");
-		builder.append("\n");
+		builder.append(getString(R.string.PleaseFreeSpace));
 
 		if (!isFinishing())
-			new AppErrDialog(context, exception, builder.toString()).show();
+			showErrorDialog(builder.toString());
 
+    }
+
+    //
+    // Other Dialogs
+    //
+
+    private void showErrorDialog(String message)
+    {
+		GeneralDialogFragment dialog =
+		GeneralDialogFragment.newInstance("ErrorDialog",
+											getString(R.string.ErrorTitle),
+											message,
+											null);
+		dialog.show(getSupportFragmentManager(), "FreeDialog");
     }
 
     //

@@ -25,8 +25,6 @@ public class AppErrDialog extends AlertDialog {
 		app_data = data;
 	}
 	
-	public AppErrDialog(Context ctx) { super(ctx); }
-	
 	public void show()
 	{
 

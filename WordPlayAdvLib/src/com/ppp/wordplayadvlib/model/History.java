@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.ppp.wordplayadvlib.Constants;
-import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class History {
@@ -60,14 +58,14 @@ public class History {
 			historyBuf.append("\n");
 		}
 
-		editor.putString("savedHistory", historyBuf.toString());
-		Debug.v("SAVE HISTORY = '" + historyBuf.toString() + "'");
+		editor.putString("savedHistory", historyBuf.toString().trim());
+		Debug.v("SAVE HISTORY = '" + historyBuf.toString().trim() + "'");
 
 		editor.commit();
 
 	}
 
-	public void loadHistory(Activity activity)
+	public boolean loadHistory(Activity activity)
 	{
 
 		SharedPreferences prefs = activity.getPreferences(Context.MODE_PRIVATE);
@@ -79,6 +77,7 @@ public class History {
 
 		BufferedReader historyBuf = new BufferedReader(new StringReader(historyStr), Constants.BufSize);
 		try {
+
 			String input;
 			while ((input = historyBuf.readLine()) != null)  {
 				Log.e(getClass().getSimpleName(), "input = '" + input + "'");
@@ -90,11 +89,13 @@ public class History {
 				HistoryObject history = new HistoryObject(input);
 				addHistory(history);
 			}
+
+			return true;
+
 		}
-		catch (Exception e) {
-			new AppErrDialog(WordPlayApp.getInstance()).showMessage("Problem loading search history");
-			return;
-		}
+		catch (Exception e) {}
+
+		return false;
 
 	}
 

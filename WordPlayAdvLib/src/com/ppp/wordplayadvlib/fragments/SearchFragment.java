@@ -419,12 +419,12 @@ public class SearchFragment extends BaseFragment
 				Exception e = searchObject.getException();
 				if (e instanceof WifiAuthException)
 					searchObject.setException(new WordPlayException(getString(R.string.wifi_auth_error)));
-				showAppErrDialog();
+				showErrorDialog();
 			}
 
 	}
 	
-    private void showAppErrDialog()
+    private void showErrorDialog()
     {
 
     	StringBuilder appData = new StringBuilder();
