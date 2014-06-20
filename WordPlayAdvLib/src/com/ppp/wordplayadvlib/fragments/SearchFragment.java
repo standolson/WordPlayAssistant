@@ -32,13 +32,12 @@ import com.ppp.wordplayadvlib.adapters.WordDefinitionsAdapter;
 import com.ppp.wordplayadvlib.adapters.WordListAdapter;
 import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.database.ScrabbleDatabaseClient;
-import com.ppp.wordplayadvlib.dialogs.AppErrDialog;
-import com.ppp.wordplayadvlib.exceptions.WifiAuthException;
-import com.ppp.wordplayadvlib.exceptions.WordPlayException;
 import com.ppp.wordplayadvlib.externalads.AdMobAd;
 import com.ppp.wordplayadvlib.externalads.AdMobData;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd.EventCallback;
+import com.ppp.wordplayadvlib.fragments.dialog.GeneralDialogFragment;
+import com.ppp.wordplayadvlib.fragments.dialog.GeneralDialogFragment.GeneralDialogListener;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment.SearchProgressListener;
 import com.ppp.wordplayadvlib.model.DictionaryType;
@@ -56,7 +55,8 @@ public class SearchFragment extends BaseFragment
 	implements
 		OnItemClickListener,
 		SearchProgressListener,
-		EventCallback
+		EventCallback,
+		GeneralDialogListener
 {
 
 	private View rootView;
@@ -339,13 +339,6 @@ public class SearchFragment extends BaseFragment
 	private void startSearch()
 	{
 
-		// Register the broadcast receiver to receive completed and
-		// cancelled notifications
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(SEARCH_COMPLETED_INTENT);
-		filter.addAction(SEARCH_CANCELED_INTENT);
-		broadcastManager.registerReceiver(searchReceiver, filter);
-
 		// Create the SearchObject
 		searchObject = new SearchObject(getArguments());
 
@@ -415,29 +408,29 @@ public class SearchFragment extends BaseFragment
 		else if (searchObject.getScoredWordList() != null)
 			showScoredWordList();
 		else if (searchObject.getException() != null)
-			if (!getActivity().isFinishing())  {
-				Exception e = searchObject.getException();
-				if (e instanceof WifiAuthException)
-					searchObject.setException(new WordPlayException(getString(R.string.wifi_auth_error)));
-				showErrorDialog();
-			}
+			if (!getActivity().isFinishing())
+				showErrorDialog(searchObject.getException().getMessage());
+
 
 	}
 	
-    private void showErrorDialog()
+    private void showErrorDialog(String message)
     {
-
-    	StringBuilder appData = new StringBuilder();
-
-    	appData.append("search_string = " + searchObject.getSearchString() + "\n");
-    	appData.append("search_type = " + searchObject.getSearchType() + "\n");
-    	appData.append("dictionary = " + searchObject.getDictionary().toString() + "\n");
-    	appData.append("word_scores = " + searchObject.getWordScores() + "\n");
-    	appData.append("word_sort = " + searchObject.getWordSort() + "\n");
-
-    	new AppErrDialog(getActivity(), searchObject.getException(), appData.toString()).show();
-
+    	GeneralDialogFragment dialog =
+    		GeneralDialogFragment.newInstance("ErrorDialog",
+		    									getString(R.string.ErrorTitle),
+		    									message,
+		    									SearchFragment.class.getName());
+    	dialog.setCancelable(false);
+	    dialog.show(getFragmentManager(), GeneralDialogFragment.class.getName());
     }
+
+	@Override
+	public void onGeneralDialogDimissed(String dialogName)
+	{
+		if (dialogName.equals("ErrorDialog"))
+			popStack();
+	}
 
     //
     // Search Results

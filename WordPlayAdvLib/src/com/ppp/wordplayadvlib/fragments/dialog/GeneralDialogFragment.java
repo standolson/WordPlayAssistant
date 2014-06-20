@@ -92,7 +92,7 @@ public class GeneralDialogFragment extends DialogFragment {
         if (getActivity() instanceof GeneralDialogListener)
             l = (GeneralDialogListener) getActivity();
 
-        if ((listener != null) && (l == null))  {
+        if (listener != null)  {
             Fragment frag = getFragmentManager().findFragmentByTag(listener);
             if (frag instanceof GeneralDialogListener)
                 l = (GeneralDialogListener) frag;
