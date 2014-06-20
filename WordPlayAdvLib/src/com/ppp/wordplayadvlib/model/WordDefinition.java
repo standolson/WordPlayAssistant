@@ -136,7 +136,8 @@ public class WordDefinition implements Parcelable {
 	{
 		word = in.readString();
 		int len = in.readInt();
-		definitions = new String[len];
+		if (len > 0)
+			definitions = new String[len];
 		in.readStringArray(definitions);
 		currentIndex = in.readInt();
 		maxIndex = in.readInt();
@@ -146,8 +147,9 @@ public class WordDefinition implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags)
 	{
 		dest.writeString(word);
-		dest.writeInt(definitions.length);
-		dest.writeStringArray(definitions);
+		dest.writeInt(definitions != null ? definitions.length : 0);
+		if (definitions != null)
+			dest.writeStringArray(definitions);
 		dest.writeInt(currentIndex);
 		dest.writeInt(maxIndex);
 	}
