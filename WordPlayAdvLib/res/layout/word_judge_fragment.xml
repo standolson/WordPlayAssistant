@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/wordjudge"
-	android:layout_width="fill_parent"
+	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical">
 	
@@ -38,11 +38,12 @@
 			android:text="@string/judge_button_text"/>
 
 	</LinearLayout>
-	
-	<ListView
-		android:id="@+id/wordjudge_listview"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:choiceMode="singleChoice" />
-	
+
+	<!-- Container for the WordJudgeAdapterFragment -->
+
+	<FrameLayout
+	    android:id="@+id/word_judge_adapter_container"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" />
+
 </LinearLayout>

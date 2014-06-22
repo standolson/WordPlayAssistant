@@ -1,7 +1,5 @@
 package com.ppp.wordplayadvlib.fragments;
 
-import java.util.TreeSet;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +7,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,22 +22,16 @@ import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
-import com.ppp.wordplayadvlib.WordPlayApp;
-import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
-import com.ppp.wordplayadvlib.adapters.WordJudgeAdapter;
 import com.ppp.wordplayadvlib.analytics.Analytics;
 import com.ppp.wordplayadvlib.database.ScrabbleDatabaseClient;
-import com.ppp.wordplayadvlib.externalads.SponsoredAd;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment;
 import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment.SearchProgressListener;
+import com.ppp.wordplayadvlib.fragments.tablet.WordJudgeAdapterFragment;
 import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.model.JudgeHistory;
 import com.ppp.wordplayadvlib.model.JudgeHistoryObject;
@@ -49,24 +42,19 @@ import com.ppp.wordplayadvlib.utils.Debug;
 public class WordJudgeFragment extends BaseFragment
 	implements
 		View.OnClickListener,
-		OnItemClickListener,
 		SearchProgressListener
 {
 
 	private View rootView;
+
+	private WordJudgeAdapterFragment adapterFragment;
 	private Button wjButton = null;
 	private EditText wjText = null;
-	private ListView wjListview = null;
-	private SponsoredAdAdapter wjAdAdapter = null;
-	private WordJudgeAdapter wjAdapter = null;
 
 	private JudgeSearchObject judgeSearchObject = null;
 
 	private static AsyncTask<Void, Void, Void> task;
 	private LocalBroadcastManager broadcastManager;
-
-    private TreeSet<Integer> sponsoredAdPositions = new TreeSet<Integer>();
-    private SparseArray<SponsoredAd> sponsoredAdListAds = new SparseArray<SponsoredAd>();
 
 	//
 	// Activity Methods
@@ -90,14 +78,10 @@ public class WordJudgeFragment extends BaseFragment
 
 		rootView = inflater.inflate(R.layout.word_judge_fragment, container, false);
 
-		if (savedInstanceState != null)  {
-			int[] positions = savedInstanceState.getIntArray("sponsoredAdListPositions");
-			sponsoredAdPositions = SponsoredAd.intArrayToTreeSet(positions);
-		}
-
 		setupWordJudgeTab();
 
 		return rootView;
+
 	}
 
 	@Override
@@ -131,13 +115,6 @@ public class WordJudgeFragment extends BaseFragment
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle savedInstanceState)
-	{
-		super.onSaveInstanceState(savedInstanceState);
-    	savedInstanceState.putIntArray("sponsoredAdListPositions", SponsoredAd.treeSetToIntArray(sponsoredAdPositions));		
-	}
-
-	@Override
     public void onClick(View v)
     {
         InputMethodManager imm =
@@ -145,30 +122,6 @@ public class WordJudgeFragment extends BaseFragment
         imm.hideSoftInputFromWindow(wjText.getWindowToken(), 0);
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     	startWordJudgeSearch();
-    }
-
-	@Override
-	public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-    {
-
-		// If we're showing ads, we need to do some special stuff
-		if (wjAdAdapter != null)  {
-
-			// If the user is trying to click on the sponsored ad,
-			// pass that click off to that view and be done.  If
-			// not, adjust the position according to the number of
-			// sponsored ads seen at the location.
-			if (wjAdAdapter.isSponsoredAd(position))  {
-				wjAdAdapter.performClick(position);
-				return;
-			}
-			else
-				position -= wjAdAdapter.sponsoredAdCountAt(position);
-
-		}
-
-		startJudgeHistorySearch(position);
-
     }
 
     @Override
@@ -188,8 +141,9 @@ public class WordJudgeFragment extends BaseFragment
 
 			Analytics.sendEvent(Analytics.HISTORY, Analytics.CLEAR_JUDGE_HISTORY, "", 0);
 
+			// TODO: notify adapter fragment of clear history
 			JudgeHistory.getInstance().clearJudgeHistory(getActivity());
-			wjAdapter.notifyDataSetChanged();
+//			wjAdapter.notifyDataSetChanged();
 			return true;
 
 		}
@@ -263,26 +217,26 @@ public class WordJudgeFragment extends BaseFragment
 			@Override
 			public void onClick(View v) { wjText.setText(""); }
 		});
-		
-        wjListview = (ListView)rootView.findViewById(R.id.wordjudge_listview);
 
-        // Create the content adapter
-        wjAdapter =
-			new WordJudgeAdapter(getActivity(),
-									R.layout.judge_history,
-									JudgeHistory.getInstance().getJudgeHistory());
+        // Find the adapter fragment
+        String tag = WordJudgeAdapterFragment.class.getName();
+		adapterFragment =
+			(WordJudgeAdapterFragment) getChildFragmentManager().findFragmentByTag(tag);
 
-		// If this is the free version, create that adapter
-		if (WordPlayApp.getInstance().isFreeMode())
-			wjAdAdapter = new SponsoredAdAdapter(getActivity(),
-													wjAdapter,
-													WordPlayApp.getInstance().getWordJudgeAdUnitIds(),
-													sponsoredAdPositions,
-													sponsoredAdListAds);
+		// If we currently don't have an AdDetailFragment, create one and
+		// add it to our container
+		if (adapterFragment == null)  {
 
-		// Attach the adapter to the ListView
-        wjListview.setAdapter(wjAdAdapter != null ? wjAdAdapter : wjAdapter);
-        wjListview.setOnItemClickListener(this);
+			// Create a transaction and the fragment we're adding
+			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+			adapterFragment =
+				(WordJudgeAdapterFragment) Fragment.instantiate(getActivity(), tag);
+
+			// Add the fragment and commit the transaction
+			ft.add(R.id.word_judge_adapter_container, adapterFragment, adapterFragment.getClass().getName());
+			ft.commit();
+
+		}
 
 	}
 
@@ -385,10 +339,7 @@ public class WordJudgeFragment extends BaseFragment
 		JudgeHistory.getInstance().saveJudgeHistory(getActivity());
 
 		// Update the adapter
-		if (WordPlayApp.getInstance().isFreeMode())
-			wjAdAdapter.notifyDataSetChanged();
-		else
-			wjAdapter.notifyDataSetChanged();
+		adapterFragment.updateJudgeAdapter();
 
 	}
 
