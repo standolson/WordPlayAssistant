@@ -141,9 +141,8 @@ public class WordJudgeFragment extends BaseFragment
 
 			Analytics.sendEvent(Analytics.HISTORY, Analytics.CLEAR_JUDGE_HISTORY, "", 0);
 
-			// TODO: notify adapter fragment of clear history
 			JudgeHistory.getInstance().clearJudgeHistory(getActivity());
-//			wjAdapter.notifyDataSetChanged();
+			adapterFragment.updateJudgeAdapter();
 			return true;
 
 		}

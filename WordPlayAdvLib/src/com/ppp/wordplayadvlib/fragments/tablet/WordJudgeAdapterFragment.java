@@ -55,6 +55,42 @@ public class WordJudgeAdapterFragment extends BaseFragment
 	}
 
 	@Override
+	public void onPause()
+	{
+
+		super.onPause();
+
+		// Pause all AdMob activity
+		if (wjAdAdapter != null)
+			wjAdAdapter.pause();
+
+	}
+
+	@Override
+	public void onResume()
+	{
+
+		super.onResume();
+
+		// Resume all AdMob activity
+		if (wjAdAdapter != null)
+			wjAdAdapter.resume();
+
+	}
+
+	@Override
+	public void onDestroy()
+	{
+
+		super.onDestroy();
+
+		// Stop all AdMob activity
+		if (wjAdAdapter != null)
+			wjAdAdapter.destroy();
+
+	}
+
+	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
 		super.onSaveInstanceState(savedInstanceState);
