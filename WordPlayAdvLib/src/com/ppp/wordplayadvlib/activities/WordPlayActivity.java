@@ -81,6 +81,7 @@ public class WordPlayActivity extends HostActivity
     private String lastItemTitle = null;
     private boolean drawerSeen = false;
     private List<DrawerMenuItem> menuItems;
+    private Runnable selectMenuItemRunnable;
 
 	private static boolean notificationIconEnabled = false;
 
@@ -151,12 +152,19 @@ public class WordPlayActivity extends HostActivity
             
             public void onDrawerClosed(View drawerView)
             {
+
                 if (!drawerSeen)  {
                     drawerSeen = true;
                     SharedPreferences.Editor edit = getPreferences(Context.MODE_PRIVATE).edit();
                     edit.putBoolean("drawerSeen", true);
                     edit.commit();
                 }
+
+                if (selectMenuItemRunnable != null) {
+            		selectMenuItemRunnable.run();
+            		selectMenuItemRunnable = null;
+                }
+
             }
 
         };
@@ -252,19 +260,24 @@ public class WordPlayActivity extends HostActivity
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,	long id)
+    public void onItemClick(final AdapterView<?> parent, View view, final int position,	long id)
     {
 
-        DrawerMenuItem it = (DrawerMenuItem) parent.getAdapter().getItem(position);
+        final DrawerMenuItem it = (DrawerMenuItem) parent.getAdapter().getItem(position);
 
         if (it.itemClass != null)  {
-	        lastItemTitle = it.title;
-	        parent.setSelection(position);
-	        switchToFragment(it.itemClass, true);
-	        menuListView.setItemChecked(position, true);
+        	selectMenuItemRunnable = new Runnable() {
+        		public void run()
+        		{
+        	        lastItemTitle = it.title;
+        	        parent.setSelection(position);
+        	        switchToFragment(it.itemClass, true);
+        	        menuListView.setItemChecked(position, true);
+        			getSupportActionBar().setSubtitle(it.title);      			
+        		}
+        	};
 	        menuDrawer.closeDrawer(menuListView);
-			getSupportActionBar().setSubtitle(it.title);
-        }
+       }
 
     }
 
