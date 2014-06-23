@@ -18,6 +18,7 @@ import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
 import com.ppp.wordplayadvlib.adapters.WordJudgeAdapter;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd;
 import com.ppp.wordplayadvlib.fragments.BaseFragment;
+import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
 import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.model.JudgeHistory;
 import com.ppp.wordplayadvlib.model.JudgeHistoryObject;
@@ -30,12 +31,26 @@ public class WordJudgeAdapterFragment extends BaseFragment
 
 	private View rootView;
 
+	private WordJudgeFragment wjFragment;
+
 	private ListView wjListview = null;
 	private SponsoredAdAdapter wjAdAdapter = null;
 	private WordJudgeAdapter wjAdapter = null;
 
     private TreeSet<Integer> sponsoredAdPositions = new TreeSet<Integer>();
     private SparseArray<SponsoredAd> sponsoredAdListAds = new SparseArray<SponsoredAd>();
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+
+    	super.onCreate(savedInstanceState);
+
+    	// Find the WordJudgeFragment that owns us
+    	if ((wjFragment == null) && (getParentFragment() != null) && getParentFragment() instanceof WordJudgeFragment)
+    		wjFragment = (WordJudgeFragment) getParentFragment();
+
+    }
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -150,6 +165,12 @@ public class WordJudgeAdapterFragment extends BaseFragment
 
 	}
 
+	@Override
+	public boolean isTablet()
+	{
+		return wjFragment != null ? wjFragment.isTablet() : false;
+	}
+
 	//
 	// Fragment IPC
 	//
@@ -181,7 +202,10 @@ public class WordJudgeAdapterFragment extends BaseFragment
 			args.putInt("SearchType", SearchType.OPTION_DICTIONARY_EXACT_MATCH.ordinal());
 			args.putInt("Dictionary", DictionaryType.DICTIONARY_DICT_DOT_ORG.ordinal());
 
-    		startNewSearch(args);
+			if ((wjFragment != null) && wjFragment.isTablet())
+				startNewSearch(args, R.id.word_judge_definitions_container);
+			else
+				startNewSearch(args);
 
     	}
     	else

@@ -47,6 +47,7 @@ public class WordJudgeFragment extends BaseFragment
 
 	private View rootView;
 
+	private View definitionsView;
 	private WordJudgeAdapterFragment adapterFragment;
 	private Button wjButton = null;
 	private EditText wjText = null;
@@ -222,7 +223,7 @@ public class WordJudgeFragment extends BaseFragment
 		adapterFragment =
 			(WordJudgeAdapterFragment) getChildFragmentManager().findFragmentByTag(tag);
 
-		// If we currently don't have an AdDetailFragment, create one and
+		// If we currently don't have an WordJudgeAdapterFragment, create one and
 		// add it to our container
 		if (adapterFragment == null)  {
 
@@ -237,7 +238,14 @@ public class WordJudgeFragment extends BaseFragment
 
 		}
 
+		// Find the container that will hold the exact match search.  On tablets,
+		// this is used when the user clicks a word from the adapter fragment.
+		definitionsView = rootView.findViewById(R.id.word_judge_definitions_container);
+
 	}
+
+	@Override
+	public boolean isTablet() { return definitionsView != null; }
 
 	//
 	// Search Activity Support

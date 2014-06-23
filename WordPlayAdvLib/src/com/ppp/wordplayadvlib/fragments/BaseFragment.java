@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.SpannableString;
@@ -82,7 +83,26 @@ public class BaseFragment extends Fragment
 	{
 		SearchFragment fragment = new SearchFragment();
 		fragment.setArguments(args);
-		pushToStack(fragment);
+		pushToStack(fragment);		
+	}
+
+	public void startNewSearch(Bundle args, int containerId)
+	{
+
+		if (isTablet())  {
+
+			String tag = SearchFragment.class.getName();
+			SearchFragment fragment = (SearchFragment) SearchFragment.instantiate(getActivity(), tag);
+			fragment.setArguments(args);
+
+			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+			ft.add(containerId, fragment, fragment.getClass().getName());
+			ft.commit();
+
+		}
+		else
+			startNewSearch(args);
+
 	}
 
     //
@@ -146,6 +166,8 @@ public class BaseFragment extends Fragment
 	//
 	// Miscellaneous Support
 	//
+
+    public boolean isTablet() { return false; }
 
     protected boolean validateString(String searchString,
     									DictionaryType dictionary,
