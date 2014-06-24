@@ -20,9 +20,6 @@ public class HostActivity extends BaseActivity {
     protected Fragment lastAdded;
     protected String lastAddedTag = null;
 
-    //
-    // Stack Management
-    //
 	@Override
     protected void onCreate(Bundle savedInstanceState)
     {

@@ -2,11 +2,12 @@ package com.ppp.wordplayadvlib;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -24,6 +25,7 @@ public class WordPlayApp extends Application
 	public static int appVersionCode = 0;
 	public static String appVersionName = "Unknown";
 
+	private boolean debugFlag = false;
 	private boolean freeMode = true;
 	private boolean useGoogleAppEngine = false;
 
@@ -42,6 +44,7 @@ public class WordPlayApp extends Application
 		// to disabled)
 		Debug.setLogLevel(Debug.DebugLevel.DebugLevelVerbose);
         Debug.enableAsserts();
+        setDebugFlag();
 
         // Set the free/paid mode based on the name of the package
         freeMode = getPackageName().contains("free");
@@ -54,16 +57,19 @@ public class WordPlayApp extends Application
 
 	}
 
+	@Override
 	public void onLowMemory()
 	{
 		super.onLowMemory();
 	}
 
+	@Override
 	public void onTerminate()
 	{
 		super.onTerminate();
 	}
 
+	@Override
 	public void onConfigurationChanged(Configuration config)
 	{
 		super.onConfigurationChanged(config);
@@ -104,6 +110,30 @@ public class WordPlayApp extends Application
 
 	public boolean getUseGoogleAppEngine() { return useGoogleAppEngine; }
 	public void setUseGoogleAppEngine(boolean b) { useGoogleAppEngine = b; }
+
+	//
+	// Debug
+	//
+
+	private void setDebugFlag()
+	{
+
+		// Determine what the debug flag setting is by reading the <application> tag
+		// in the manifest
+		try {
+			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+			debugFlag = (info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+			Log.e(getClass().getSimpleName(), "Debug: " + (debugFlag ? "on" : "off"));
+		}
+		catch (Exception e) {
+			Log.e(getClass().getSimpleName(), "unable to get debug setting...defaults to false");
+		}
+
+	}
+
+	public boolean getDebugFlag() { return debugFlag; }
+
+	public String debugFlagString() { return debugFlag ? "TRUE" : "FALSE"; }
 
 	//
 	// Google Play Services

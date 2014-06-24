@@ -18,6 +18,7 @@ import com.ppp.wordplayadvlib.adapters.SponsoredAdAdapter;
 import com.ppp.wordplayadvlib.adapters.WordJudgeAdapter;
 import com.ppp.wordplayadvlib.externalads.SponsoredAd;
 import com.ppp.wordplayadvlib.fragments.BaseFragment;
+import com.ppp.wordplayadvlib.fragments.SearchFragment;
 import com.ppp.wordplayadvlib.fragments.WordJudgeFragment;
 import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.model.JudgeHistory;
@@ -202,14 +203,17 @@ public class WordJudgeAdapterFragment extends BaseFragment
 			args.putInt("SearchType", SearchType.OPTION_DICTIONARY_EXACT_MATCH.ordinal());
 			args.putInt("Dictionary", DictionaryType.DICTIONARY_DICT_DOT_ORG.ordinal());
 
-			if ((wjFragment != null) && wjFragment.isTablet())
-				startNewSearch(args, R.id.word_judge_definitions_container);
+			if (wjFragment != null)
+				wjFragment.startNewSearch(args);
 			else
 				startNewSearch(args);
 
     	}
-    	else
-    		Toast.makeText(getActivity(), "Cannot search for unknown words", Toast.LENGTH_SHORT).show();
+    	else {
+    		if (wjFragment != null)
+    			wjFragment.removeExistingFragment(SearchFragment.class.getName());
+    		Toast.makeText(getActivity(), getString(R.string.WordJudgeInvalidSearch), Toast.LENGTH_SHORT).show();
+    	}
 
     }
 

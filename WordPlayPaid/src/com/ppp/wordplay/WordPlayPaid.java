@@ -18,7 +18,8 @@ public class WordPlayPaid extends WordPlayActivity {
         super.onCreate(savedInstanceState);
 
         // Initialize Crittercism
-        Crittercism.initialize(getApplicationContext(), "531e144040ec925d0e000002");
+        if (!WordPlayApp.getInstance().getDebugFlag())
+        	Crittercism.initialize(getApplicationContext(), "531e144040ec925d0e000002");
 
         // Initialiaze Google Analytics
         initGoogleAnalytics("UA-50341453-1");

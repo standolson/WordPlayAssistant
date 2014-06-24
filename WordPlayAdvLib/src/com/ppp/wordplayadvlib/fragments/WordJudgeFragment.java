@@ -20,11 +20,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.ppp.wordplayadvlib.R;
 import com.ppp.wordplayadvlib.analytics.Analytics;
@@ -34,14 +31,11 @@ import com.ppp.wordplayadvlib.fragments.dialog.SearchProgressDialogFragment.Sear
 import com.ppp.wordplayadvlib.fragments.tablet.WordJudgeAdapterFragment;
 import com.ppp.wordplayadvlib.model.DictionaryType;
 import com.ppp.wordplayadvlib.model.JudgeHistory;
-import com.ppp.wordplayadvlib.model.JudgeHistoryObject;
 import com.ppp.wordplayadvlib.model.JudgeSearchObject;
-import com.ppp.wordplayadvlib.model.SearchType;
 import com.ppp.wordplayadvlib.utils.Debug;
 
 public class WordJudgeFragment extends BaseFragment
 	implements
-		View.OnClickListener,
 		SearchProgressListener
 {
 
@@ -115,16 +109,6 @@ public class WordJudgeFragment extends BaseFragment
 
 	}
 
-	@Override
-    public void onClick(View v)
-    {
-        InputMethodManager imm =
-        	(InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(wjText.getWindowToken(), 0);
-		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-    	startWordJudgeSearch();
-    }
-
     @Override
     public void onPrepareOptionsMenu(Menu menu)
     {
@@ -142,8 +126,12 @@ public class WordJudgeFragment extends BaseFragment
 
 			Analytics.sendEvent(Analytics.HISTORY, Analytics.CLEAR_JUDGE_HISTORY, "", 0);
 
+			// Clear the history, update the list of words, and if
+			// running on a tablet, remove any existing SearchFragment
 			JudgeHistory.getInstance().clearJudgeHistory(getActivity());
 			adapterFragment.updateJudgeAdapter();
+			removeExistingFragment(SearchFragment.class.getName());
+
 			return true;
 
 		}
@@ -244,8 +232,49 @@ public class WordJudgeFragment extends BaseFragment
 
 	}
 
+	//
+	// Tablet Support
+	//
+
+	public void removeExistingFragment(String tag)
+	{
+		SearchFragment oldFragment = (SearchFragment) getChildFragmentManager().findFragmentByTag(tag);
+		if (isTablet() && (oldFragment != null))  {
+			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+			ft.remove(oldFragment);
+			ft.commit();
+		}
+	}
+
 	@Override
 	public boolean isTablet() { return definitionsView != null; }
+
+	@Override
+	public void startNewSearch(Bundle args)
+	{
+
+		if (isTablet())  {
+
+			String tag = SearchFragment.class.getName();
+
+			// See if we already have a SearchFragment attached and if so
+			// detach it
+			removeExistingFragment(tag);
+
+			// Create the new SearchFragment
+			SearchFragment fragment = (SearchFragment) SearchFragment.instantiate(getActivity(), tag);
+			fragment.setArguments(args);
+
+			// Add it
+			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+			ft.add(R.id.word_judge_definitions_container, fragment, fragment.getClass().getName());
+			ft.commit();
+
+		}
+		else
+			startNewSearch(args);
+		
+	}
 
 	//
 	// Search Activity Support
@@ -257,6 +286,10 @@ public class WordJudgeFragment extends BaseFragment
 		String searchString = wjText.getText().toString().toLowerCase();
 		DictionaryType dictionary = DictionaryType.fromInt(getSelectedDictionary() + 1);
 
+		// Get rid of any existing SearchFragment when in tablet mode
+    	removeExistingFragment(SearchFragment.class.getName());
+
+    	// Start a new search
 		judgeSearchObject = new JudgeSearchObject(searchString, dictionary);
 		doWordJudgeSearch();
 
@@ -278,29 +311,6 @@ public class WordJudgeFragment extends BaseFragment
     //
     // Word Judge Search
     //
-
-    private void startJudgeHistorySearch(int position)
-    {
-
-    	JudgeHistoryObject elem = JudgeHistory.getInstance().getJudgeHistory().get(position);
-
-    	if (elem.getState())  {
-
-    		if (elem.getWord().contains(","))
-    			return;
-
-    		Bundle args = new Bundle();
-			args.putString("SearchString", elem.getWord());
-			args.putInt("SearchType", SearchType.OPTION_DICTIONARY_EXACT_MATCH.ordinal());
-			args.putInt("Dictionary", DictionaryType.DICTIONARY_DICT_DOT_ORG.ordinal());
-
-    		startNewSearch(args);
-
-    	}
-    	else
-    		Toast.makeText(getActivity(), "Cannot search for unknown words", Toast.LENGTH_SHORT).show();
-
-    }
 
     private static final String SEARCH_COMPLETED_INTENT = "WordJudgeSearchCompleted";
     private static final String SEARCH_CANCELED_INTENT = "WordJudgeSearchCanceled";

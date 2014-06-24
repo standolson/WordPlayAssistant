@@ -86,25 +86,6 @@ public class BaseFragment extends Fragment
 		pushToStack(fragment);		
 	}
 
-	public void startNewSearch(Bundle args, int containerId)
-	{
-
-		if (isTablet())  {
-
-			String tag = SearchFragment.class.getName();
-			SearchFragment fragment = (SearchFragment) SearchFragment.instantiate(getActivity(), tag);
-			fragment.setArguments(args);
-
-			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-			ft.add(containerId, fragment, fragment.getClass().getName());
-			ft.commit();
-
-		}
-		else
-			startNewSearch(args);
-
-	}
-
     //
     // Menu Helpers
     //
