@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -153,6 +154,8 @@ public class WordPlayActivity extends HostActivity
             public void onDrawerClosed(View drawerView)
             {
 
+            	// If this was the first time the user saw the drawer, mark
+            	// that they've seen it so we don't show it again
                 if (!drawerSeen)  {
                     drawerSeen = true;
                     SharedPreferences.Editor edit = getPreferences(Context.MODE_PRIVATE).edit();
@@ -164,10 +167,11 @@ public class WordPlayActivity extends HostActivity
             		selectMenuItemRunnable.run();
             		selectMenuItemRunnable = null;
                 }
-
+                
             }
 
         };
+
         menuDrawer.setDrawerListener(drawerToggle);
 
         // Initialize the drawer seen state
@@ -265,6 +269,8 @@ public class WordPlayActivity extends HostActivity
 
         final DrawerMenuItem it = (DrawerMenuItem) parent.getAdapter().getItem(position);
 
+        // Perform all of the actions that need to happen when
+        // the drawer closes in a Runnable so that the UI doesn't
         if (it.itemClass != null)  {
         	selectMenuItemRunnable = new Runnable() {
         		public void run()
@@ -274,6 +280,7 @@ public class WordPlayActivity extends HostActivity
         	        switchToFragment(it.itemClass, true);
         	        menuListView.setItemChecked(position, true);
         			getSupportActionBar().setSubtitle(it.title);      			
+		            setDrawerIndicator(null, it.itemClass.getName());
         		}
         	};
 	        menuDrawer.closeDrawer(menuListView);
@@ -880,16 +887,52 @@ public class WordPlayActivity extends HostActivity
             @Override
             public void run()
             {
-            	if (lastAdded != null) {
-                	if (lastAdded.getChildFragmentManager().getBackStackEntryCount() > 0) 
-                		drawerToggle.setDrawerIndicatorEnabled(false);
-                	else 
-                		drawerToggle.setDrawerIndicatorEnabled(true);
-                }
-            }
+            	if (lastAdded != null)
+            		setDrawerIndicator(lastAdded, null);                }
         }, 500);
     }
 
+    private void setDrawerIndicator(Fragment fragment, String tag)
+    {
+
+    	// If no fragment was supplied and we received a tag, use that
+    	// to find the HostFragment in question
+    	if (fragment == null)  {
+
+    		// Use the tag to find the fragment
+    		if (tag != null)
+    			fragment = getSupportFragmentManager().findFragmentByTag(tag);
+
+    		// No tag or fragment?!!?!  Set the indicator to the drawer
+    		// hamburger and log the fact that we hit this condition.
+    		else {
+    			Log.e(getClass().getSimpleName(), "unable to set drawer indicator without either a fragment or tag");
+        		drawerToggle.setDrawerIndicatorEnabled(true);
+        		return;
+    		}
+
+    	}
+
+    	// Now that we have a fragment, check its child count and if there is
+    	// a stack of fragments, show the home-as-up indicator instead of the
+    	// drawer hamburger
+    	if (fragment != null)  {
+    		if (fragment.getChildFragmentManager().getBackStackEntryCount() > 0)
+    			drawerToggle.setDrawerIndicatorEnabled(false);
+    		else
+    			drawerToggle.setDrawerIndicatorEnabled(true);
+    	}
+    	
+    	// It is possible the fragment hasn't been added yet so we set the
+    	// indicator to the hamburger
+    	else
+    		drawerToggle.setDrawerIndicatorEnabled(true);
+
+    }
+
+    //
+    // Misc
+    //
 
 	public void initGoogleAnalytics(String trackingId)
 	{

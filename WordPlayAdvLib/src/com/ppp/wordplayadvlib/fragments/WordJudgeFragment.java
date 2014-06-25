@@ -272,7 +272,7 @@ public class WordJudgeFragment extends BaseFragment
 
 		}
 		else
-			startNewSearch(args);
+			super.startNewSearch(args);
 		
 	}
 
