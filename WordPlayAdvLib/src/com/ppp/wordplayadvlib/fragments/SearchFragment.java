@@ -60,9 +60,10 @@ public class SearchFragment extends BaseFragment
 {
 
 	private View rootView;
-	private ListView searchListView;
-	private TextView elapsedTextView;
+	private View resultsView;
 	private View zeroView;
+	private TextView elapsedTextView;
+	private ListView searchListView;
 	private SponsoredAdAdapter adAdapter = null;
 	
 	private RFC2229 dictServer;	
@@ -73,6 +74,7 @@ public class SearchFragment extends BaseFragment
 
 	private AdMobAd interstitialAdMobAd = null;
 	private boolean isTopLevelSearch = false;
+	private boolean isTablet = false;
 	private boolean showedInterstitial = false;
 	private Bundle nextArgs = null;
     private TreeSet<Integer> sponsoredAdPositions = new TreeSet<Integer>();
@@ -94,6 +96,7 @@ public class SearchFragment extends BaseFragment
 		// Pull stuff from the arguments
 		Bundle args = getArguments();
 		isTopLevelSearch = args.getBoolean("isTopLevelSearch");
+		isTablet = args.getBoolean("isTablet");
 
 	    // If this is the free version, load an interstitial ad in
 	    // case the user tries to dive deeper into the search result
@@ -120,10 +123,11 @@ public class SearchFragment extends BaseFragment
 
 		rootView = inflater.inflate(R.layout.search_fragment, container, false);
 
-		searchListView = (ListView) rootView.findViewById(R.id.search_result_list);
-
+	    resultsView = rootView.findViewById(R.id.results);
 	    zeroView = rootView.findViewById(R.id.zero_results);
+
 	    elapsedTextView = (TextView) rootView.findViewById(R.id.elapsed_time);
+	    searchListView = (ListView) rootView.findViewById(R.id.search_result_list);
 
 	    // Restore state
 		if (savedInstanceState != null)  {
@@ -287,6 +291,11 @@ public class SearchFragment extends BaseFragment
     public void onPrepareOptionsMenu(Menu menu)
     {
 
+    	// If you're running on a tablet, leave all menu
+    	// items alone
+    	if (isTablet)
+    		return;
+
     	int[] ids = {
     		R.id.dictionary_menu,
     		R.id.settings_menu,
@@ -439,8 +448,7 @@ public class SearchFragment extends BaseFragment
     private boolean zeroResults(int count)
     {
 		zeroView.setVisibility(count > 0 ? View.GONE : View.VISIBLE);
-		searchListView.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
-		elapsedTextView.setVisibility(View.VISIBLE);
+		resultsView.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
 		return count == 0;
     }
 

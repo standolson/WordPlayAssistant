@@ -263,6 +263,7 @@ public class WordJudgeFragment extends BaseFragment
 
 			// Create the new SearchFragment
 			SearchFragment fragment = (SearchFragment) SearchFragment.instantiate(getActivity(), tag);
+			args.putBoolean("isTablet", true);
 			fragment.setArguments(args);
 
 			// Add it

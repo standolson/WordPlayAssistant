@@ -4,22 +4,28 @@
 	android:layout_width="match_parent"
 	android:layout_height="fill_parent" >
 
-    <TextView
-        style="@style/HeaderText"
-        android:id="@+id/elapsed_time"
+    <LinearLayout
+        android:id="@+id/results"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:padding="3dip"
-        android:visibility="gone" />
+        android:orientation="vertical"
+	    android:visibility="gone" >
 
-	<ListView
-		android:id="@+id/search_result_list"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_below="@+id/elapsed_time"
-		android:choiceMode="singleChoice"
-		android:visibility="gone" />
+	    <TextView
+	        style="@style/HeaderText"
+	        android:id="@+id/elapsed_time"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="3dip" />
+	
+		<ListView
+			android:id="@+id/search_result_list"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:choiceMode="singleChoice" />
+
+	</LinearLayout>
 
 	<TextView
 	    android:id="@+id/zero_results"
