@@ -32,7 +32,7 @@ public enum DictionaryType {
 			case DICTIONARY_DICT_DOT_ORG:
 				return "*";
 			case DICTIONARY_THESAURUS:
-				return "moby-thes";
+				return "moby-thesaurus";
 		}
 		return "Unknown";
 	}
@@ -57,7 +57,7 @@ public enum DictionaryType {
 			return DICTIONARY_ENABLE;
 		if (str.equals("*"))
 			return DICTIONARY_DICT_DOT_ORG;
-		if (str.equals("moby-thes"))
+		if (str.equals("moby-thesaurus"))
 			return DICTIONARY_THESAURUS;
 		
 		return DICTIONARY_UNKNOWN;
