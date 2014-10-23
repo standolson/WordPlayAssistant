@@ -21,10 +21,10 @@ import com.ppp.wordplayadvlib.utils.Debug;
 
 public class RFC2229 {
 	
-	Socket s = null;
-	PrintWriter out = null;
-	BufferedReader in = null;
-	boolean connected = false;
+	private Socket s = null;
+	private PrintWriter out = null;
+	private BufferedReader in = null;
+	private boolean connected = false;
 
 	//
 	// Public Entry Points
@@ -68,7 +68,7 @@ public class RFC2229 {
 		StringBuilder buf = new StringBuilder();
 		
 		hello();
-		buf = sendAndRecv("define moby-thes \"" + word + "\"");
+		buf = sendAndRecv("define moby-thesaurus \"" + word + "\"");
 		Debug.i("MOBY-THES REPLY: " + buf.toString());
 		quit();
 		
